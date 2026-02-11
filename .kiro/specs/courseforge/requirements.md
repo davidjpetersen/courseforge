@@ -21,7 +21,7 @@ CourseForge is guided by five core principles that shape all implementation deci
 
 3. **Standards-Native Architecture**: CTDL and CTDL-ASN are not export formats—they are the native data model. All artifacts are created, stored, and manipulated as standards-compliant JSON-LD, ensuring interoperability and future-proofing.
 
-4. **CLI-First Parity**: The command-line interface is a first-class citizen with feature parity to the web application. Professional workflows, automation, and integration are enabled through a robust CLI that mirrors web capabilities.
+4. **CLI-First Parity**: The command-line interface is a first-class citizen with comprehensive feature parity to the web application for core workflows. Professional automation, CI/CD integration, and power-user workflows are enabled through a robust CLI. The following capabilities have full CLI parity: package authoring, publishing, dependency management, search and discovery, lifecycle management, pull request workflows, organization/team management, and quality gate inspection. Web-only features include: visual CTDL artifact rendering, interactive package recommendation browsing, and administrative dashboards.
 
 5. **Human-in-the-Loop Quality Governance**: Automated validation and quality gates provide guardrails, but human review and approval remain central to the publishing process. The platform supports collaborative review workflows that balance automation with expert judgment.
 
@@ -59,8 +59,90 @@ CourseForge has a focused scope. The following are explicitly out of scope:
 - **Version_Constraint**: A semantic versioning range specification (e.g., ^1.2.0, ~2.1.0) that defines acceptable dependency versions
 - **Orphaned_Package**: A package whose owning organization or user has been deleted, requiring reassignment before modification
 - **Package_Visibility**: The access control setting for a package (public, organization-private, team-private)
+- **Channel**: A distribution stream for package releases (e.g., stable, beta, prerelease) that allows consumers to opt into different stability levels
+- **Popularity**: A composite metric calculated from download count, number of dependent packages, and recency of updates
 
 ## Requirements
+
+### Requirement Index
+
+Requirements are grouped by feature area but retain stable numeric identifiers for reference. Use this index to locate specific requirements:
+
+| ID | Requirement Title | Section |
+|----|-------------------|---------|
+| 1 | CTDL/CTDL-ASN Artifact Storage | CTDL/CTDL-ASN Compliance |
+| 2 | CTDL Schema Validation Engine | CTDL/CTDL-ASN Compliance |
+| 3 | CTDL Import and Export | CTDL/CTDL-ASN Compliance |
+| 4 | Canonical Dependency Model | Dependency Management |
+| 5 | Dependency Version Constraints | Dependency Management |
+| 6 | Dependency Locking | Dependency Management |
+| 7 | CLI Initialization and Manifest Creation | CLI (forge) Authoring and Publishing |
+| 8 | CLI Artifact Creation | CLI (forge) Authoring and Publishing |
+| 9 | CLI Validation | CLI (forge) Authoring and Publishing |
+| 10 | CLI Package Building | CLI (forge) Authoring and Publishing |
+| 11 | CLI Package Publishing | CLI (forge) Authoring and Publishing |
+| 12 | CLI Dependency Installation | CLI (forge) Authoring and Publishing |
+| 13 | CLI Dependency Addition | CLI (forge) Authoring and Publishing |
+| 14 | Objective-First Dependency Resolution | CLI (forge) Authoring and Publishing |
+| 15 | CLI Dependency Resolution | CLI (forge) Authoring and Publishing |
+| 16 | CLI Semantic Versioning | Versioning and Lineage |
+| 17 | CLI Version Diffing | Versioning and Lineage |
+| 18 | Registry Package Browsing | Registry Browsing and Search |
+| 19 | Registry Package Search | Registry Browsing and Search |
+| 20 | Semantic Package Search | Registry Browsing and Search |
+| 21 | Package Recommendations | Registry Browsing and Search |
+| 22 | Suggested Dependencies | Registry Browsing and Search |
+| 23 | Package Version Details | Registry Browsing and Search |
+| 24 | CTDL Artifact Rendering | Registry Browsing and Search |
+| 25 | Web-Based Objective Authoring | Web-Based Authoring |
+| 26 | Web-Based Assessment Authoring | Web-Based Authoring |
+| 27 | Web-Based Learning Experience Authoring | Web-Based Authoring |
+| 28 | Organization Management | Organization and Team Management |
+| 29 | Team Management | Organization and Team Management |
+| 30 | Role-Based Access Control | Organization and Team Management |
+| 31 | Package Ownership and Stewardship | Organization and Team Management |
+| 32 | Pull Request Creation | Collaboration and Review Workflows |
+| 33 | Pull Request Review | Collaboration and Review Workflows |
+| 34 | Review Assignment | Collaboration and Review Workflows |
+| 35 | Package Lifecycle Management | Package Lifecycle States |
+| 36 | Artifact Versioning | Package Lifecycle States |
+| 37 | Package Branching | Package Lifecycle States |
+| 38 | Package Merging | Package Lifecycle States |
+| 39 | Schema Validation Quality Gate | Quality Gates and Security |
+| 40 | Accessibility Quality Gate | Quality Gates and Security |
+| 41 | Rubric Alignment Quality Gate | Quality Gates and Security |
+| 42 | Security Scanning | Quality Gates and Security |
+| 43 | Required Quality Gates Configuration | Quality Gates and Security |
+| 44 | Package Name Uniqueness | Package Management Fundamentals |
+| 45 | Immutable Published Versions | Package Management Fundamentals |
+| 46 | Version Lineage Tracking | Package Management Fundamentals |
+| 47 | User Authentication | Authentication and Access |
+| 48 | API Authentication for CLI | Authentication and Access |
+| 49 | Registry Environment Management | Authentication and Access |
+| 50 | Package Download Statistics | Package Statistics and Lifecycle |
+| 51 | Registry Consumer API | Package Statistics and Lifecycle |
+| 52 | Package Visibility | Package Statistics and Lifecycle |
+| 53 | Platform Metrics | Package Statistics and Lifecycle |
+| 54 | Package Deprecation | Package Statistics and Lifecycle |
+| 55 | Package Unpublishing | Package Statistics and Lifecycle |
+| 56 | Embedding Generation for Semantic Search | Semantic Search Infrastructure |
+| 57 | Transitive Dependency Resolution | Dependency Management |
+| 58 | Package Checksums and Integrity | Package Management Fundamentals |
+| 59 | Package License Declaration | Package Metadata |
+| 60 | Package Keywords and Tagging | Package Metadata |
+| 61 | CLI Package Search | CLI (forge) Authoring and Publishing |
+| 62 | CLI Package Browsing | CLI (forge) Authoring and Publishing |
+| 63 | CLI Lifecycle State Management | CLI (forge) Authoring and Publishing |
+| 64 | CLI Pull Request Management | CLI (forge) Authoring and Publishing |
+| 65 | CLI Organization and Team Management | CLI (forge) Authoring and Publishing |
+| 66 | CLI Quality Gate Inspection | CLI (forge) Authoring and Publishing |
+| 67 | Package Promotion Between Environments | Registry Environments |
+| 68 | Environment-Specific Configuration | Registry Environments |
+| 69 | Audit Logging for State Changes | Cross-Cutting Concerns |
+| 70 | Package README and Documentation | Package Metadata |
+| 71 | Notification System | Cross-Cutting Concerns |
+| 72 | Non-Functional Performance Requirements | Cross-Cutting Concerns |
+| 73 | Release Channels | Package Metadata |
 
 ### CTDL/CTDL-ASN Compliance
 
@@ -77,17 +159,19 @@ CourseForge has a focused scope. The following are explicitly out of scope:
 5. WHEN a package version is created, THE System SHALL generate a versioned identifier for each artifact
 6. THE System SHALL preserve the JSON-LD @context and @type fields for all artifacts
 
-### Requirement 2: CTDL Schema Validation
+### Requirement 2: CTDL Schema Validation Engine
 
-**User Story:** As a package publisher, I want my artifacts validated against CTDL schemas before publishing, so that I can ensure standards compliance and catch errors early.
+**User Story:** As a package publisher, I want my artifacts validated against CTDL schemas, so that I can ensure standards compliance and catch errors early.
 
 #### Acceptance Criteria
 
-1. WHEN a user attempts to publish a package, THE System SHALL validate all artifacts against their respective CTDL schemas
-2. IF validation fails, THEN THE System SHALL return descriptive error messages indicating which fields are non-compliant
-3. THE System SHALL prevent publication of packages containing invalid CTDL artifacts
-4. WHEN validation succeeds, THE System SHALL mark the package as schema-compliant
-5. THE System SHALL validate that Objective artifacts conform to CTDL-ASN structure requirements
+1. THE System SHALL provide a validation engine that checks artifacts against their respective CTDL schemas
+2. THE validation engine SHALL validate Objective artifacts against CTDL-ASN structure requirements
+3. THE validation engine SHALL validate Learning_Experience and Assessment artifacts against CTDL schemas
+4. THE validation engine SHALL check for required fields, valid data types, and proper JSON-LD structure
+5. THE validation engine SHALL return descriptive error messages indicating which fields are non-compliant
+6. THE validation engine SHALL be invoked by the Forge_CLI during local validation (see Requirement 9)
+7. THE validation engine SHALL be invoked as a Quality_Gate during publishing (see Requirement 39)
 
 ### Validation Framework
 
@@ -128,9 +212,10 @@ All three contexts share a common validation engine that ensures consistent rule
 1. THE System SHALL allow Learning_Experience packages to declare dependencies on Objective packages
 2. THE System SHALL allow Learning_Experience packages to declare dependencies on Assessment packages
 3. THE System SHALL allow Assessment packages to declare dependencies on Objective packages
-4. THE System SHALL prevent Objective packages from declaring dependencies on Learning_Experience or Assessment packages
-5. THE System SHALL prevent Assessment packages from declaring dependencies on Learning_Experience packages
-6. WHEN resolving dependencies, THE System SHALL validate that all dependency relationships follow the canonical model
+4. THE System SHALL allow Objective packages to declare dependencies on other Objective packages (to support competency hierarchies and prerequisite relationships as defined in CTDL-ASN)
+5. THE System SHALL prevent Objective packages from declaring dependencies on Learning_Experience or Assessment packages
+6. THE System SHALL prevent Assessment packages from declaring dependencies on Learning_Experience packages
+7. WHEN resolving dependencies, THE System SHALL validate that all dependency relationships follow the canonical model
 
 ### Requirement 5: Dependency Version Constraints
 
@@ -159,6 +244,18 @@ All three contexts share a common validation engine that ensures consistent rule
 6. THE System SHALL fail CI validation if the lockfile is out of sync with declared dependencies
 7. THE lockfile SHALL include the full transitive dependency graph with checksums
 
+### Requirement 57: Transitive Dependency Resolution
+
+**User Story:** As a package consumer, I want all transitive dependencies resolved automatically, so that I have a complete working set of packages.
+
+#### Acceptance Criteria
+
+1. WHEN installing a package, THE System SHALL resolve all direct dependencies
+2. THE System SHALL recursively resolve dependencies of dependencies
+3. THE System SHALL detect and prevent circular dependency chains
+4. THE System SHALL select compatible versions when multiple versions are required
+5. IF version conflicts cannot be resolved, THEN THE System SHALL report the conflict and halt installation
+
 ### CLI (forge) Authoring and Publishing
 
 ### Requirement 7: CLI Initialization and Manifest Creation
@@ -174,15 +271,15 @@ All three contexts share a common validation engine that ensures consistent rule
 5. THE Forge_CLI SHALL initialize version to "0.1.0" by default
 6. THE Forge_CLI SHALL include fields for name, description, type, ctdl, version, license, repository, dependencies, contributors, keywords, publish, and quality in the manifest
 
-### Requirement 8: CLI Artifact Authoring
+### Requirement 8: CLI Artifact Creation
 
-**User Story:** As a package author, I want to add artifacts to my package using the forge CLI, so that I can build my instructional content incrementally.
+**User Story:** As a package author, I want to create new artifacts in my package using the forge CLI, so that I can build my instructional content incrementally.
 
 #### Acceptance Criteria
 
-1. WHEN a user runs "forge add objective", THE Forge_CLI SHALL create a new Objective artifact file
-2. WHEN a user runs "forge add assessment", THE Forge_CLI SHALL create a new Assessment artifact file
-3. WHEN a user runs "forge add experience", THE Forge_CLI SHALL create a new Learning_Experience artifact file
+1. WHEN a user runs "forge create objective", THE Forge_CLI SHALL create a new Objective artifact file
+2. WHEN a user runs "forge create assessment", THE Forge_CLI SHALL create a new Assessment artifact file
+3. WHEN a user runs "forge create experience", THE Forge_CLI SHALL create a new Learning_Experience artifact file
 4. THE Forge_CLI SHALL generate valid CTDL JSON-LD templates for each artifact type
 5. THE Forge_CLI SHALL update the forge.json manifest to reference the new artifact
 6. THE Forge_CLI SHALL assign a unique identifier to each new artifact
@@ -222,7 +319,7 @@ All three contexts share a common validation engine that ensures consistent rule
 2. THE Forge_CLI SHALL build the package before publishing
 3. THE Forge_CLI SHALL upload the package bundle to the Registry
 4. THE Forge_CLI SHALL verify that the package name is unique or properly scoped
-5. THE System SHALL mark published package versions as immutable
+5. THE System SHALL make published package versions immutable (see Requirement 45)
 6. THE Forge_CLI SHALL output the published package URI and version
 
 ### Requirement 12: CLI Dependency Installation
@@ -249,6 +346,7 @@ All three contexts share a common validation engine that ensures consistent rule
 3. THE Forge_CLI SHALL download and install the dependency
 4. THE Forge_CLI SHALL validate that the dependency relationship follows the canonical model
 5. THE Forge_CLI SHALL use the latest stable version unless a specific version is specified
+6. THE Forge_CLI SHALL treat "objective", "assessment", and "experience" as reserved subcommand keywords that trigger specialized workflows (see Requirement 14) rather than package name lookups
 
 ### Requirement 14: Objective-First Dependency Resolution
 
@@ -256,10 +354,10 @@ All three contexts share a common validation engine that ensures consistent rule
 
 #### Acceptance Criteria
 
-1. WHEN a user runs "forge add-objective <uri|name>", THE Forge_CLI SHALL query the Registry for the specified Objective package
+1. WHEN a user runs "forge add objective <uri|name>", THE Forge_CLI SHALL query the Registry for the specified Objective package
 2. THE Forge_CLI SHALL search for Assessment packages that depend on the specified Objective
 3. THE Forge_CLI SHALL search for Learning_Experience packages that depend on the specified Objective
-4. THE Forge_CLI SHALL prefer stable releases unless a channel is specified
+4. THE Forge_CLI SHALL prefer stable Channel releases unless a specific channel is specified (e.g., --channel=beta)
 5. THE Forge_CLI SHALL output a resolved dependency set including the Objective and compatible packages
 6. THE Forge_CLI SHALL update forge.json with the resolved dependencies
 7. THE Forge_CLI SHALL prompt the user to select from multiple compatible options when available
@@ -304,6 +402,79 @@ All three contexts share a common validation engine that ensures consistent rule
 4. THE Forge_CLI SHALL output a human-readable diff showing additions, deletions, and modifications
 5. THE Forge_CLI SHALL highlight changes to critical fields like objectives and competencies
 
+### Requirement 61: CLI Package Search
+
+**User Story:** As a package author, I want to search for packages from the command line, so that I can discover dependencies without switching to the web interface.
+
+#### Acceptance Criteria
+
+1. WHEN a user runs "forge search <query>", THE Forge_CLI SHALL perform keyword search against the Registry
+2. THE Forge_CLI SHALL support semantic search via a --semantic flag
+3. THE Forge_CLI SHALL support filtering by package type via --type flag
+4. THE Forge_CLI SHALL return results in a structured, readable format showing name, version, type, and description
+5. THE Forge_CLI SHALL support JSON output format via --json flag for programmatic consumption
+6. THE Forge_CLI SHALL display semantic similarity scores when using semantic search
+
+### Requirement 62: CLI Package Browsing
+
+**User Story:** As a package author, I want to browse available packages from the command line, so that I can explore the registry without using the web interface.
+
+#### Acceptance Criteria
+
+1. WHEN a user runs "forge browse", THE Forge_CLI SHALL retrieve a paginated list of published packages
+2. THE Forge_CLI SHALL support filtering by package type via --type flag
+3. THE Forge_CLI SHALL support sorting via --sort flag (name, date, popularity)
+4. THE Forge_CLI SHALL support pagination via --page and --limit flags
+5. THE Forge_CLI SHALL display package name, description, type, and latest version for each result
+
+### Requirement 63: CLI Lifecycle State Management
+
+**User Story:** As a package author, I want to manage package lifecycle states from the command line, so that I can control publication workflow without using the web interface.
+
+#### Acceptance Criteria
+
+1. WHEN a user runs "forge lifecycle <version> <state>", THE Forge_CLI SHALL transition the specified package version to the target state
+2. THE Forge_CLI SHALL validate that the state transition is allowed per the lifecycle state machine
+3. THE Forge_CLI SHALL require authentication and ownership verification
+4. THE Forge_CLI SHALL display the current lifecycle state via "forge lifecycle <version> status"
+5. THE Forge_CLI SHALL prevent invalid state transitions and report the allowed transitions
+
+### Requirement 64: CLI Pull Request Management
+
+**User Story:** As a package contributor, I want to manage pull requests from the command line, so that I can participate in collaborative workflows without using the web interface.
+
+#### Acceptance Criteria
+
+1. WHEN a user runs "forge pr create", THE Forge_CLI SHALL create a new Pull_Request from local changes
+2. WHEN a user runs "forge pr list", THE Forge_CLI SHALL display open Pull_Requests for packages the user has access to
+3. WHEN a user runs "forge pr review <pr-id>", THE Forge_CLI SHALL display the Pull_Request details and allow approval or rejection
+4. THE Forge_CLI SHALL support adding comments to Pull_Requests via "forge pr comment <pr-id> <message>"
+5. THE Forge_CLI SHALL require authentication for all Pull_Request operations
+
+### Requirement 65: CLI Organization and Team Management
+
+**User Story:** As an organization owner, I want to manage organizations and teams from the command line, so that I can administer access control without using the web interface.
+
+#### Acceptance Criteria
+
+1. WHEN a user runs "forge org create <name>", THE Forge_CLI SHALL create a new Organization
+2. WHEN a user runs "forge org list", THE Forge_CLI SHALL display organizations the user belongs to
+3. WHEN a user runs "forge team create <org> <team-name>", THE Forge_CLI SHALL create a new Team within the organization
+4. WHEN a user runs "forge team add-member <org> <team> <user>", THE Forge_CLI SHALL add a user to the team
+5. THE Forge_CLI SHALL require appropriate permissions for all organization and team operations
+
+### Requirement 66: CLI Quality Gate Inspection
+
+**User Story:** As a package author, I want to view quality gate results from the command line, so that I can understand validation failures without using the web interface.
+
+#### Acceptance Criteria
+
+1. WHEN a user runs "forge quality-gates <version>", THE Forge_CLI SHALL display all quality gate results for the specified package version
+2. THE Forge_CLI SHALL show the status (passed, failed, advisory) for each quality gate
+3. THE Forge_CLI SHALL display detailed error messages for failed quality gates
+4. THE Forge_CLI SHALL indicate which quality gates are required vs. advisory
+5. THE Forge_CLI SHALL support JSON output format via --json flag
+
 ### Registry Browsing and Search
 
 ### Requirement 18: Registry Package Browsing
@@ -342,6 +513,7 @@ All three contexts share a common validation engine that ensures consistent rule
 4. THE System SHALL return semantically similar packages ranked by similarity score
 5. THE System SHALL combine keyword search and semantic search results
 6. THE System SHALL provide explanation metadata for semantic matches showing matched competencies, fields, or embedding similarity scores
+7. IF embedding generation fails or semantic search infrastructure is unavailable, THE System SHALL fall back to keyword-only search and display a notice to the user that semantic results are temporarily unavailable
 
 ### Requirement 21: Package Recommendations
 
@@ -506,12 +678,12 @@ All three contexts share a common validation engine that ensures consistent rule
 
 #### Acceptance Criteria
 
-1. THE System SHALL display all open Pull_Requests for packages I maintain
+1. THE System SHALL display all open Pull_Requests for packages the maintainer owns or has maintainer access to
 2. THE System SHALL show the proposed changes in a diff view
-3. THE System SHALL allow me to add comments on specific changes
-4. THE System SHALL allow me to approve or reject the Pull_Request
-5. WHEN I approve a Pull_Request, THE System SHALL merge the changes into the package
-6. WHEN I reject a Pull_Request, THE System SHALL notify the contributor with my comments
+3. THE System SHALL allow the maintainer to add comments on specific changes
+4. THE System SHALL allow the maintainer to approve or reject the Pull_Request
+5. WHEN the maintainer approves a Pull_Request, THE System SHALL merge the changes into the package
+6. WHEN the maintainer rejects a Pull_Request, THE System SHALL notify the contributor with the maintainer's comments
 
 ### Requirement 34: Review Assignment
 
@@ -523,8 +695,11 @@ All three contexts share a common validation engine that ensures consistent rule
 2. THE System SHALL allow organizations to configure default reviewers for their packages
 3. THE System SHALL allow organizations to configure approval thresholds (number of required approvals)
 4. THE System SHALL disallow self-approval unless the user is the package owner
-5. THE System SHALL notify assigned reviewers when a Pull_Request is created
-6. THE System SHALL display review status and assigned reviewers on the Pull_Request page
+5. THE System SHALL allow organizations to configure whether package owners can self-approve Pull_Requests (enabled by default to support solo maintainers and small teams)
+6. THE System SHALL notify assigned reviewers when a Pull_Request is created
+7. THE System SHALL display review status and assigned reviewers on the Pull_Request page
+
+**Note:** AC4 and AC5 together provide an intentional escape hatch for solo maintainers and small teams while allowing larger organizations to enforce independent review by disabling owner self-approval.
 
 ### Package Lifecycle States
 
@@ -548,7 +723,7 @@ CourseForge packages progress through a defined set of lifecycle states that gov
 1. THE System SHALL enforce allowed state transitions: draft → under-review → approved → published → deprecated → archived
 2. THE System SHALL allow transitions from under-review back to draft when review feedback requires changes
 3. THE System SHALL prevent publication of package versions not in the approved state
-4. THE System SHALL make published package versions immutable
+4. THE System SHALL make published package versions immutable (see Requirement 45 for canonical immutability rules)
 5. THE System SHALL allow deprecated package versions to remain installable while displaying warnings
 6. THE System SHALL make archived package versions non-discoverable but historically accessible via explicit version reference
 7. THE System SHALL integrate lifecycle states with Pull_Request workflows
@@ -578,7 +753,10 @@ CourseForge packages progress through a defined set of lifecycle states that gov
 2. THE System SHALL initialize new branches from a specified version
 3. THE System SHALL allow independent versioning on each branch
 4. THE System SHALL track the branch lineage for each version
-5. THE System SHALL allow publishing versions from any branch
+5. THE System SHALL allow publishing versions from any branch provided the version has reached approved lifecycle state
+6. THE System SHALL allow branches to have independent lifecycle states (draft versions on a branch do not affect published versions on other branches)
+7. THE System SHALL allow Pull_Requests to target specific branches
+8. THE System SHALL allow Quality_Gates to be configured per-branch or inherited from organization defaults
 
 ### Requirement 38: Package Merging
 
@@ -587,10 +765,12 @@ CourseForge packages progress through a defined set of lifecycle states that gov
 #### Acceptance Criteria
 
 1. THE System SHALL allow package owners to merge branches
-2. THE System SHALL detect conflicts between branch versions
+2. THE System SHALL detect conflicts between branch versions by comparing CTDL artifacts and dependencies
 3. IF conflicts exist, THEN THE System SHALL require manual resolution before merging
-4. THE System SHALL create a new version on the target branch with merged changes
+4. THE System SHALL create a new version on the target branch with merged changes in draft state
 5. THE System SHALL preserve the merge history in package metadata
+6. THE System SHALL require the merged version to pass through the standard lifecycle workflow (draft → under-review → approved → published)
+7. THE System SHALL allow merge operations to be performed via Pull_Request workflow
 
 ### Quality Gates and Security
 
@@ -600,11 +780,11 @@ CourseForge packages progress through a defined set of lifecycle states that gov
 
 #### Acceptance Criteria
 
-1. WHEN a user attempts to publish a package, THE System SHALL run schema validation as a Quality_Gate
-2. THE System SHALL validate all artifacts against their respective CTDL schemas
-3. IF validation fails, THEN THE System SHALL prevent publication and report errors
-4. IF validation succeeds, THEN THE System SHALL mark the check as passed
-5. THE System SHALL display validation status on the package page
+1. WHEN a user attempts to publish a package, THE System SHALL run the CTDL Schema Validation Engine (Requirement 2) as a Quality_Gate
+2. IF validation fails, THEN THE System SHALL prevent publication and report errors
+3. IF validation succeeds, THEN THE System SHALL mark the check as passed
+4. THE System SHALL display validation status on the package page
+5. THE System SHALL make this quality gate mandatory and non-configurable
 
 ### Requirement 40: Accessibility Quality Gate
 
@@ -613,10 +793,12 @@ CourseForge packages progress through a defined set of lifecycle states that gov
 #### Acceptance Criteria
 
 1. WHERE accessibility checking is enabled, THE System SHALL run accessibility validation as a Quality_Gate
-2. THE System SHALL check for required accessibility metadata in CTDL artifacts
-3. THE System SHALL validate that learning resources include alternative text and captions where applicable
-4. IF accessibility checks fail, THEN THE System SHALL report specific issues
-5. THE System SHALL allow configuration of whether accessibility checks are required or advisory
+2. THE System SHALL check for required accessibility metadata in CTDL artifacts conforming to WCAG 2.1 Level AA guidelines
+3. THE System SHALL validate that learning resources include alternative text descriptions for images and visual content
+4. THE System SHALL validate that multimedia resources include caption and transcript metadata references
+5. THE System SHALL validate that documents include language declarations and proper heading structures in metadata
+6. IF accessibility checks fail, THEN THE System SHALL report specific issues with field references
+7. THE System SHALL allow configuration of whether accessibility checks are required or advisory
 
 ### Requirement 41: Rubric Alignment Quality Gate
 
@@ -637,8 +819,8 @@ CourseForge packages progress through a defined set of lifecycle states that gov
 #### Acceptance Criteria
 
 1. WHEN a package is published, THE System SHALL scan for embedded scripts or executable content
-2. THE System SHALL check for known malicious patterns in CTDL content
-3. THE System SHALL validate that external resource URLs use secure protocols
+2. THE System SHALL check for known malicious patterns including: SQL injection attempts in text fields, XSS payloads in HTML content, command injection patterns, and suspicious URL schemes
+3. THE System SHALL validate that external resource URLs use secure protocols (HTTPS)
 4. IF security issues are found, THEN THE System SHALL flag the package and notify the author
 5. THE System SHALL display security scan status on the package page
 
@@ -666,7 +848,13 @@ CourseForge packages progress through a defined set of lifecycle states that gov
 2. THE System SHALL enforce uniqueness within an organization for scoped package names
 3. WHEN a user attempts to publish a package with a duplicate name, THE System SHALL reject the publication
 4. THE System SHALL allow the same unscoped name if it is scoped to different organizations
-5. THE System SHALL validate package name format and allowed characters
+5. THE System SHALL validate package name format according to the following rules:
+   - Unscoped names: lowercase alphanumeric characters and hyphens only (pattern: `[a-z0-9-]+`)
+   - Scoped names: organization scope prefix followed by package name (pattern: `@[a-z0-9-]+/[a-z0-9-]+`)
+   - Minimum length: 2 characters (excluding scope prefix)
+   - Maximum length: 214 characters (including scope prefix if present)
+   - Names must not start or end with a hyphen
+   - Reserved names that cannot be used: "node_modules", "favicon.ico", "index", "package", "forge", "objective", "assessment", "experience"
 
 ### Requirement 45: Immutable Published Versions
 
@@ -675,10 +863,22 @@ CourseForge packages progress through a defined set of lifecycle states that gov
 #### Acceptance Criteria
 
 1. THE System SHALL prevent modification of published package versions
-2. THE System SHALL prevent deletion of published package versions
+2. THE System SHALL prevent deletion of published package versions, except as permitted by the unpublish window defined in Requirement 55
 3. IF a package needs changes, THEN THE System SHALL require publishing a new version
 4. THE System SHALL preserve all metadata and artifacts for published versions indefinitely
 5. THE System SHALL return an error if a user attempts to modify a published version
+
+### Requirement 58: Package Checksums and Integrity
+
+**User Story:** As a package consumer, I want package integrity verified during installation, so that I can trust the content has not been tampered with.
+
+#### Acceptance Criteria
+
+1. WHEN a package is published, THE System SHALL generate a checksum for the package bundle
+2. THE System SHALL store the checksum in the package metadata
+3. WHEN a package is downloaded, THE Forge_CLI SHALL verify the checksum
+4. IF the checksum does not match, THEN THE Forge_CLI SHALL reject the package and report an error
+5. THE System SHALL use a cryptographically secure hash algorithm for checksums
 
 ### Requirement 46: Version Lineage Tracking
 
@@ -718,25 +918,58 @@ CourseForge packages progress through a defined set of lifecycle states that gov
 4. THE Forge_CLI SHALL include the API token in all authenticated requests
 5. THE System SHALL validate API tokens and reject requests with invalid tokens
 
-### Requirement 49: Registry Environments
+### Requirement 49: Registry Environment Management
 
-**User Story:** As a package author, I want to publish packages to different registry environments, so that I can test in staging before promoting to production.
+**User Story:** As a platform administrator, I want to manage multiple registry environments, so that I can separate development, staging, and production deployments.
 
 #### Acceptance Criteria
 
 1. THE System SHALL support multiple Registry_Environment instances (local, staging, production)
-2. THE Forge_CLI SHALL allow targeting specific registry endpoints via configuration
-3. THE System SHALL support organization-scoped registries and private namespaces
-4. THE System SHALL provide a mechanism to promote packages between environments
-5. THE System SHALL allow environment-specific Quality_Gate configuration
-6. THE Forge_CLI SHALL store environment configurations in user settings
-7. THE System SHALL maintain independent package catalogs per environment
-8. WHEN promoting a package, THE System SHALL preserve version identifiers
-9. WHEN promoting a package, THE System SHALL preserve checksums
-10. WHEN promoting a package, THE System SHALL require passing destination environment Quality_Gates
-11. THE System SHALL make package promotions auditable with timestamp and actor information
-12. THE System SHALL apply promotion only to published package versions
-13. THE System SHALL copy packages during promotion (source environment remains unchanged)
+2. THE System SHALL maintain independent package catalogs per environment
+3. THE System SHALL allow environment-specific Quality_Gate configuration
+4. THE Forge_CLI SHALL allow targeting specific registry endpoints via configuration
+5. THE Forge_CLI SHALL store environment configurations in user settings
+
+### Requirement 67: Package Promotion Between Environments
+
+**User Story:** As a package author, I want to promote packages from staging to production, so that I can test thoroughly before making packages publicly available.
+
+#### Acceptance Criteria
+
+1. THE System SHALL provide a mechanism to promote packages between Registry_Environments
+2. WHEN promoting a package, THE System SHALL preserve version identifiers
+3. WHEN promoting a package, THE System SHALL preserve checksums
+4. WHEN promoting a package, THE System SHALL require passing destination environment Quality_Gates
+5. THE System SHALL apply promotion only to published package versions
+6. THE System SHALL copy packages during promotion (source environment remains unchanged)
+7. Package_Visibility SHALL be preserved during promotion unless explicitly overridden
+
+### Requirement 68: Environment-Specific Configuration
+
+**User Story:** As an organization owner, I want to configure different settings per environment, so that I can enforce stricter quality gates in production than in staging.
+
+#### Acceptance Criteria
+
+1. THE System SHALL allow organization-scoped registries and private namespaces per environment
+2. THE System SHALL allow different Quality_Gate configurations per environment
+3. THE System SHALL allow different access control policies per environment
+4. THE System SHALL make environment configurations independent and non-inherited
+
+### Requirement 69: Audit Logging for State Changes
+
+**User Story:** As a platform administrator, I want comprehensive audit logs of all state-changing operations, so that I can track accountability and troubleshoot issues.
+
+#### Acceptance Criteria
+
+1. THE System SHALL log all package publish operations with timestamp, actor, and package details
+2. THE System SHALL log all package deprecation and archival operations
+3. THE System SHALL log all ownership transfers (as specified in Requirement 31)
+4. THE System SHALL log all package promotions between environments with timestamp and actor information (as specified in Requirement 67)
+5. THE System SHALL log all lifecycle state transitions
+6. THE System SHALL log all permission and role changes
+7. THE System SHALL make audit logs queryable by package, actor, operation type, and time range
+8. THE System SHALL retain audit logs for a minimum of 2 years
+9. THE System SHALL make audit logs accessible to organization owners for their packages
 
 ### Package Statistics and Lifecycle
 
@@ -765,6 +998,7 @@ CourseForge packages progress through a defined set of lifecycle states that gov
 5. THE Consumer_API SHALL implement rate limiting to prevent abuse
 6. THE Consumer_API SHALL enforce access control based on package visibility settings
 7. THE Consumer_API SHALL return packages in CTDL JSON-LD format
+8. The Consumer_API SHALL be scoped to a specific Registry_Environment.
 
 ### Requirement 52: Package Visibility
 
@@ -816,6 +1050,7 @@ CourseForge packages progress through a defined set of lifecycle states that gov
 3. WHEN a version is unpublished, THE System SHALL remove it from search results and listings
 4. THE System SHALL prevent installation of unpublished versions
 5. THE System SHALL notify users who have already installed the unpublished version
+6. Unpublished versions SHALL remain stored internally for audit and dependency resolution but SHALL be inaccessible for installation
 
 ### Semantic Search Infrastructure
 
@@ -837,30 +1072,6 @@ CourseForge packages progress through a defined set of lifecycle states that gov
 10. THE System SHALL allow organization-level opt-out of semantic indexing for private packages
 11. THE System SHALL support background re-embedding jobs for model updates
 12. THE System SHALL log embedding generation events for audit and debugging
-
-### Requirement 57: Transitive Dependency Resolution
-
-**User Story:** As a package consumer, I want all transitive dependencies resolved automatically, so that I have a complete working set of packages.
-
-#### Acceptance Criteria
-
-1. WHEN installing a package, THE System SHALL resolve all direct dependencies
-2. THE System SHALL recursively resolve dependencies of dependencies
-3. THE System SHALL detect and prevent circular dependency chains
-4. THE System SHALL select compatible versions when multiple versions are required
-5. IF version conflicts cannot be resolved, THEN THE System SHALL report the conflict and halt installation
-
-### Requirement 58: Package Checksums and Integrity
-
-**User Story:** As a package consumer, I want package integrity verified during installation, so that I can trust the content has not been tampered with.
-
-#### Acceptance Criteria
-
-1. WHEN a package is published, THE System SHALL generate a checksum for the package bundle
-2. THE System SHALL store the checksum in the package metadata
-3. WHEN a package is downloaded, THE Forge_CLI SHALL verify the checksum
-4. IF the checksum does not match, THEN THE Forge_CLI SHALL reject the package and report an error
-5. THE System SHALL use a cryptographically secure hash algorithm for checksums
 
 ### Package Metadata
 
@@ -887,3 +1098,58 @@ CourseForge packages progress through a defined set of lifecycle states that gov
 3. THE System SHALL display keywords on the package detail page
 4. THE System SHALL allow filtering search results by keyword
 5. THE System SHALL suggest popular keywords during package authoring
+
+### Requirement 73: Release Channels
+
+**User Story:** As a package author, I want to publish packages to named release channels, so that I can manage stable and pre-release versions independently.
+
+#### Acceptance Criteria
+
+1. Packages MAY be published to named Channels (e.g., stable, beta, prerelease)
+2. Consumers MAY explicitly request packages from a specific Channel
+3. The default Channel SHALL be stable
+4. Channel selection SHALL be supported in Forge_CLI install and add commands
+
+### Requirement 70: Package README and Documentation
+
+**User Story:** As a package author, I want to include a README with my package, so that users can understand how to use my learning components.
+
+#### Acceptance Criteria
+
+1. THE System SHALL require packages to include a README.md file
+2. THE System SHALL render the README in Markdown format on the package detail page
+3. THE System SHALL index README content for search functionality
+4. THE System SHALL validate that the README is present during package validation
+5. THE System SHALL support including images and links in the README
+6. THE System SHALL allow the README to reference CTDL artifact details
+7. README content SHALL be indexed only within the visibility scope of the package
+
+### Requirement 71: Notification System
+
+**User Story:** As a package consumer, I want to be notified of important events affecting my dependencies, so that I can keep my packages up-to-date and secure.
+
+#### Acceptance Criteria
+
+1. THE System SHALL notify users when a package they depend on is deprecated
+2. THE System SHALL notify users when new versions of their dependencies are published
+3. THE System SHALL notify package maintainers when Pull_Requests are submitted for their packages
+4. THE System SHALL notify users when security advisories are issued for their dependencies
+5. THE System SHALL allow users to configure notification preferences (email, in-app, webhook)
+6. THE System SHALL provide a notification history view in the web interface
+7. THE System SHALL support notification delivery via the Forge_CLI
+
+### Requirement 72: Non-Functional Performance Requirements
+
+**User Story:** As a platform user, I want the system to be responsive and reliable, so that I can work efficiently without delays or downtime.
+
+#### Acceptance Criteria
+
+1. THE System SHALL respond to API requests within 200ms for the 95th percentile
+2. THE System SHALL complete keyword search queries within 500ms for the 95th percentile
+3. THE System SHALL complete semantic search queries within 2 seconds for the 95th percentile
+4. THE System SHALL process embedding generation for new packages within 5 minutes of publication
+5. THE System SHALL maintain 99.5% uptime for the production registry environment
+6. THE System SHALL support at least 100 concurrent package publish operations
+7. THE System SHALL retain all published package data indefinitely
+8. THE System SHALL retain audit logs for a minimum of 2 years (as specified in Requirement 69)
+9. THE System SHALL retain draft and under-review package versions for a minimum of 90 days after last modification
