@@ -9,8 +9,10 @@ import { Construct } from 'constructs';
 export interface FoundationStackProps extends cdk.StackProps {}
 
 export class FoundationStack extends cdk.Stack {
+  public readonly eventBus: events.IEventBus;
   public readonly eventBusArn: string;
   public readonly eventBusName: string;
+  public readonly mainTable: dynamodb.ITable;
   public readonly mainTableName: string;
   public readonly mainTableArn: string;
   public readonly artifactBucketName: string;
@@ -22,6 +24,7 @@ export class FoundationStack extends cdk.Stack {
     const eventBus = new events.EventBus(this, 'DomainEventBus', {
       eventBusName: 'courseforge-domain',
     });
+    this.eventBus = eventBus;
 
     // Schema Registry
     const registry = new eventschemas.CfnRegistry(this, 'SchemaRegistry', {
@@ -55,6 +58,7 @@ export class FoundationStack extends cdk.Stack {
       pointInTimeRecoverySpecification: { pointInTimeRecoveryEnabled: true },
       encryption: dynamodb.TableEncryption.AWS_MANAGED,
     });
+    this.mainTable = mainTable;
 
     mainTable.addGlobalSecondaryIndex({
       indexName: 'GSI_TENANT_STATUS',

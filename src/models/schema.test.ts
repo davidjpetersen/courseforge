@@ -6,8 +6,14 @@ import {
   categoryGSI1SK,
   tenantPK,
   workflowSK,
+  workflowPK,
+  workflowMetaSK,
   connectionSK,
   auditSK,
+  webhookSecretSK,
+  runSK,
+  schedulePK,
+  scheduleSK,
   buildSecretName,
   buildCategoryIndexKeys,
   TABLE_DEFINITION,
@@ -39,6 +45,14 @@ describe('DynamoDB key builders', () => {
     expect(workflowSK('wf-001')).toBe('WORKFLOW#wf-001');
   });
 
+  it('builds workflow PK for workflow entities', () => {
+    expect(workflowPK('wf-001')).toBe('WF#wf-001');
+  });
+
+  it('builds workflow metadata SK', () => {
+    expect(workflowMetaSK()).toBe('META');
+  });
+
   it('builds connection SK', () => {
     expect(connectionSK('conn-001')).toBe('CONNECTION#conn-001');
   });
@@ -53,6 +67,21 @@ describe('DynamoDB key builders', () => {
     expect(buildSecretName('tenant-1', 'conn-001')).toBe(
       'courseforge/tenant/tenant-1/connection/conn-001',
     );
+  });
+
+  it('builds webhook secret SK', () => {
+    expect(webhookSecretSK('wf-001')).toBe('WEBHOOK_SECRET#wf-001');
+  });
+
+  it('builds run SK', () => {
+    expect(runSK('2024-01-01T00:00:00Z', 'run-1')).toBe(
+      'RUN#2024-01-01T00:00:00Z#run-1',
+    );
+  });
+
+  it('builds schedule PK/SK', () => {
+    expect(schedulePK('wf-001')).toBe('WORKFLOW#wf-001');
+    expect(scheduleSK('sched-1')).toBe('SCHEDULE#sched-1');
   });
 });
 

@@ -17,12 +17,17 @@ export const KEY_PREFIX = {
   CATEGORY: 'CATEGORY#',
   TENANT: 'TENANT#',
   WORKFLOW: 'WORKFLOW#',
+  WORKFLOW_ENTITY: 'WF#',
   CONNECTION: 'CONNECTION#',
   AUDIT: 'AUDIT#',
+  WEBHOOK_SECRET: 'WEBHOOK_SECRET#',
+  RUN: 'RUN#',
+  SCHEDULE: 'SCHEDULE#',
 } as const;
 
 export const SK_VALUES = {
   METADATA: 'METADATA',
+  META: 'META',
 } as const;
 
 // ── Key Builders ──
@@ -51,12 +56,36 @@ export function workflowSK(workflowId: string): string {
   return `${KEY_PREFIX.WORKFLOW}${workflowId}`;
 }
 
+export function workflowPK(workflowId: string): string {
+  return `${KEY_PREFIX.WORKFLOW_ENTITY}${workflowId}`;
+}
+
+export function workflowMetaSK(): string {
+  return SK_VALUES.META;
+}
+
 export function connectionSK(connectionId: string): string {
   return `${KEY_PREFIX.CONNECTION}${connectionId}`;
 }
 
 export function auditSK(timestamp: string, id: string): string {
   return `${KEY_PREFIX.AUDIT}${timestamp}#${id}`;
+}
+
+export function webhookSecretSK(workflowId: string): string {
+  return `${KEY_PREFIX.WEBHOOK_SECRET}${workflowId}`;
+}
+
+export function runSK(timestamp: string, runId: string): string {
+  return `${KEY_PREFIX.RUN}${timestamp}#${runId}`;
+}
+
+export function schedulePK(workflowId: string): string {
+  return `${KEY_PREFIX.WORKFLOW}${workflowId}`;
+}
+
+export function scheduleSK(scheduleId: string): string {
+  return `${KEY_PREFIX.SCHEDULE}${scheduleId}`;
 }
 
 export function buildSecretName(tenantId: string, connectionId: string): string {

@@ -1,2 +1,8 @@
-export { DomainEvent } from './events.js';
-export { WorkflowStatus, RunStatus } from './events.js';
+export {
+  TRIGGER_EVENT_TYPES,
+  type DomainEvent,
+  type TriggerEventType,
+  type TriggerType,
+  WorkflowStatus,
+  RunStatus,
+} from './events.js';
