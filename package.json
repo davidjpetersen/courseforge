@@ -12,7 +12,7 @@
     "@types/node": "^20.11.0",
     "fast-check": "^3.15.0",
     "typescript": "^5.3.3",
-    "vitest": "^1.2.0"
+    "vitest": "^4.1.2"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.490.0",
