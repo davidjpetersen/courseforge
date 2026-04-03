@@ -1,0 +1,9 @@
+{
+  "app": "npx ts-node bin/app.ts",
+  "context": {
+    "dev_account": "REPLACE_WITH_DEV_ACCOUNT",
+    "dev_region": "us-east-1",
+    "prod_account": "REPLACE_WITH_PROD_ACCOUNT",
+    "prod_region": "us-east-1"
+  }
+}

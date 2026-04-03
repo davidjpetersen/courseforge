@@ -1,0 +1,22 @@
+{
+  "name": "@courseforge/infra",
+  "version": "1.0.0",
+  "description": "CourseForge Connect foundation infrastructure (AWS CDK)",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest --run",
+    "cdk": "cdk",
+    "synth": "cdk synth"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "^2.170.0",
+    "constructs": "^10.4.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.0"
+  }
+}

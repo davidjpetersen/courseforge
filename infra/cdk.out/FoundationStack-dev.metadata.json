@@ -1,0 +1,94 @@
+{
+  "/FoundationStack-dev/SchemaRegistry": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SchemaRegistry"
+    }
+  ],
+  "/FoundationStack-dev/SchemaDiscoverer": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SchemaDiscoverer"
+    }
+  ],
+  "/FoundationStack-dev/EventBusArn": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "EventBusArn"
+    }
+  ],
+  "/FoundationStack-dev/EventBusName": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "EventBusName"
+    }
+  ],
+  "/FoundationStack-dev/MainTable": [
+    {
+      "type": "aws:cdk:hasPhysicalName",
+      "data": {
+        "Ref": "MainTable74195DAB"
+      }
+    }
+  ],
+  "/FoundationStack-dev/MainTableName": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MainTableName"
+    }
+  ],
+  "/FoundationStack-dev/MainTableArn": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MainTableArn"
+    }
+  ],
+  "/FoundationStack-dev/ArtifactBucketName": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ArtifactBucketName"
+    }
+  ],
+  "/FoundationStack-dev/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    }
+  ],
+  "/FoundationStack-dev/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    }
+  ],
+  "/FoundationStack-dev/DomainEventBus/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DomainEventBus7D687A9A"
+    }
+  ],
+  "/FoundationStack-dev/MainTable/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MainTable74195DAB"
+    }
+  ],
+  "/FoundationStack-dev/ArtifactBucket/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ArtifactBucket7410C9EF"
+    }
+  ],
+  "/FoundationStack-dev/ConnectionRootSecret/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ConnectionRootSecretA6DDFF5A"
+    }
+  ],
+  "/FoundationStack-dev/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    }
+  ]
+}

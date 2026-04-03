@@ -1,0 +1,21 @@
+{
+  "version": "53.0.0",
+  "files": {
+    "c697e162b3818999c285bd39fefc9e9e5d7912fde124f539efc9617e057ee423": {
+      "displayName": "FoundationStack-prod Template",
+      "source": {
+        "path": "FoundationStack-prod.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "REPLACE_WITH_PROD_ACCOUNT-us-east-1-46e585a7": {
+          "bucketName": "cdk-hnb659fds-assets-REPLACE_WITH_PROD_ACCOUNT-us-east-1",
+          "objectKey": "c697e162b3818999c285bd39fefc9e9e5d7912fde124f539efc9617e057ee423.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::REPLACE_WITH_PROD_ACCOUNT:role/cdk-hnb659fds-file-publishing-role-REPLACE_WITH_PROD_ACCOUNT-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}
