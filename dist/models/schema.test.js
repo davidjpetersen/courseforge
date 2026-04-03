@@ -1,0 +1,59 @@
+import { describe, it, expect } from 'vitest';
+import { templatePK, templateSK, categoryGSI1PK, categoryGSI1SK, tenantPK, workflowSK, connectionSK, auditSK, buildSecretName, buildCategoryIndexKeys, TABLE_DEFINITION, CATEGORY_INDEX, } from './schema.js';
+describe('DynamoDB key builders', () => {
+    it('builds template PK', () => {
+        expect(templatePK('abc-123')).toBe('TEMPLATE#abc-123');
+    });
+    it('builds template SK as METADATA', () => {
+        expect(templateSK()).toBe('METADATA');
+    });
+    it('builds category GSI1PK', () => {
+        expect(categoryGSI1PK('Roster Ops')).toBe('CATEGORY#Roster Ops');
+    });
+    it('builds category GSI1SK', () => {
+        expect(categoryGSI1SK('abc-123')).toBe('TEMPLATE#abc-123');
+    });
+    it('builds tenant PK', () => {
+        expect(tenantPK('tenant-1')).toBe('TENANT#tenant-1');
+    });
+    it('builds workflow SK', () => {
+        expect(workflowSK('wf-001')).toBe('WORKFLOW#wf-001');
+    });
+    it('builds connection SK', () => {
+        expect(connectionSK('conn-001')).toBe('CONNECTION#conn-001');
+    });
+    it('builds audit SK', () => {
+        expect(auditSK('2024-01-01T00:00:00Z', 'abc')).toBe('AUDIT#2024-01-01T00:00:00Z#abc');
+    });
+    it('builds secret names', () => {
+        expect(buildSecretName('tenant-1', 'conn-001')).toBe('courseforge/tenant/tenant-1/connection/conn-001');
+    });
+});
+describe('buildCategoryIndexKeys', () => {
+    it('returns one entry per category', () => {
+        const keys = buildCategoryIndexKeys('tpl-1', ['Roster Ops', 'Analytics']);
+        expect(keys).toHaveLength(2);
+        expect(keys[0]).toEqual({ GSI1PK: 'CATEGORY#Roster Ops', GSI1SK: 'TEMPLATE#tpl-1' });
+        expect(keys[1]).toEqual({ GSI1PK: 'CATEGORY#Analytics', GSI1SK: 'TEMPLATE#tpl-1' });
+    });
+    it('returns empty array for no categories', () => {
+        expect(buildCategoryIndexKeys('tpl-1', [])).toEqual([]);
+    });
+});
+describe('TABLE_DEFINITION', () => {
+    it('has PK/SK key schema', () => {
+        expect(TABLE_DEFINITION.KeySchema).toEqual([
+            { AttributeName: 'PK', KeyType: 'HASH' },
+            { AttributeName: 'SK', KeyType: 'RANGE' },
+        ]);
+    });
+    it('defines CategoryIndex GSI', () => {
+        const gsi = TABLE_DEFINITION.GlobalSecondaryIndexes[0];
+        expect(gsi.IndexName).toBe(CATEGORY_INDEX);
+        expect(gsi.KeySchema).toEqual([
+            { AttributeName: 'GSI1PK', KeyType: 'HASH' },
+            { AttributeName: 'GSI1SK', KeyType: 'RANGE' },
+        ]);
+    });
+});
+//# sourceMappingURL=schema.test.js.map

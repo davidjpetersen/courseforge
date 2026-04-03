@@ -6,6 +6,9 @@ import {
   categoryGSI1SK,
   tenantPK,
   workflowSK,
+  connectionSK,
+  auditSK,
+  buildSecretName,
   buildCategoryIndexKeys,
   TABLE_DEFINITION,
   CATEGORY_INDEX,
@@ -34,6 +37,22 @@ describe('DynamoDB key builders', () => {
 
   it('builds workflow SK', () => {
     expect(workflowSK('wf-001')).toBe('WORKFLOW#wf-001');
+  });
+
+  it('builds connection SK', () => {
+    expect(connectionSK('conn-001')).toBe('CONNECTION#conn-001');
+  });
+
+  it('builds audit SK', () => {
+    expect(auditSK('2024-01-01T00:00:00Z', 'abc')).toBe(
+      'AUDIT#2024-01-01T00:00:00Z#abc',
+    );
+  });
+
+  it('builds secret names', () => {
+    expect(buildSecretName('tenant-1', 'conn-001')).toBe(
+      'courseforge/tenant/tenant-1/connection/conn-001',
+    );
   });
 });
 

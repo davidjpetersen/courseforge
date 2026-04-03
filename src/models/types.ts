@@ -96,7 +96,83 @@ export interface Workflow {
   configuration: Record<string, unknown>;
   dslDefinition: string; // JSON-stringified WorkflowDSL
   status: WorkflowStatus;
+  connectionIds?: string[];
   createdBy: string;
   createdAt: string; // ISO 8601
   updatedAt: string; // ISO 8601
+}
+
+// ── Connection Management ──
+
+export type AuthType = 'oauth2' | 'apikey' | 'basic';
+export type ConnectionStatus = 'active' | 'error' | 'pending' | 'deleted';
+
+export interface ConnectionRecord {
+  connectionId: string;
+  tenantId: string;
+  connectorKey: string;
+  displayName: string;
+  authType: AuthType;
+  secretRef: string;
+  scopes: string[];
+  status: ConnectionStatus;
+  createdAt: string;
+  updatedAt: string;
+  lastTestedAt: string | null;
+  createdBy: string;
+  deletedAt: string | null;
+}
+
+export interface ConnectionListItem {
+  connectionId: string;
+  displayName: string;
+  connectorKey: string;
+  authType: AuthType;
+  status: ConnectionStatus;
+  createdAt: string;
+  lastTestedAt: string | null;
+}
+
+export interface SecretValue {
+  accessToken?: string;
+  refreshToken?: string;
+  apiKey?: string;
+  username?: string;
+  password?: string;
+  expiresAt?: string;
+  baseUrl?: string;
+  [key: string]: unknown;
+}
+
+export interface DependentWorkflow {
+  workflowId: string;
+  name: string;
+  status: string;
+}
+
+export interface AuditLogEntry {
+  PK: string;
+  SK: string;
+  tenantId: string;
+  actionType: 'CONNECTION_ROTATED' | 'CONNECTION_DELETED';
+  actor: string;
+  resourceId: string;
+  ip: string;
+  timestamp: string;
+}
+
+export interface TestResult {
+  success: boolean;
+  message: string;
+}
+
+export interface ConnectorDefinition {
+  key: string;
+  displayName: string;
+  authType: AuthType;
+  credentialSchema: Record<string, unknown>;
+  testFn: (
+    credentials: Record<string, unknown>,
+    baseUrl?: string,
+  ) => Promise<TestResult>;
 }

@@ -17,6 +17,8 @@ export const KEY_PREFIX = {
   CATEGORY: 'CATEGORY#',
   TENANT: 'TENANT#',
   WORKFLOW: 'WORKFLOW#',
+  CONNECTION: 'CONNECTION#',
+  AUDIT: 'AUDIT#',
 } as const;
 
 export const SK_VALUES = {
@@ -47,6 +49,18 @@ export function tenantPK(tenantId: string): string {
 
 export function workflowSK(workflowId: string): string {
   return `${KEY_PREFIX.WORKFLOW}${workflowId}`;
+}
+
+export function connectionSK(connectionId: string): string {
+  return `${KEY_PREFIX.CONNECTION}${connectionId}`;
+}
+
+export function auditSK(timestamp: string, id: string): string {
+  return `${KEY_PREFIX.AUDIT}${timestamp}#${id}`;
+}
+
+export function buildSecretName(tenantId: string, connectionId: string): string {
+  return `courseforge/tenant/${tenantId}/connection/${connectionId}`;
 }
 
 // ── Table & Index Names ──
