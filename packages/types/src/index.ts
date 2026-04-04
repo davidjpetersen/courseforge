@@ -6,3 +6,4 @@ export {
   WorkflowStatus,
   RunStatus,
 } from './events.js';
+export * from './audit';

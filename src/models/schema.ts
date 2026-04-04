@@ -21,6 +21,7 @@ export const KEY_PREFIX = {
   CONNECTION: 'CONNECTION#',
   AUDIT: 'AUDIT#',
   WEBHOOK_SECRET: 'WEBHOOK_SECRET#',
+  ENV: 'ENV#',
   RUN: 'RUN#',
   SCHEDULE: 'SCHEDULE#',
 } as const;
@@ -74,6 +75,10 @@ export function auditSK(timestamp: string, id: string): string {
 
 export function webhookSecretSK(workflowId: string): string {
   return `${KEY_PREFIX.WEBHOOK_SECRET}${workflowId}`;
+}
+
+export function environmentSK(environmentId: string): string {
+  return `${KEY_PREFIX.ENV}${environmentId}`;
 }
 
 export function runSK(timestamp: string, runId: string): string {

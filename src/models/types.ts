@@ -72,6 +72,7 @@ export interface WorkflowDSLStep {
 
 export interface WorkflowMetadata {
   tenantId: string;
+  environmentId?: EnvironmentId;
   createdBy: string;
   createdAt: string; // ISO 8601
 }
@@ -87,6 +88,8 @@ export interface WorkflowDSL {
 // ── Workflow (DynamoDB record) ──
 
 export type WorkflowStatus = 'active' | 'paused' | 'failed';
+
+export type EnvironmentId = 'dev' | 'prod';
 
 export interface Workflow {
   workflowId: string;
@@ -175,4 +178,14 @@ export interface ConnectorDefinition {
     credentials: Record<string, unknown>,
     baseUrl?: string,
   ) => Promise<TestResult>;
+}
+
+
+export interface EnvironmentRecord {
+  environmentId: EnvironmentId;
+  tenantId: string;
+  name: string;
+  description: string;
+  createdAt: string;
+  isDefault: boolean;
 }
