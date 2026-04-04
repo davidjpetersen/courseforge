@@ -70,7 +70,7 @@ describe('TriggerStack', () => {
 
   it('targets a Step Functions state machine from the routing rule', () => {
     template.hasResourceProperties('AWS::StepFunctions::StateMachine', {
-      StateMachineName: 'courseforge-workflow-runner',
+      StateMachineName: 'courseforge-trigger-workflow-runner',
     });
     template.hasResourceProperties('AWS::Events::Rule', {
       Targets: Match.arrayWith([

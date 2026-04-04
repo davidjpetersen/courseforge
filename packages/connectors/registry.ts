@@ -1,0 +1,30 @@
+import {
+  executeHttpAction,
+  type ConnectorContext,
+  type HttpActionParams,
+} from './http-action/index.js';
+
+export interface Connector {
+  run(params: unknown, context: ConnectorContext): Promise<unknown>;
+}
+
+const httpConnector: Connector = {
+  async run(params: unknown, context: ConnectorContext): Promise<unknown> {
+    return executeHttpAction(params as HttpActionParams, context, {
+      secretsClient: { send: async () => ({ SecretString: '' }) },
+    });
+  },
+};
+
+export const connectorRegistry: Record<string, Connector> = {
+  http: httpConnector,
+};
+
+export function resolveConnector(connectorKey: string): Connector {
+  const connector = connectorRegistry[connectorKey];
+  if (!connector) {
+    throw new Error(`Unknown connector key: ${connectorKey}`);
+  }
+
+  return connector;
+}
