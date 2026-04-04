@@ -14,6 +14,7 @@ import { Construct } from 'constructs';
 export interface TriggerStackProps extends cdk.StackProps {
   eventBus: events.IEventBus;
   mainTable: dynamodb.ITable;
+  workflowRunnerStateMachine?: sfn.IStateMachine;
 }
 
 export class TriggerStack extends cdk.Stack {
@@ -86,10 +87,12 @@ export class TriggerStack extends cdk.Stack {
       queueName: 'courseforge-trigger-dlq',
     });
 
-    this.workflowRunnerStateMachine = new sfn.StateMachine(this, 'WorkflowRunnerSFN', {
-      stateMachineName: 'courseforge-workflow-runner',
-      definitionBody: sfn.DefinitionBody.fromChainable(new sfn.Pass(this, 'StartWorkflowRun')),
-    });
+    this.workflowRunnerStateMachine =
+      props.workflowRunnerStateMachine ??
+      new sfn.StateMachine(this, 'WorkflowRunnerSFN', {
+        stateMachineName: 'courseforge-trigger-workflow-runner',
+        definitionBody: sfn.DefinitionBody.fromChainable(new sfn.Pass(this, 'StartWorkflowRun')),
+      });
 
     const triggerRule = new events.Rule(this, 'TriggerRoutingRule', {
       eventBus: props.eventBus,
