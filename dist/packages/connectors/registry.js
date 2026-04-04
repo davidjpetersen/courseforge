@@ -1,4 +1,6 @@
 import { executeHttpAction, } from './http-action/index.js';
+import oneRosterConnector from './oneroster/index.js';
+import ltiProvisionConnector from './lti-provision/index.js';
 const httpConnector = {
     async run(params, context) {
         return executeHttpAction(params, context, {
@@ -8,6 +10,8 @@ const httpConnector = {
 };
 export const connectorRegistry = {
     http: httpConnector,
+    oneroster: oneRosterConnector,
+    'lti-provision': ltiProvisionConnector,
 };
 export function resolveConnector(connectorKey) {
     const connector = connectorRegistry[connectorKey];
