@@ -25,10 +25,9 @@ export const connectorRegistry: Record<string, Connector> = {
 };
 
 export function resolveConnector(connectorKey: string): Connector {
-  const connector = connectorRegistry[connectorKey];
-  if (!connector) {
+  if (!Object.prototype.hasOwnProperty.call(connectorRegistry, connectorKey)) {
     throw new Error(`Unknown connector key: ${connectorKey}`);
   }
 
-  return connector;
+  return connectorRegistry[connectorKey];
 }

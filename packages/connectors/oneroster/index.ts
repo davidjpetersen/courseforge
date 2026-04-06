@@ -84,6 +84,28 @@ export function buildEnrollmentsUrl(baseUrl: string, since?: string): string {
   return url.toString();
 }
 
+export function filterEnrollmentsByOrg(
+  enrollments: Record<string, unknown>[],
+  targetOrgId?: string,
+): Record<string, unknown>[] {
+  if (!targetOrgId) {
+    return enrollments;
+  }
+
+  return enrollments.filter((item) => item.schoolSourcedId === targetOrgId);
+}
+
+export function buildUserIdBatches(userIds: string[]): string[][] {
+  const uniqueIds = [...new Set(userIds)].filter(Boolean);
+  const batches: string[][] = [];
+
+  for (let i = 0; i < uniqueIds.length; i += 50) {
+    batches.push(uniqueIds.slice(i, i + 50));
+  }
+
+  return batches;
+}
+
 function parseNextLink(linkHeader: string | null): string | null {
   if (!linkHeader) return null;
   const sections = linkHeader.split(',').map((v) => v.trim());
@@ -160,11 +182,7 @@ export async function fetchUsers(
   accessToken: string,
   userIds: string[],
 ): Promise<Record<string, unknown>[]> {
-  const uniqueIds = [...new Set(userIds)].filter(Boolean);
-  const batches: string[][] = [];
-  for (let i = 0; i < uniqueIds.length; i += 50) {
-    batches.push(uniqueIds.slice(i, i + 50));
-  }
+  const batches = buildUserIdBatches(userIds);
 
   const users: Record<string, unknown>[] = [];
 
@@ -222,6 +240,13 @@ export async function syncToTarget(
   });
 
   return mappedRecords.length;
+}
+
+export function ensureErrorThreshold(total: number, errorCount: number): void {
+  const errorRate = total === 0 ? 0 : errorCount / total;
+  if (errorRate > 0.2) {
+    throw new BatchSyncThresholdError(errorRate, total);
+  }
 }
 
 function emitMetric(context: ConnectorContext, name: string, value: number): void {
@@ -287,9 +312,7 @@ export const oneRosterConnector: ConnectorDefinition<OneRosterParams, OneRosterR
     const since = params.syncScope === 'delta' ? params.lastSyncedAt : undefined;
     const enrollments = await fetchEnrollments(params.baseUrl, token, since);
 
-    const filteredEnrollments = params.targetOrgId
-      ? enrollments.filter((item) => item.schoolSourcedId === params.targetOrgId)
-      : enrollments;
+    const filteredEnrollments = filterEnrollmentsByOrg(enrollments, params.targetOrgId);
 
     const userIds = filteredEnrollments
       .map((entry) => entry.userSourcedId)
@@ -340,11 +363,7 @@ export const oneRosterConnector: ConnectorDefinition<OneRosterParams, OneRosterR
     emitMetric(context, 'OneRosterSyncErrors', errors.length);
     emitMetric(context, 'OneRosterSynced', synced);
 
-    const total = filteredEnrollments.length;
-    const errorRate = total === 0 ? 0 : errors.length / total;
-    if (errorRate > 0.2) {
-      throw new BatchSyncThresholdError(errorRate, total);
-    }
+    ensureErrorThreshold(filteredEnrollments.length, errors.length);
 
     return {
       synced,

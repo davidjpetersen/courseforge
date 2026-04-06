@@ -51,7 +51,7 @@ function buildUrl(baseUrl: string, path: string): string {
   return `${baseUrl.replace(/\/$/, '')}${path}`;
 }
 
-async function parseLmsError(response: Response, lmsType: string): Promise<LtiError> {
+export async function parseLmsError(response: Response, lmsType: string): Promise<LtiError> {
   let payload: Record<string, unknown> | undefined;
   try {
     payload = (await response.json()) as Record<string, unknown>;
@@ -81,7 +81,7 @@ async function parseLmsError(response: Response, lmsType: string): Promise<LtiEr
   };
 }
 
-function createD2LSignature(apiKey: string, secret: string, path: string): string {
+export function createD2LSignature(apiKey: string, secret: string, path: string): string {
   const raw = `${apiKey}:${secret}:${path}`;
   return Buffer.from(raw).toString('base64url');
 }
@@ -247,4 +247,3 @@ export const ltiProvisionConnector: ConnectorDefinition<
 };
 
 export default ltiProvisionConnector;
-export { parseLmsError };
