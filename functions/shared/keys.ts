@@ -27,7 +27,7 @@ export function runStepRecordPK(runId: string): string {
 }
 
 export function runStepRecordSK(stepIndex: number, stepId: string): string {
-  return `${STEP_PREFIX}${stepIndex}#${stepId}`;
+  return `${STEP_PREFIX}${String(stepIndex).padStart(4, '0')}#${stepId}`;
 }
 
 export function auditEntryPK(tenantId: string): string {

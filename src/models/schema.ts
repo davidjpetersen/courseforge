@@ -23,6 +23,9 @@ export const KEY_PREFIX = {
   WEBHOOK_SECRET: 'WEBHOOK_SECRET#',
   RUN: 'RUN#',
   SCHEDULE: 'SCHEDULE#',
+  STEP: 'STEP#',
+  USER: 'USER#',
+  NOTIFICATION: 'NOTIFICATION#',
 } as const;
 
 export const SK_VALUES = {
@@ -91,6 +94,25 @@ export function scheduleSK(scheduleId: string): string {
 export function buildSecretName(tenantId: string, connectionId: string): string {
   return `courseforge/tenant/${tenantId}/connection/${connectionId}`;
 }
+
+export function runPK(runId: string): string {
+  return `${KEY_PREFIX.RUN}${runId}`;
+}
+
+export function stepSK(stepIndex: number, stepId: string): string {
+  return `${KEY_PREFIX.STEP}${String(stepIndex).padStart(4, '0')}#${stepId}`;
+}
+
+export function userPK(userId: string): string {
+  return `${KEY_PREFIX.USER}${userId}`;
+}
+
+export function notificationSK(timestamp: string, notificationId: string): string {
+  return `${KEY_PREFIX.NOTIFICATION}${timestamp}#${notificationId}`;
+}
+
+export const GSI_WORKFLOW_RUNS = 'GSI_WORKFLOW_RUNS';
+export const GSI_TENANT_STATUS = 'GSI_TENANT_STATUS';
 
 // ── Table & Index Names ──
 

@@ -18,6 +18,12 @@ import {
   buildCategoryIndexKeys,
   TABLE_DEFINITION,
   CATEGORY_INDEX,
+  runPK,
+  stepSK,
+  userPK,
+  notificationSK,
+  GSI_WORKFLOW_RUNS,
+  GSI_TENANT_STATUS,
 } from './schema.js';
 
 describe('DynamoDB key builders', () => {
@@ -82,6 +88,38 @@ describe('DynamoDB key builders', () => {
   it('builds schedule PK/SK', () => {
     expect(schedulePK('wf-001')).toBe('WORKFLOW#wf-001');
     expect(scheduleSK('sched-1')).toBe('SCHEDULE#sched-1');
+  });
+});
+
+describe('run-history-observability key builders', () => {
+  it('builds run PK', () => {
+    expect(runPK('run-1')).toBe('RUN#run-1');
+  });
+
+  it('builds step SK with zero-padded index', () => {
+    expect(stepSK(0, 'step-1')).toBe('STEP#0000#step-1');
+  });
+
+  it('builds step SK with non-zero index', () => {
+    expect(stepSK(42, 'step-x')).toBe('STEP#0042#step-x');
+  });
+
+  it('builds user PK', () => {
+    expect(userPK('user-1')).toBe('USER#user-1');
+  });
+
+  it('builds notification SK', () => {
+    expect(notificationSK('2024-01-01T00:00:00Z', 'notif-1')).toBe(
+      'NOTIFICATION#2024-01-01T00:00:00Z#notif-1',
+    );
+  });
+
+  it('exports GSI_WORKFLOW_RUNS constant', () => {
+    expect(GSI_WORKFLOW_RUNS).toBe('GSI_WORKFLOW_RUNS');
+  });
+
+  it('exports GSI_TENANT_STATUS constant', () => {
+    expect(GSI_TENANT_STATUS).toBe('GSI_TENANT_STATUS');
   });
 });
 
