@@ -1,11 +1,12 @@
 import * as cdk from 'aws-cdk-lib';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import * as events from 'aws-cdk-lib/aws-events';
+import * as targets from 'aws-cdk-lib/aws-events-targets';
+import * as iam from 'aws-cdk-lib/aws-iam';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as sfn from 'aws-cdk-lib/aws-stepfunctions';
 import * as tasks from 'aws-cdk-lib/aws-stepfunctions-tasks';
-import * as targets from 'aws-cdk-lib/aws-events-targets';
 import { Construct } from 'constructs';
 
 export interface OrchestrationStackProps extends cdk.StackProps {
@@ -85,6 +86,13 @@ export class OrchestrationStack extends cdk.Stack {
     props.artifactBucket.grantReadWrite(this.executeStepFn);
     props.eventBus.grantPutEventsTo(this.runFinalizerFn);
 
+    this.executeStepFn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['cloudwatch:PutMetricData', 'xray:PutTraceSegments', 'xray:PutTelemetryRecords'],
+        resources: ['*'],
+      }),
+    );
+
     const initializeRun = new tasks.LambdaInvoke(this, 'InitializeRun', {
       lambdaFunction: this.runInitializerFn,
       resultPath: '$.initResult',
@@ -98,7 +106,7 @@ export class OrchestrationStack extends cdk.Stack {
       lambdaFunction: this.executeStepFn,
       payloadResponseOnly: true,
       payload: sfn.TaskInput.fromObject({
-        'step.$': '$$.Map.Item.Value',
+        'step.$': '$.Map.Item.Value',
         'runId.$': '$.initResult.runId',
         'tenantId.$': '$.initResult.tenantId',
         'traceId.$': '$.initResult.traceId',

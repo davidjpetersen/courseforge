@@ -17,6 +17,7 @@ export class FoundationStack extends cdk.Stack {
   public readonly mainTableArn: string;
   public readonly artifactBucket: s3.IBucket;
   public readonly artifactBucketName: string;
+  public readonly artifactBucket: s3.IBucket;
 
   constructor(scope: Construct, id: string, props: FoundationStackProps) {
     super(scope, id, props);
@@ -107,6 +108,7 @@ export class FoundationStack extends cdk.Stack {
 
     // Expose S3 properties
     this.artifactBucketName = artifactBucket.bucketName;
+    this.artifactBucket = artifactBucket;
 
     // S3 CloudFormation output
     new cdk.CfnOutput(this, 'ArtifactBucketName', {

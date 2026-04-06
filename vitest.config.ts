@@ -7,6 +7,7 @@ export default defineConfig({
       'src/**/*.test.ts',
       'functions/**/*.test.ts',
       'packages/connectors/**/*.test.ts',
+      'packages/utils/**/*.test.ts',
     ],
   },
 });

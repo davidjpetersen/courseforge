@@ -21,6 +21,13 @@ const devOrchestration = new OrchestrationStack(app, 'OrchestrationStack-dev', {
   artifactBucket: devFoundation.artifactBucket,
 });
 
+const devOrchestration = new OrchestrationStack(app, 'OrchestrationStack-dev', {
+  env: { account: devAccount, region: devRegion },
+  eventBus: devFoundation.eventBus,
+  mainTable: devFoundation.mainTable,
+  artifactBucket: devFoundation.artifactBucket,
+});
+
 new TriggerStack(app, 'TriggerStack-dev', {
   env: { account: devAccount, region: devRegion },
   eventBus: devFoundation.eventBus,
@@ -31,6 +38,13 @@ new TriggerStack(app, 'TriggerStack-dev', {
 const prodFoundation = new FoundationStack(app, 'FoundationStack-prod', {
   env: { account: prodAccount, region: prodRegion },
 });
+const prodOrchestration = new OrchestrationStack(app, 'OrchestrationStack-prod', {
+  env: { account: prodAccount, region: prodRegion },
+  eventBus: prodFoundation.eventBus,
+  mainTable: prodFoundation.mainTable,
+  artifactBucket: prodFoundation.artifactBucket,
+});
+
 const prodOrchestration = new OrchestrationStack(app, 'OrchestrationStack-prod', {
   env: { account: prodAccount, region: prodRegion },
   eventBus: prodFoundation.eventBus,
