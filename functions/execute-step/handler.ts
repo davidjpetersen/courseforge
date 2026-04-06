@@ -2,7 +2,6 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import {
   DynamoDBDocumentClient,
   PutCommand,
-  QueryCommand,
   UpdateCommand,
 } from '@aws-sdk/lib-dynamodb';
 
@@ -15,12 +14,6 @@ const INLINE_OUTPUT_LIMIT_BYTES = 4 * 1024;
 
 export interface DynamoClientLike {
   put(params: { TableName: string; Item: Record<string, unknown> }): Promise<unknown>;
-  query?(params: {
-    TableName: string;
-    KeyConditionExpression: string;
-    ExpressionAttributeValues: Record<string, unknown>;
-    ScanIndexForward?: boolean;
-  }): Promise<{ Items?: Array<Record<string, unknown>> }>;
   update(params: {
     TableName: string;
     Key: Record<string, unknown>;
@@ -37,14 +30,19 @@ export interface S3ClientLike {
     Body: string;
     ContentType: string;
   }): Promise<unknown>;
-  getObject?(params: {
-    Bucket: string;
-    Key: string;
-  }): Promise<string>;
 }
 
 export interface MetricsLike {
   putMetric(name: string, value: number, unit: string): void;
+}
+
+export interface TraceSubsegmentLike {
+  addError?(error: Error): void;
+  close?(error?: Error): void;
+}
+
+export interface TracerLike {
+  startSubsegment(name: string): TraceSubsegmentLike | undefined;
 }
 
 export interface ExecuteStepDeps {
@@ -55,6 +53,7 @@ export interface ExecuteStepDeps {
   connectors?: Map<string, RuntimeConnector>;
   clock?: () => Date;
   metrics?: MetricsLike;
+  tracer?: TracerLike;
 }
 
 function toRunStepError(error: unknown): RunStepError {
@@ -70,61 +69,11 @@ function getOutputSizeBytes(output: unknown): number {
   return Buffer.byteLength(JSON.stringify(output), 'utf8');
 }
 
-async function buildPriorStepContext(
-  deps: ExecuteStepDeps,
-  input: ExecuteStepInput,
-): Promise<Record<string, unknown>> {
-  if (!deps.dynamoClient.query) {
-    return {};
-  }
-
-  const result = await deps.dynamoClient.query({
-    TableName: deps.mainTableName,
-    KeyConditionExpression: 'PK = :pk AND begins_with(SK, :prefix)',
-    ExpressionAttributeValues: {
-      ':pk': runStepRecordPK(input.runId),
-      ':prefix': 'STEP#',
-    },
-    ScanIndexForward: true,
-  });
-
-  const priorSteps = (result.Items ?? []).filter((item) => {
-    const stepIndex = typeof item.stepIndex === 'number' ? item.stepIndex : -1;
-    return stepIndex < input.step.stepIndex && item.status === 'SUCCESS';
-  });
-
-  const contextEntries = await Promise.all(
-    priorSteps.map(async (item) => {
-      const stepId = typeof item.stepId === 'string' ? item.stepId : null;
-      if (!stepId) {
-        return null;
-      }
-
-      if (Object.prototype.hasOwnProperty.call(item, 'output')) {
-        return [stepId, item.output] as const;
-      }
-
-      if (typeof item.outputRef === 'string' && deps.s3Client.getObject) {
-        const raw = await deps.s3Client.getObject({
-          Bucket: deps.artifactBucketName,
-          Key: item.outputRef,
-        });
-        return [stepId, JSON.parse(raw) as unknown] as const;
-      }
-
-      return null;
-    }),
-  );
-
-  return Object.fromEntries(
-    contextEntries.filter((entry): entry is readonly [string, unknown] => entry !== null),
-  );
-}
-
 export function createExecuteStepHandler(deps: ExecuteStepDeps) {
   const now = deps.clock ?? (() => new Date());
   const connectors = deps.connectors ?? runtimeConnectorRegistry;
   const metrics = deps.metrics;
+  const tracer = deps.tracer;
 
   return async (input: ExecuteStepInput): Promise<ExecuteStepOutput> => {
     const startedAtIso = now().toISOString();
@@ -164,12 +113,13 @@ export function createExecuteStepHandler(deps: ExecuteStepDeps) {
     }
 
     const startedAtMs = Date.now();
+    const subsegment = tracer?.startSubsegment(
+      `connector:${input.step.connectorKey}:${input.step.stepId}`,
+    );
 
     try {
-      const priorStepContext = await buildPriorStepContext(deps, input);
       const connectorContext = {
         ...input.accumulatedContext,
-        ...priorStepContext,
         tenantId: input.tenantId,
         traceId: input.traceId,
       };
@@ -182,7 +132,6 @@ export function createExecuteStepHandler(deps: ExecuteStepDeps) {
       const outputSize = getOutputSizeBytes(stepResult);
       const accumulatedContext = {
         ...input.accumulatedContext,
-        ...priorStepContext,
         [input.step.stepId]: stepResult,
       };
 
@@ -219,12 +168,14 @@ export function createExecuteStepHandler(deps: ExecuteStepDeps) {
         });
       }
 
-      metrics?.putMetric('courseforge/StepExecutionDuration', durationMs, 'Milliseconds');
       metrics?.putMetric('courseforge/StepSuccess', 1, 'Count');
+      metrics?.putMetric('courseforge/StepExecutionDuration', durationMs, 'Milliseconds');
+      subsegment?.close?.();
 
       return { accumulatedContext, stepResult };
     } catch (error) {
       const runStepError = toRunStepError(error);
+      const durationMs = Date.now() - startedAtMs;
       await deps.dynamoClient.update({
         TableName: deps.mainTableName,
         Key: stepKey,
@@ -236,7 +187,12 @@ export function createExecuteStepHandler(deps: ExecuteStepDeps) {
           ':error': runStepError,
         },
       });
+      if (error instanceof Error) {
+        subsegment?.addError?.(error);
+      }
       metrics?.putMetric('courseforge/StepSuccess', 0, 'Count');
+      metrics?.putMetric('courseforge/StepExecutionDuration', durationMs, 'Milliseconds');
+      subsegment?.close?.(error instanceof Error ? error : undefined);
       throw Object.assign(error instanceof Error ? error : new Error(runStepError.message), {
         code: runStepError.code,
         rawResponse: runStepError.rawResponse,
@@ -250,37 +206,49 @@ let productionHandlerPromise:
   | Promise<(input: ExecuteStepInput) => Promise<ExecuteStepOutput>>
   | undefined;
 
+async function createProductionTracer(): Promise<TracerLike | undefined> {
+  try {
+    const awsXray = await import('aws-xray-sdk-core');
+    const getSegment = (awsXray as { getSegment?: () => { addNewSubsegment(name: string): TraceSubsegmentLike } | undefined }).getSegment;
+    if (!getSegment) {
+      return undefined;
+    }
+
+    return {
+      startSubsegment(name: string) {
+        const segment = getSegment();
+        return segment?.addNewSubsegment(name);
+      },
+    };
+  } catch {
+    return undefined;
+  }
+}
+
 async function getProductionHandler() {
   productionHandlerPromise ??= (async () => {
     const { PutObjectCommand, S3Client } = await import('@aws-sdk/client-s3');
     const dynamoClient = DynamoDBDocumentClient.from(new DynamoDBClient({}));
     const s3Client = new S3Client({});
+    const tracer = await createProductionTracer();
 
     return createExecuteStepHandler({
       dynamoClient: {
         async put(params) {
           return dynamoClient.send(new PutCommand(params));
         },
-        async query(params) {
-          const result = await dynamoClient.send(new QueryCommand(params));
-          return { Items: result.Items as Array<Record<string, unknown>> | undefined };
-        },
         async update(params) {
           return dynamoClient.send(new UpdateCommand(params));
         },
       },
       s3Client: {
-        async getObject(params) {
-          const { GetObjectCommand } = await import('@aws-sdk/client-s3');
-          const response = await s3Client.send(new GetObjectCommand(params));
-          return (await response.Body?.transformToString()) ?? '';
-        },
         async putObject(params) {
           return s3Client.send(new PutObjectCommand(params));
         },
       },
       mainTableName: process.env.MAIN_TABLE_NAME ?? '',
       artifactBucketName: process.env.ARTIFACT_BUCKET_NAME ?? '',
+      tracer,
     });
   })();
 

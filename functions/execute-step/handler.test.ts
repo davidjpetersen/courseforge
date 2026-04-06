@@ -21,10 +21,9 @@ describe('createExecuteStepHandler', () => {
     const put = vi.fn(async () => ({}));
     const update = vi.fn(async () => ({}));
     const putObject = vi.fn(async () => ({}));
-    const query = vi.fn(async () => ({ Items: [] }));
 
     const handler = createExecuteStepHandler({
-      dynamoClient: { put, query, update },
+      dynamoClient: { put, update },
       s3Client: { putObject },
       mainTableName: 'courseforge-main',
       artifactBucketName: 'artifacts',
@@ -45,7 +44,7 @@ describe('createExecuteStepHandler', () => {
     const largeOutput = { blob: 'x'.repeat(5000) };
 
     const handler = createExecuteStepHandler({
-      dynamoClient: { put: vi.fn(async () => ({})), query: vi.fn(async () => ({ Items: [] })), update },
+      dynamoClient: { put: vi.fn(async () => ({})), update },
       s3Client: { putObject },
       mainTableName: 'courseforge-main',
       artifactBucketName: 'artifacts',
@@ -65,11 +64,18 @@ describe('createExecuteStepHandler', () => {
 
   it('records step failure and rethrows the error', async () => {
     const update = vi.fn(async () => ({}));
+    const putMetric = vi.fn();
+    const close = vi.fn();
+    const addError = vi.fn();
     const handler = createExecuteStepHandler({
-      dynamoClient: { put: vi.fn(async () => ({})), query: vi.fn(async () => ({ Items: [] })), update },
+      dynamoClient: { put: vi.fn(async () => ({})), update },
       s3Client: { putObject: vi.fn(async () => ({ })) },
       mainTableName: 'courseforge-main',
       artifactBucketName: 'artifacts',
+      metrics: { putMetric },
+      tracer: {
+        startSubsegment: vi.fn(() => ({ addError, close })),
+      },
       connectors: new Map([
         ['echo', { run: async () => { throw Object.assign(new Error('boom'), { code: 'ConnectorError' }); } }],
       ]),
@@ -82,24 +88,22 @@ describe('createExecuteStepHandler', () => {
       message: 'boom',
       code: 'ConnectorError',
     });
+    expect(putMetric).toHaveBeenCalledWith('courseforge/StepSuccess', 0, 'Count');
+    expect(putMetric).toHaveBeenCalledWith(
+      'courseforge/StepExecutionDuration',
+      expect.any(Number),
+      'Milliseconds',
+    );
+    expect(addError).toHaveBeenCalledWith(expect.any(Error));
+    expect(close).toHaveBeenCalledWith(expect.any(Error));
   });
 
-  it('rebuilds accumulated context from prior successful step outputs', async () => {
+  it('passes the accumulated context from the workflow runner into the connector', async () => {
     const connectorRun = vi.fn(async () => ({ value: 'next' }));
 
     const handler = createExecuteStepHandler({
       dynamoClient: {
         put: vi.fn(async () => ({})),
-        query: vi.fn(async () => ({
-          Items: [
-            {
-              stepId: 'step-0',
-              stepIndex: 0,
-              status: 'SUCCESS',
-              output: { fromPrevious: true },
-            },
-          ],
-        })),
         update: vi.fn(async () => ({})),
       },
       s3Client: { putObject: vi.fn(async () => ({ })) },
@@ -112,6 +116,10 @@ describe('createExecuteStepHandler', () => {
 
     const result = await handler({
       ...baseInput,
+      accumulatedContext: {
+        ...baseInput.accumulatedContext,
+        'step-0': { fromPrevious: true },
+      },
       step: {
         ...baseInput.step,
         stepId: 'step-1',
@@ -133,5 +141,26 @@ describe('createExecuteStepHandler', () => {
       'step-0': { fromPrevious: true },
       'step-1': { value: 'next' },
     });
+  });
+
+  it('creates and closes an X-Ray-style subsegment around connector execution', async () => {
+    const close = vi.fn();
+    const startSubsegment = vi.fn(() => ({ close }));
+
+    const handler = createExecuteStepHandler({
+      dynamoClient: {
+        put: vi.fn(async () => ({})),
+        update: vi.fn(async () => ({})),
+      },
+      s3Client: { putObject: vi.fn(async () => ({ })) },
+      mainTableName: 'courseforge-main',
+      artifactBucketName: 'artifacts',
+      tracer: { startSubsegment },
+    });
+
+    await handler(baseInput);
+
+    expect(startSubsegment).toHaveBeenCalledWith('connector:echo:step-1');
+    expect(close).toHaveBeenCalledWith();
   });
 });

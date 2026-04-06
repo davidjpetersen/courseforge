@@ -35,7 +35,30 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 const cdk = __importStar(require("aws-cdk-lib"));
 const assertions_1 = require("aws-cdk-lib/assertions");
+const lambda = __importStar(require("aws-cdk-lib/aws-lambda"));
 const vitest_1 = require("vitest");
+vitest_1.vi.mock('aws-cdk-lib/aws-lambda-nodejs', async () => {
+    class MockNodejsFunction extends lambda.Function {
+        constructor(scope, id, props) {
+            super(scope, id, {
+                runtime: props.runtime ?? lambda.Runtime.NODEJS_20_X,
+                handler: props.handler ?? 'index.handler',
+                code: lambda.Code.fromInline('exports.handler = async () => undefined;'),
+                timeout: props.timeout,
+                memorySize: props.memorySize,
+                environment: props.environment,
+                tracing: props.tracing,
+            });
+        }
+    }
+    return {
+        NodejsFunction: MockNodejsFunction,
+        OutputFormat: {
+            ESM: 'esm',
+            CJS: 'cjs',
+        },
+    };
+});
 const foundation_stack_1 = require("../lib/foundation-stack");
 const orchestration_stack_1 = require("../lib/orchestration-stack");
 function createTemplate() {

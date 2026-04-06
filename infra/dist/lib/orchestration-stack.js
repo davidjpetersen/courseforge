@@ -129,23 +129,41 @@ class OrchestrationStack extends cdk.Stack {
             interval: cdk.Duration.seconds(1),
             maxAttempts: 2,
         });
+        const seedExecutionState = new sfn.Pass(this, 'SeedExecutionState', {
+            parameters: {
+                'initResult.$': '$.initResult',
+                execution: {
+                    'steps.$': '$.initResult.steps',
+                    'totalSteps.$': 'States.ArrayLength($.initResult.steps)',
+                    currentStepIndex: 0,
+                    'currentContext.$': '$.initResult.payload',
+                },
+            },
+        });
         const executeStepTask = new tasks.LambdaInvoke(this, 'ExecuteStep', {
             lambdaFunction: this.executeStepFn,
+            resultPath: '$.execution.lastStepResult',
             payloadResponseOnly: true,
             payload: sfn.TaskInput.fromObject({
-                'step.$': '$.Map.Item.Value',
+                'step.$': 'States.ArrayGetItem($.execution.steps, $.execution.currentStepIndex)',
                 'runId.$': '$.initResult.runId',
                 'tenantId.$': '$.initResult.tenantId',
                 'traceId.$': '$.initResult.traceId',
-                'accumulatedContext.$': '$.initResult.payload',
+                'accumulatedContext.$': '$.execution.currentContext',
             }),
         });
-        const executeSteps = new sfn.Map(this, 'ExecuteSteps', {
-            itemsPath: sfn.JsonPath.stringAt('$.initResult.steps'),
-            maxConcurrency: 1,
-            resultPath: '$.stepResults',
+        const advanceExecutionState = new sfn.Pass(this, 'AdvanceExecutionState', {
+            parameters: {
+                'initResult.$': '$.initResult',
+                execution: {
+                    'steps.$': '$.execution.steps',
+                    'totalSteps.$': '$.execution.totalSteps',
+                    'currentStepIndex.$': 'States.MathAdd($.execution.currentStepIndex, 1)',
+                    'currentContext.$': '$.execution.lastStepResult.accumulatedContext',
+                },
+            },
         });
-        executeSteps.itemProcessor(executeStepTask);
+        const executeSteps = new sfn.Choice(this, 'ExecuteSteps');
         const finalizeRun = new tasks.LambdaInvoke(this, 'FinalizeRun', {
             lambdaFunction: this.runFinalizerFn,
             payloadResponseOnly: true,
@@ -154,7 +172,6 @@ class OrchestrationStack extends cdk.Stack {
                 'tenantId.$': '$.initResult.tenantId',
                 'workflowId.$': '$.initResult.workflowId',
                 status: 'SUCCESS',
-                'stepResults.$': '$.stepResults',
             }),
         });
         const handleStepFailure = new tasks.LambdaInvoke(this, 'HandleStepFailure', {
@@ -177,8 +194,10 @@ class OrchestrationStack extends cdk.Stack {
             cause: 'Workflow execution failed',
         });
         initializeRun.addCatch(failRun);
-        executeSteps.addCatch(handleStepFailure, { resultPath: '$.stepFailure' });
-        const definition = initializeRun.next(executeSteps).next(finalizeRun);
+        executeStepTask.addCatch(handleStepFailure, { resultPath: '$.stepFailure' });
+        executeSteps.when(sfn.Condition.numberLessThanJsonPath('$.execution.currentStepIndex', '$.execution.totalSteps'), executeStepTask.next(advanceExecutionState).next(executeSteps));
+        executeSteps.otherwise(finalizeRun);
+        const definition = initializeRun.next(seedExecutionState).next(executeSteps);
         handleStepFailure.next(failRun);
         this.workflowRunnerStateMachine = new sfn.StateMachine(this, 'WorkflowRunner', {
             stateMachineName: 'courseforge-workflow-runner',
