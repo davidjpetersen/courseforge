@@ -2,14 +2,21 @@ import * as cdk from 'aws-cdk-lib';
 import { Match, Template } from 'aws-cdk-lib/assertions';
 import { describe, expect, it } from 'vitest';
 import { FoundationStack } from '../lib/foundation-stack';
+import { OrchestrationStack } from '../lib/orchestration-stack';
 import { TriggerStack } from '../lib/trigger-stack';
 
 function createTemplate(): Template {
   const app = new cdk.App();
   const foundation = new FoundationStack(app, 'Foundation', {});
+  const orchestration = new OrchestrationStack(app, 'Orchestration', {
+    mainTable: foundation.mainTable,
+    eventBus: foundation.eventBus,
+    artifactBucket: foundation.artifactBucket,
+  });
   const trigger = new TriggerStack(app, 'Trigger', {
     eventBus: foundation.eventBus,
     mainTable: foundation.mainTable,
+    workflowRunnerStateMachine: orchestration.workflowRunnerStateMachine,
   });
 
   return Template.fromStack(trigger);
@@ -69,15 +76,10 @@ describe('TriggerStack', () => {
   });
 
   it('targets a Step Functions state machine from the routing rule', () => {
-    template.hasResourceProperties('AWS::StepFunctions::StateMachine', {
-      StateMachineName: 'courseforge-workflow-runner',
-    });
     template.hasResourceProperties('AWS::Events::Rule', {
       Targets: Match.arrayWith([
         Match.objectLike({
-          Arn: {
-            Ref: Match.anyValue(),
-          },
+          Arn: Match.anyValue(),
         }),
       ]),
     });

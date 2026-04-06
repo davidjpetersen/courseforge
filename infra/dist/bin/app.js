@@ -36,6 +36,7 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 const cdk = __importStar(require("aws-cdk-lib"));
 const foundation_stack_1 = require("../lib/foundation-stack");
+const orchestration_stack_1 = require("../lib/orchestration-stack");
 const trigger_stack_1 = require("../lib/trigger-stack");
 const app = new cdk.App();
 const devAccount = app.node.tryGetContext('dev_account') ?? 'REPLACE_WITH_DEV_ACCOUNT';
@@ -45,17 +46,31 @@ const prodRegion = app.node.tryGetContext('prod_region') ?? 'us-east-1';
 const devFoundation = new foundation_stack_1.FoundationStack(app, 'FoundationStack-dev', {
     env: { account: devAccount, region: devRegion },
 });
+const devOrchestration = new orchestration_stack_1.OrchestrationStack(app, 'OrchestrationStack-dev', {
+    env: { account: devAccount, region: devRegion },
+    eventBus: devFoundation.eventBus,
+    mainTable: devFoundation.mainTable,
+    artifactBucket: devFoundation.artifactBucket,
+});
 new trigger_stack_1.TriggerStack(app, 'TriggerStack-dev', {
     env: { account: devAccount, region: devRegion },
     eventBus: devFoundation.eventBus,
     mainTable: devFoundation.mainTable,
+    workflowRunnerStateMachine: devOrchestration.workflowRunnerStateMachine,
 });
 const prodFoundation = new foundation_stack_1.FoundationStack(app, 'FoundationStack-prod', {
     env: { account: prodAccount, region: prodRegion },
+});
+const prodOrchestration = new orchestration_stack_1.OrchestrationStack(app, 'OrchestrationStack-prod', {
+    env: { account: prodAccount, region: prodRegion },
+    eventBus: prodFoundation.eventBus,
+    mainTable: prodFoundation.mainTable,
+    artifactBucket: prodFoundation.artifactBucket,
 });
 new trigger_stack_1.TriggerStack(app, 'TriggerStack-prod', {
     env: { account: prodAccount, region: prodRegion },
     eventBus: prodFoundation.eventBus,
     mainTable: prodFoundation.mainTable,
+    workflowRunnerStateMachine: prodOrchestration.workflowRunnerStateMachine,
 });
 //# sourceMappingURL=app.js.map

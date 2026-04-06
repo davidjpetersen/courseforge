@@ -15,6 +15,7 @@ export class FoundationStack extends cdk.Stack {
   public readonly mainTable: dynamodb.ITable;
   public readonly mainTableName: string;
   public readonly mainTableArn: string;
+  public readonly artifactBucket: s3.IBucket;
   public readonly artifactBucketName: string;
 
   constructor(scope: Construct, id: string, props: FoundationStackProps) {
@@ -102,6 +103,7 @@ export class FoundationStack extends cdk.Stack {
         },
       ],
     });
+    this.artifactBucket = artifactBucket;
 
     // Expose S3 properties
     this.artifactBucketName = artifactBucket.bucketName;

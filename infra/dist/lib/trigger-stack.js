@@ -43,14 +43,12 @@ const targets = __importStar(require("aws-cdk-lib/aws-events-targets"));
 const iam = __importStar(require("aws-cdk-lib/aws-iam"));
 const lambda = __importStar(require("aws-cdk-lib/aws-lambda"));
 const scheduler = __importStar(require("aws-cdk-lib/aws-scheduler"));
-const sfn = __importStar(require("aws-cdk-lib/aws-stepfunctions"));
 const sqs = __importStar(require("aws-cdk-lib/aws-sqs"));
 class TriggerStack extends cdk.Stack {
     schedulesTable;
     webhookApi;
     webhookIngressFn;
     scheduledTriggerFn;
-    workflowRunnerStateMachine;
     schedulerTargetRole;
     constructor(scope, id, props) {
         super(scope, id, props);
@@ -102,17 +100,13 @@ class TriggerStack extends cdk.Stack {
         const dlq = new sqs.Queue(this, 'TriggerDlq', {
             queueName: 'courseforge-trigger-dlq',
         });
-        this.workflowRunnerStateMachine = new sfn.StateMachine(this, 'WorkflowRunnerSFN', {
-            stateMachineName: 'courseforge-workflow-runner',
-            definitionBody: sfn.DefinitionBody.fromChainable(new sfn.Pass(this, 'StartWorkflowRun')),
-        });
         const triggerRule = new events.Rule(this, 'TriggerRoutingRule', {
             eventBus: props.eventBus,
             eventPattern: {
                 source: ['courseforge.trigger'],
             },
         });
-        triggerRule.addTarget(new targets.SfnStateMachine(this.workflowRunnerStateMachine, {
+        triggerRule.addTarget(new targets.SfnStateMachine(props.workflowRunnerStateMachine, {
             deadLetterQueue: dlq,
         }));
         this.schedulerTargetRole = new iam.Role(this, 'SchedulerTargetRole', {

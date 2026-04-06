@@ -14,6 +14,7 @@ import { Construct } from 'constructs';
 export interface TriggerStackProps extends cdk.StackProps {
   eventBus: events.IEventBus;
   mainTable: dynamodb.ITable;
+  workflowRunnerStateMachine: sfn.IStateMachine;
 }
 
 export class TriggerStack extends cdk.Stack {
@@ -21,7 +22,6 @@ export class TriggerStack extends cdk.Stack {
   public readonly webhookApi: apigwv2.HttpApi;
   public readonly webhookIngressFn: lambda.Function;
   public readonly scheduledTriggerFn: lambda.Function;
-  public readonly workflowRunnerStateMachine: sfn.StateMachine;
   public readonly schedulerTargetRole: iam.Role;
 
   constructor(scope: Construct, id: string, props: TriggerStackProps) {
@@ -86,11 +86,6 @@ export class TriggerStack extends cdk.Stack {
       queueName: 'courseforge-trigger-dlq',
     });
 
-    this.workflowRunnerStateMachine = new sfn.StateMachine(this, 'WorkflowRunnerSFN', {
-      stateMachineName: 'courseforge-workflow-runner',
-      definitionBody: sfn.DefinitionBody.fromChainable(new sfn.Pass(this, 'StartWorkflowRun')),
-    });
-
     const triggerRule = new events.Rule(this, 'TriggerRoutingRule', {
       eventBus: props.eventBus,
       eventPattern: {
@@ -99,7 +94,7 @@ export class TriggerStack extends cdk.Stack {
     });
 
     triggerRule.addTarget(
-      new targets.SfnStateMachine(this.workflowRunnerStateMachine, {
+      new targets.SfnStateMachine(props.workflowRunnerStateMachine, {
         deadLetterQueue: dlq,
       }),
     );

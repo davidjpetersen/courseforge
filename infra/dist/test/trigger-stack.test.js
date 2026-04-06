@@ -37,13 +37,20 @@ const cdk = __importStar(require("aws-cdk-lib"));
 const assertions_1 = require("aws-cdk-lib/assertions");
 const vitest_1 = require("vitest");
 const foundation_stack_1 = require("../lib/foundation-stack");
+const orchestration_stack_1 = require("../lib/orchestration-stack");
 const trigger_stack_1 = require("../lib/trigger-stack");
 function createTemplate() {
     const app = new cdk.App();
     const foundation = new foundation_stack_1.FoundationStack(app, 'Foundation', {});
+    const orchestration = new orchestration_stack_1.OrchestrationStack(app, 'Orchestration', {
+        mainTable: foundation.mainTable,
+        eventBus: foundation.eventBus,
+        artifactBucket: foundation.artifactBucket,
+    });
     const trigger = new trigger_stack_1.TriggerStack(app, 'Trigger', {
         eventBus: foundation.eventBus,
         mainTable: foundation.mainTable,
+        workflowRunnerStateMachine: orchestration.workflowRunnerStateMachine,
     });
     return assertions_1.Template.fromStack(trigger);
 }
@@ -93,15 +100,10 @@ function createTemplate() {
         });
     });
     (0, vitest_1.it)('targets a Step Functions state machine from the routing rule', () => {
-        template.hasResourceProperties('AWS::StepFunctions::StateMachine', {
-            StateMachineName: 'courseforge-workflow-runner',
-        });
         template.hasResourceProperties('AWS::Events::Rule', {
             Targets: assertions_1.Match.arrayWith([
                 assertions_1.Match.objectLike({
-                    Arn: {
-                        Ref: assertions_1.Match.anyValue(),
-                    },
+                    Arn: assertions_1.Match.anyValue(),
                 }),
             ]),
         });

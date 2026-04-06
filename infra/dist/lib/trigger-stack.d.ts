@@ -9,13 +9,13 @@ import { Construct } from 'constructs';
 export interface TriggerStackProps extends cdk.StackProps {
     eventBus: events.IEventBus;
     mainTable: dynamodb.ITable;
+    workflowRunnerStateMachine: sfn.IStateMachine;
 }
 export declare class TriggerStack extends cdk.Stack {
     readonly schedulesTable: dynamodb.Table;
     readonly webhookApi: apigwv2.HttpApi;
     readonly webhookIngressFn: lambda.Function;
     readonly scheduledTriggerFn: lambda.Function;
-    readonly workflowRunnerStateMachine: sfn.StateMachine;
     readonly schedulerTargetRole: iam.Role;
     constructor(scope: Construct, id: string, props: TriggerStackProps);
 }

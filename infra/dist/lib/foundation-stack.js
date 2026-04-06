@@ -47,6 +47,7 @@ class FoundationStack extends cdk.Stack {
     mainTable;
     mainTableName;
     mainTableArn;
+    artifactBucket;
     artifactBucketName;
     constructor(scope, id, props) {
         super(scope, id, props);
@@ -120,6 +121,7 @@ class FoundationStack extends cdk.Stack {
                 },
             ],
         });
+        this.artifactBucket = artifactBucket;
         // Expose S3 properties
         this.artifactBucketName = artifactBucket.bucketName;
         // S3 CloudFormation output
