@@ -16,4 +16,18 @@ export {
   type WorkflowRecord,
   type WorkflowRepository,
   type WorkflowVersionRecord,
+  type WorkflowStatus,
 } from './handlers.js';
+
+export {
+  filterWorkflows,
+  getTransitionError,
+  isValidTransition,
+  sortVersionsDescending,
+  summarizeSteps,
+  toVersionMetadata,
+  validateConnections,
+  validateCreateRequest,
+  type ValidationError,
+  type VersionMetadata,
+} from './logic.js';

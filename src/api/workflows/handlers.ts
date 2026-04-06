@@ -1,7 +1,8 @@
 import { randomUUID } from 'node:crypto';
 
 import { compilePlan, type Connection, type Recipe, type StepDefinition } from '../../../packages/utils/src/compile-plan.js';
-import { bumpMinor, compareSemver } from '../../../packages/utils/src/semver.js';
+import { bumpMinor } from '../../../packages/utils/src/semver.js';
+import { filterWorkflows, sortVersionsDescending, summarizeSteps, toVersionMetadata } from './logic.js';
 
 export type WorkflowStatus = 'DRAFT' | 'PUBLISHED' | 'PAUSED' | 'ARCHIVED';
 
@@ -148,10 +149,6 @@ function ensureActiveConnections(connections: Connection[], expectedCount: numbe
   return inactive ? `Connection ${inactive.connectionId} is not active` : null;
 }
 
-function summarizeSteps(steps: StepDefinition[]): string[] {
-  return steps.map((step) => step.name);
-}
-
 export function createCreateWorkflowHandler(
   workflowRepo: WorkflowRepository,
   connectionRepo: ConnectionRepository,
@@ -256,15 +253,7 @@ export function createListWorkflowsHandler(workflowRepo: WorkflowRepository) {
     const environmentFilter = event.queryStringParameters?.environmentId;
 
     const workflows = await workflowRepo.listWorkflows(tenantId);
-    const filtered = workflows.filter((workflow) => {
-      if (statusFilter && workflow.status !== statusFilter) {
-        return false;
-      }
-      if (environmentFilter && workflow.environmentId !== environmentFilter) {
-        return false;
-      }
-      return true;
-    });
+    const filtered = filterWorkflows(workflows, statusFilter, environmentFilter);
 
     return jsonResponse(200, { workflows: filtered });
   };
@@ -453,16 +442,7 @@ export function createListWorkflowVersionsHandler(workflowRepo: WorkflowReposito
     }
 
     const versions = await workflowRepo.listVersions(workflowId);
-    const metadataOnly = versions
-      .sort((a, b) => compareSemver(b.semver, a.semver))
-      .map((version) => ({
-        versionId: version.versionId,
-        workflowId: version.workflowId,
-        semver: version.semver,
-        createdBy: version.createdBy,
-        createdAt: version.createdAt,
-        recipeId: version.recipeId,
-      }));
+    const metadataOnly = sortVersionsDescending(versions).map(toVersionMetadata);
 
     return jsonResponse(200, { versions: metadataOnly });
   };
