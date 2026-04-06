@@ -1,22 +1,25 @@
 import { EventBridgeClient, PutEventsCommand } from '@aws-sdk/client-eventbridge';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import { DynamoDBDocumentClient, GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
+import { DynamoDBDocumentClient, PutCommand, QueryCommand } from '@aws-sdk/lib-dynamodb';
 import { NextRequest, NextResponse } from 'next/server';
 
-import { createReplayRunHandler } from '../../../../../src/api/runs/replay';
+import { createReplayHandler } from '../../../../../src/api/replay/handler.js';
 
 const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 const eventBridgeClient = new EventBridgeClient({});
-const runsTable = process.env.RUNS_TABLE_NAME ?? 'CourseForgeRuns';
+const runsTable = process.env.MAIN_TABLE_NAME ?? process.env.RUNS_TABLE_NAME ?? 'CourseForgeRuns';
 const eventBusName = process.env.EVENT_BUS_NAME ?? 'default';
 
-const handler = createReplayRunHandler({
-  async getRun(runId) {
-    const res = await ddb.send(new GetCommand({ TableName: runsTable, Key: { PK: `RUN#${runId}`, SK: 'META' } }));
-    return res.Item as Record<string, unknown> | undefined;
-  },
-  async createRun(item) {
-    await ddb.send(new PutCommand({ TableName: runsTable, Item: item }));
+const handler = createReplayHandler({
+  dynamoClient: {
+    async query(params) {
+      const result = await ddb.send(new QueryCommand(params));
+      return { Items: result.Items as Array<Record<string, unknown>> | undefined };
+    },
+    async put(params) {
+      await ddb.send(new PutCommand(params));
+      return {};
+    },
   },
   eventBridgeClient: {
     async putEvents(params) {
@@ -24,11 +27,19 @@ const handler = createReplayRunHandler({
       return {};
     },
   },
+  mainTableName: runsTable,
   eventBusName,
 });
 
-export async function POST(_: NextRequest, context: { params: Promise<{ runId: string }> }) {
+export async function POST(request: NextRequest, context: { params: Promise<{ runId: string }> }) {
   const { runId } = await context.params;
-  const result = await handler({ pathParameters: { runId } });
+  const result = await handler({
+    pathParameters: { runId },
+    requestContext: {
+      authorizer: {
+        tenantId: request.headers.get('x-tenant-id') ?? 'CURRENT',
+      },
+    },
+  });
   return new NextResponse(result.body, { status: result.statusCode, headers: result.headers });
 }

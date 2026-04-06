@@ -20,6 +20,9 @@ export declare const KEY_PREFIX: {
     readonly WEBHOOK_SECRET: "WEBHOOK_SECRET#";
     readonly RUN: "RUN#";
     readonly SCHEDULE: "SCHEDULE#";
+    readonly STEP: "STEP#";
+    readonly USER: "USER#";
+    readonly NOTIFICATION: "NOTIFICATION#";
 };
 export declare const SK_VALUES: {
     readonly METADATA: "METADATA";
@@ -40,6 +43,12 @@ export declare function runSK(timestamp: string, runId: string): string;
 export declare function schedulePK(workflowId: string): string;
 export declare function scheduleSK(scheduleId: string): string;
 export declare function buildSecretName(tenantId: string, connectionId: string): string;
+export declare function runPK(runId: string): string;
+export declare function stepSK(stepIndex: number, stepId: string): string;
+export declare function userPK(userId: string): string;
+export declare function notificationSK(timestamp: string, notificationId: string): string;
+export declare const GSI_WORKFLOW_RUNS = "GSI_WORKFLOW_RUNS";
+export declare const GSI_TENANT_STATUS = "GSI_TENANT_STATUS";
 export declare const TABLE_NAME = "RecipeLibrary";
 export declare const CATEGORY_INDEX = "CategoryIndex";
 export declare const TABLE_DEFINITION: {
