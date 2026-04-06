@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import type { Notification } from '../../packages/types/src/runs';
@@ -15,9 +15,11 @@ function relativeTime(input: string): string {
 }
 
 export function NotificationBell() {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [busy, setBusy] = useState(false);
 
   async function refresh() {
     const res = await fetch('/api/notifications');
@@ -26,15 +28,32 @@ export function NotificationBell() {
     setUnreadCount(data.unreadCount);
   }
 
-  async function markRead(notificationId: string) {
-    await fetch(`/api/notifications/${notificationId}/read`, { method: 'POST' });
-    await refresh();
+  async function markAllRead() {
+    setBusy(true);
+    try {
+      await Promise.all(
+        notifications
+          .filter((notification) => !notification.read)
+          .map((notification) =>
+            fetch(`/api/notifications/${notification.notificationId}/read`, { method: 'POST' }),
+          ),
+      );
+      await refresh();
+    } finally {
+      setBusy(false);
+    }
   }
 
-  async function markAllRead() {
-    await Promise.all(
-      notifications.filter((n) => !n.read).map((n) => markRead(n.notificationId)),
-    );
+  async function openNotification(notification: Notification) {
+    setBusy(true);
+    try {
+      await fetch(`/api/notifications/${notification.notificationId}/read`, { method: 'POST' });
+      await refresh();
+      setOpen(false);
+      router.push(`/runs/${notification.runId}`);
+    } finally {
+      setBusy(false);
+    }
   }
 
   useEffect(() => {
@@ -45,23 +64,43 @@ export function NotificationBell() {
 
   return (
     <div className="relative">
-      <button className="relative rounded p-2" onClick={() => setOpen((v) => !v)}>
+      <button
+        className="relative rounded p-2"
+        aria-label="Notifications"
+        onClick={() => setOpen((value) => !value)}
+      >
         🔔
-        {unreadCount > 0 ? <span className="absolute right-0 top-0 rounded-full bg-red-600 px-1 text-xs text-white">{unreadCount}</span> : null}
+        {unreadCount > 0 ? (
+          <span className="absolute right-0 top-0 rounded-full bg-red-600 px-1 text-xs text-white">
+            {unreadCount}
+          </span>
+        ) : null}
       </button>
       {open ? (
-        <div className="absolute right-0 z-10 w-80 rounded border bg-white p-2 shadow">
+        <div className="absolute right-0 z-10 w-80 rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
           <ul className="space-y-1">
-            {notifications.slice(0, 5).map((n) => (
-              <li key={n.notificationId} className="rounded p-2 hover:bg-gray-50">
-                <Link href={`/runs/${n.runId}`} onClick={() => void markRead(n.notificationId)}>
-                  <div className="text-sm font-medium">{n.workflowName}</div>
-                  <div className="text-xs text-gray-600">{n.failedStepName} · {relativeTime(n.createdAt)}</div>
-                </Link>
+            {notifications.slice(0, 5).map((notification) => (
+              <li key={notification.notificationId}>
+                <button
+                  className="w-full rounded-lg p-2 text-left hover:bg-slate-50"
+                  disabled={busy}
+                  onClick={() => void openNotification(notification)}
+                >
+                  <div className="text-sm font-medium text-slate-900">{notification.workflowName}</div>
+                  <div className="text-xs text-slate-600">
+                    {notification.failedStepName} · {relativeTime(notification.createdAt)}
+                  </div>
+                </button>
               </li>
             ))}
           </ul>
-          <button className="mt-2 text-xs text-blue-700 hover:underline" onClick={() => void markAllRead()}>Mark all as read</button>
+          <button
+            className="mt-2 text-xs text-blue-700 hover:underline disabled:text-slate-400"
+            disabled={busy || unreadCount === 0}
+            onClick={() => void markAllRead()}
+          >
+            Mark all as read
+          </button>
         </div>
       ) : null}
     </div>

@@ -1,14 +1,18 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient, QueryCommand } from '@aws-sdk/lib-dynamodb';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 import type { Notification } from '../../../packages/types/src/runs';
 
 const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 const tableName = process.env.NOTIFICATIONS_TABLE_NAME ?? 'CourseForgeNotifications';
 
-export async function GET() {
-  const userId = 'CURRENT';
+function getUserId(request: NextRequest): string {
+  return request.headers.get('x-user-id') ?? process.env.DEFAULT_USER_ID ?? 'CURRENT';
+}
+
+export async function GET(request: NextRequest) {
+  const userId = getUserId(request);
   const res = await ddb.send(
     new QueryCommand({
       TableName: tableName,
@@ -23,10 +27,11 @@ export async function GET() {
   );
 
   const notifications = (res.Items ?? []) as Notification[];
-  const sorted = [...notifications].sort((a, b) => Number(a.read) - Number(b.read));
+  const unread = notifications.filter((notification) => !notification.read);
+  const read = notifications.filter((notification) => notification.read);
 
   return NextResponse.json({
-    notifications: sorted,
-    unreadCount: notifications.filter((n) => !n.read).length,
+    notifications: [...unread, ...read],
+    unreadCount: unread.length,
   });
 }

@@ -3,6 +3,13 @@ import { describe, expect, it } from 'vitest';
 import { maskSensitiveFields } from './mask-sensitive';
 
 describe('maskSensitiveFields', () => {
+  it('returns primitive inputs unchanged', () => {
+    expect(maskSensitiveFields('plain text')).toBe('plain text');
+    expect(maskSensitiveFields(42)).toBe(42);
+    expect(maskSensitiveFields(false)).toBe(false);
+    expect(maskSensitiveFields(null)).toBeNull();
+  });
+
   it('masks nested sensitive keys without mutating original object', () => {
     const source = {
       profile: {
@@ -36,6 +43,7 @@ describe('maskSensitiveFields', () => {
     const source = {
       SECRET_KEY: '123',
       AuthToken: 'xyz',
+      Password: 'pw',
       normalField: 'keep',
     };
 
@@ -43,6 +51,7 @@ describe('maskSensitiveFields', () => {
 
     expect(result.SECRET_KEY).toBe('••••••••');
     expect(result.AuthToken).toBe('••••••••');
+    expect(result.Password).toBe('••••••••');
     expect(result.normalField).toBe('keep');
   });
 });

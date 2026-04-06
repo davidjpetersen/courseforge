@@ -4,6 +4,7 @@ export default defineConfig({
   test: {
     globals: true,
     include: [
+      'app/**/*.test.ts',
       'src/**/*.test.ts',
       'functions/**/*.test.ts',
       'packages/connectors/**/*.test.ts',
