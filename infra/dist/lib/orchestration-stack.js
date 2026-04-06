@@ -34,14 +34,40 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrchestrationStack = void 0;
+const fs = __importStar(require("node:fs"));
+const path = __importStar(require("node:path"));
 const cdk = __importStar(require("aws-cdk-lib"));
 const events = __importStar(require("aws-cdk-lib/aws-events"));
+const targets = __importStar(require("aws-cdk-lib/aws-events-targets"));
+const iam = __importStar(require("aws-cdk-lib/aws-iam"));
 const lambda = __importStar(require("aws-cdk-lib/aws-lambda"));
+const lambdaNodejs = __importStar(require("aws-cdk-lib/aws-lambda-nodejs"));
 const sfn = __importStar(require("aws-cdk-lib/aws-stepfunctions"));
 const tasks = __importStar(require("aws-cdk-lib/aws-stepfunctions-tasks"));
-const targets = __importStar(require("aws-cdk-lib/aws-events-targets"));
-function inlineLambdaCode(name) {
-    return lambda.Code.fromInline(`exports.handler = async (event) => ({ stub: '${name}', event });`);
+function resolveFunctionEntry(...parts) {
+    const candidates = [
+        path.resolve(process.cwd(), ...parts),
+        path.resolve(process.cwd(), '..', ...parts),
+        path.resolve(__dirname, '..', '..', '..', ...parts),
+        path.resolve(__dirname, '..', '..', ...parts),
+    ];
+    const entry = candidates.find((candidate) => fs.existsSync(candidate));
+    if (!entry) {
+        throw new Error(`Unable to resolve function entry for ${parts.join('/')}`);
+    }
+    return entry;
+}
+function createNodejsFunction(scope, id, entry, props) {
+    return new lambdaNodejs.NodejsFunction(scope, id, {
+        entry: resolveFunctionEntry(entry),
+        handler: 'handler',
+        runtime: lambda.Runtime.NODEJS_20_X,
+        bundling: {
+            target: 'node20',
+            format: lambdaNodejs.OutputFormat.ESM,
+        },
+        ...props,
+    });
 }
 class OrchestrationStack extends cdk.Stack {
     workflowRunnerStateMachine;
@@ -51,10 +77,7 @@ class OrchestrationStack extends cdk.Stack {
     notificationFn;
     constructor(scope, id, props) {
         super(scope, id, props);
-        this.runInitializerFn = new lambda.Function(this, 'RunInitializerFn', {
-            runtime: lambda.Runtime.NODEJS_20_X,
-            handler: 'index.handler',
-            code: inlineLambdaCode('RunInitializerFn'),
+        this.runInitializerFn = createNodejsFunction(this, 'RunInitializerFn', 'functions/run-initializer/handler.ts', {
             timeout: cdk.Duration.seconds(30),
             memorySize: 256,
             environment: {
@@ -62,10 +85,7 @@ class OrchestrationStack extends cdk.Stack {
             },
             tracing: lambda.Tracing.ACTIVE,
         });
-        this.executeStepFn = new lambda.Function(this, 'ExecuteStepFn', {
-            runtime: lambda.Runtime.NODEJS_20_X,
-            handler: 'index.handler',
-            code: inlineLambdaCode('ExecuteStepFn'),
+        this.executeStepFn = createNodejsFunction(this, 'ExecuteStepFn', 'functions/execute-step/handler.ts', {
             timeout: cdk.Duration.minutes(5),
             memorySize: 512,
             environment: {
@@ -74,10 +94,7 @@ class OrchestrationStack extends cdk.Stack {
             },
             tracing: lambda.Tracing.ACTIVE,
         });
-        this.runFinalizerFn = new lambda.Function(this, 'RunFinalizerFn', {
-            runtime: lambda.Runtime.NODEJS_20_X,
-            handler: 'index.handler',
-            code: inlineLambdaCode('RunFinalizerFn'),
+        this.runFinalizerFn = createNodejsFunction(this, 'RunFinalizerFn', 'functions/run-finalizer/handler.ts', {
             timeout: cdk.Duration.seconds(30),
             memorySize: 256,
             environment: {
@@ -86,10 +103,7 @@ class OrchestrationStack extends cdk.Stack {
             },
             tracing: lambda.Tracing.ACTIVE,
         });
-        this.notificationFn = new lambda.Function(this, 'NotificationFn', {
-            runtime: lambda.Runtime.NODEJS_20_X,
-            handler: 'index.handler',
-            code: inlineLambdaCode('NotificationFn'),
+        this.notificationFn = createNodejsFunction(this, 'NotificationFn', 'functions/notification/handler.ts', {
             timeout: cdk.Duration.seconds(30),
             memorySize: 256,
             environment: {
@@ -103,6 +117,10 @@ class OrchestrationStack extends cdk.Stack {
         props.mainTable.grantReadWriteData(this.notificationFn);
         props.artifactBucket.grantReadWrite(this.executeStepFn);
         props.eventBus.grantPutEventsTo(this.runFinalizerFn);
+        this.executeStepFn.addToRolePolicy(new iam.PolicyStatement({
+            actions: ['cloudwatch:PutMetricData', 'xray:PutTraceSegments', 'xray:PutTelemetryRecords'],
+            resources: ['*'],
+        }));
         const initializeRun = new tasks.LambdaInvoke(this, 'InitializeRun', {
             lambdaFunction: this.runInitializerFn,
             resultPath: '$.initResult',
@@ -115,7 +133,7 @@ class OrchestrationStack extends cdk.Stack {
             lambdaFunction: this.executeStepFn,
             payloadResponseOnly: true,
             payload: sfn.TaskInput.fromObject({
-                'step.$': '$$.Map.Item.Value',
+                'step.$': '$.Map.Item.Value',
                 'runId.$': '$.initResult.runId',
                 'tenantId.$': '$.initResult.tenantId',
                 'traceId.$': '$.initResult.traceId',

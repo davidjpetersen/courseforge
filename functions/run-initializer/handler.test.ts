@@ -26,7 +26,7 @@ describe('createRunInitializerHandler', () => {
   it('throws when there is no published version', async () => {
     const handler = createRunInitializerHandler({
       dynamoClient: {
-        get: vi.fn(async () => ({ Item: { workflowId: 'wf-1' } })),
+        get: vi.fn(async () => ({ Item: { workflowId: 'wf-1', status: 'DRAFT' } })),
         query: vi.fn(async () => ({ Items: [] })),
         update: vi.fn(async () => ({})),
       },
@@ -40,26 +40,32 @@ describe('createRunInitializerHandler', () => {
     const update = vi.fn(async () => ({}));
     const get = vi
       .fn()
-      .mockResolvedValueOnce({ Item: { workflowId: 'wf-1', publishedVersionId: 'v1' } })
+      .mockResolvedValueOnce({ Item: { workflowId: 'wf-1', status: 'PUBLISHED', currentVersionId: 'v1' } });
+    const query = vi
+      .fn()
       .mockResolvedValueOnce({
-        Item: {
-          compiledPlan: JSON.stringify([
-            {
-              stepId: 'step-1',
-              stepIndex: 0,
-              connectorKey: 'echo',
-              actionType: 'echo',
-              params: { value: 1 },
-              retryPolicy: { maxAttempts: 2, backoffRate: 2 },
-            },
-          ]),
-        },
-      });
+        Items: [
+          {
+            versionId: 'v1',
+            compiledPlan: JSON.stringify([
+              {
+                stepId: 'step-1',
+                stepIndex: 0,
+                connectorKey: 'echo',
+                actionType: 'echo',
+                params: { value: 1 },
+                retryPolicy: { maxAttempts: 2, backoffRate: 2 },
+              },
+            ]),
+          },
+        ],
+      })
+      .mockResolvedValueOnce({ Items: [{ PK: 'TENANT#tenant-1', SK: 'RUN#ts#run-1' }] });
 
     const handler = createRunInitializerHandler({
       dynamoClient: {
         get,
-        query: vi.fn(async () => ({ Items: [{ PK: 'TENANT#tenant-1', SK: 'RUN#ts#run-1' }] })),
+        query,
         update,
       },
       mainTableName: 'courseforge-main',

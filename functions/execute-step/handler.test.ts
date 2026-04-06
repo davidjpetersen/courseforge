@@ -21,9 +21,10 @@ describe('createExecuteStepHandler', () => {
     const put = vi.fn(async () => ({}));
     const update = vi.fn(async () => ({}));
     const putObject = vi.fn(async () => ({}));
+    const query = vi.fn(async () => ({ Items: [] }));
 
     const handler = createExecuteStepHandler({
-      dynamoClient: { put, update },
+      dynamoClient: { put, query, update },
       s3Client: { putObject },
       mainTableName: 'courseforge-main',
       artifactBucketName: 'artifacts',
@@ -44,7 +45,7 @@ describe('createExecuteStepHandler', () => {
     const largeOutput = { blob: 'x'.repeat(5000) };
 
     const handler = createExecuteStepHandler({
-      dynamoClient: { put: vi.fn(async () => ({})), update },
+      dynamoClient: { put: vi.fn(async () => ({})), query: vi.fn(async () => ({ Items: [] })), update },
       s3Client: { putObject },
       mainTableName: 'courseforge-main',
       artifactBucketName: 'artifacts',
@@ -65,7 +66,7 @@ describe('createExecuteStepHandler', () => {
   it('records step failure and rethrows the error', async () => {
     const update = vi.fn(async () => ({}));
     const handler = createExecuteStepHandler({
-      dynamoClient: { put: vi.fn(async () => ({})), update },
+      dynamoClient: { put: vi.fn(async () => ({})), query: vi.fn(async () => ({ Items: [] })), update },
       s3Client: { putObject: vi.fn(async () => ({ })) },
       mainTableName: 'courseforge-main',
       artifactBucketName: 'artifacts',
@@ -80,6 +81,57 @@ describe('createExecuteStepHandler', () => {
     expect(updateCall.ExpressionAttributeValues[':error']).toMatchObject({
       message: 'boom',
       code: 'ConnectorError',
+    });
+  });
+
+  it('rebuilds accumulated context from prior successful step outputs', async () => {
+    const connectorRun = vi.fn(async () => ({ value: 'next' }));
+
+    const handler = createExecuteStepHandler({
+      dynamoClient: {
+        put: vi.fn(async () => ({})),
+        query: vi.fn(async () => ({
+          Items: [
+            {
+              stepId: 'step-0',
+              stepIndex: 0,
+              status: 'SUCCESS',
+              output: { fromPrevious: true },
+            },
+          ],
+        })),
+        update: vi.fn(async () => ({})),
+      },
+      s3Client: { putObject: vi.fn(async () => ({ })) },
+      mainTableName: 'courseforge-main',
+      artifactBucketName: 'artifacts',
+      connectors: new Map([
+        ['echo', { run: connectorRun }],
+      ]),
+    });
+
+    const result = await handler({
+      ...baseInput,
+      step: {
+        ...baseInput.step,
+        stepId: 'step-1',
+        stepIndex: 1,
+      },
+    });
+
+    expect(connectorRun).toHaveBeenCalledWith(
+      { value: 'hello' },
+      expect.objectContaining({
+        existing: true,
+        'step-0': { fromPrevious: true },
+        tenantId: 'tenant-1',
+        traceId: 'trace-1',
+      }),
+    );
+    expect(result.accumulatedContext).toMatchObject({
+      existing: true,
+      'step-0': { fromPrevious: true },
+      'step-1': { value: 'next' },
     });
   });
 });

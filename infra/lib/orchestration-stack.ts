@@ -1,9 +1,13 @@
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+
 import * as cdk from 'aws-cdk-lib';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import * as events from 'aws-cdk-lib/aws-events';
 import * as targets from 'aws-cdk-lib/aws-events-targets';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
+import * as lambdaNodejs from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as sfn from 'aws-cdk-lib/aws-stepfunctions';
 import * as tasks from 'aws-cdk-lib/aws-stepfunctions-tasks';
@@ -15,8 +19,38 @@ export interface OrchestrationStackProps extends cdk.StackProps {
   eventBus: events.IEventBus;
 }
 
-function inlineLambdaCode(name: string): lambda.Code {
-  return lambda.Code.fromInline(`exports.handler = async (event) => ({ stub: '${name}', event });`);
+function resolveFunctionEntry(...parts: string[]): string {
+  const candidates = [
+    path.resolve(process.cwd(), ...parts),
+    path.resolve(process.cwd(), '..', ...parts),
+    path.resolve(__dirname, '..', '..', '..', ...parts),
+    path.resolve(__dirname, '..', '..', ...parts),
+  ];
+
+  const entry = candidates.find((candidate) => fs.existsSync(candidate));
+  if (!entry) {
+    throw new Error(`Unable to resolve function entry for ${parts.join('/')}`);
+  }
+
+  return entry;
+}
+
+function createNodejsFunction(
+  scope: Construct,
+  id: string,
+  entry: string,
+  props: Omit<lambdaNodejs.NodejsFunctionProps, 'entry' | 'runtime' | 'handler'>,
+): lambdaNodejs.NodejsFunction {
+  return new lambdaNodejs.NodejsFunction(scope, id, {
+    entry: resolveFunctionEntry(entry),
+    handler: 'handler',
+    runtime: lambda.Runtime.NODEJS_20_X,
+    bundling: {
+      target: 'node20',
+      format: lambdaNodejs.OutputFormat.ESM,
+    },
+    ...props,
+  });
 }
 
 export class OrchestrationStack extends cdk.Stack {
@@ -29,10 +63,7 @@ export class OrchestrationStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: OrchestrationStackProps) {
     super(scope, id, props);
 
-    this.runInitializerFn = new lambda.Function(this, 'RunInitializerFn', {
-      runtime: lambda.Runtime.NODEJS_20_X,
-      handler: 'index.handler',
-      code: inlineLambdaCode('RunInitializerFn'),
+    this.runInitializerFn = createNodejsFunction(this, 'RunInitializerFn', 'functions/run-initializer/handler.ts', {
       timeout: cdk.Duration.seconds(30),
       memorySize: 256,
       environment: {
@@ -41,10 +72,7 @@ export class OrchestrationStack extends cdk.Stack {
       tracing: lambda.Tracing.ACTIVE,
     });
 
-    this.executeStepFn = new lambda.Function(this, 'ExecuteStepFn', {
-      runtime: lambda.Runtime.NODEJS_20_X,
-      handler: 'index.handler',
-      code: inlineLambdaCode('ExecuteStepFn'),
+    this.executeStepFn = createNodejsFunction(this, 'ExecuteStepFn', 'functions/execute-step/handler.ts', {
       timeout: cdk.Duration.minutes(5),
       memorySize: 512,
       environment: {
@@ -54,10 +82,7 @@ export class OrchestrationStack extends cdk.Stack {
       tracing: lambda.Tracing.ACTIVE,
     });
 
-    this.runFinalizerFn = new lambda.Function(this, 'RunFinalizerFn', {
-      runtime: lambda.Runtime.NODEJS_20_X,
-      handler: 'index.handler',
-      code: inlineLambdaCode('RunFinalizerFn'),
+    this.runFinalizerFn = createNodejsFunction(this, 'RunFinalizerFn', 'functions/run-finalizer/handler.ts', {
       timeout: cdk.Duration.seconds(30),
       memorySize: 256,
       environment: {
@@ -67,10 +92,7 @@ export class OrchestrationStack extends cdk.Stack {
       tracing: lambda.Tracing.ACTIVE,
     });
 
-    this.notificationFn = new lambda.Function(this, 'NotificationFn', {
-      runtime: lambda.Runtime.NODEJS_20_X,
-      handler: 'index.handler',
-      code: inlineLambdaCode('NotificationFn'),
+    this.notificationFn = createNodejsFunction(this, 'NotificationFn', 'functions/notification/handler.ts', {
       timeout: cdk.Duration.seconds(30),
       memorySize: 256,
       environment: {

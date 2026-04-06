@@ -1,3 +1,11 @@
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import {
+  DynamoDBDocumentClient,
+  PutCommand,
+  QueryCommand,
+  UpdateCommand,
+} from '@aws-sdk/lib-dynamodb';
+
 import { auditEntryPK, auditEntrySK } from '../shared/keys.js';
 import { findRunRecordById } from '../shared/run-records.js';
 import type { AuditEntry, RunFinalizerInput, RunFinalizerOutput } from '../shared/types.js';
@@ -110,4 +118,45 @@ export function createRunFinalizerHandler(deps: RunFinalizerDeps) {
 
     return { runId: input.runId, status: input.status };
   };
+}
+
+let productionHandlerPromise:
+  | Promise<(input: RunFinalizerInput) => Promise<RunFinalizerOutput>>
+  | undefined;
+
+async function getProductionHandler() {
+  productionHandlerPromise ??= (async () => {
+    const { EventBridgeClient, PutEventsCommand } = await import('@aws-sdk/client-eventbridge');
+    const dynamoClient = DynamoDBDocumentClient.from(new DynamoDBClient({}));
+    const eventBridgeClient = new EventBridgeClient({});
+
+    return createRunFinalizerHandler({
+      dynamoClient: {
+        async query(params) {
+          const result = await dynamoClient.send(new QueryCommand(params));
+          return { Items: result.Items as Array<Record<string, unknown>> | undefined };
+        },
+        async update(params) {
+          return dynamoClient.send(new UpdateCommand(params));
+        },
+        async put(params) {
+          return dynamoClient.send(new PutCommand(params));
+        },
+      },
+      eventBridgeClient: {
+        async putEvents(params) {
+          return eventBridgeClient.send(new PutEventsCommand(params));
+        },
+      },
+      mainTableName: process.env.MAIN_TABLE_NAME ?? '',
+      eventBusName: process.env.EVENT_BUS_NAME ?? '',
+    });
+  })();
+
+  return productionHandlerPromise;
+}
+
+export async function handler(input: RunFinalizerInput): Promise<RunFinalizerOutput> {
+  const runtimeHandler = await getProductionHandler();
+  return runtimeHandler(input);
 }

@@ -1,3 +1,11 @@
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import {
+  DynamoDBDocumentClient,
+  PutCommand,
+  QueryCommand,
+  UpdateCommand,
+} from '@aws-sdk/lib-dynamodb';
+
 import type { RuntimeConnector } from '../shared/connectors.js';
 import { runtimeConnectorRegistry } from '../shared/connectors.js';
 import { runStepRecordPK, runStepRecordSK } from '../shared/keys.js';
@@ -7,6 +15,12 @@ const INLINE_OUTPUT_LIMIT_BYTES = 4 * 1024;
 
 export interface DynamoClientLike {
   put(params: { TableName: string; Item: Record<string, unknown> }): Promise<unknown>;
+  query?(params: {
+    TableName: string;
+    KeyConditionExpression: string;
+    ExpressionAttributeValues: Record<string, unknown>;
+    ScanIndexForward?: boolean;
+  }): Promise<{ Items?: Array<Record<string, unknown>> }>;
   update(params: {
     TableName: string;
     Key: Record<string, unknown>;
@@ -23,6 +37,10 @@ export interface S3ClientLike {
     Body: string;
     ContentType: string;
   }): Promise<unknown>;
+  getObject?(params: {
+    Bucket: string;
+    Key: string;
+  }): Promise<string>;
 }
 
 export interface MetricsLike {
@@ -50,6 +68,57 @@ function toRunStepError(error: unknown): RunStepError {
 
 function getOutputSizeBytes(output: unknown): number {
   return Buffer.byteLength(JSON.stringify(output), 'utf8');
+}
+
+async function buildPriorStepContext(
+  deps: ExecuteStepDeps,
+  input: ExecuteStepInput,
+): Promise<Record<string, unknown>> {
+  if (!deps.dynamoClient.query) {
+    return {};
+  }
+
+  const result = await deps.dynamoClient.query({
+    TableName: deps.mainTableName,
+    KeyConditionExpression: 'PK = :pk AND begins_with(SK, :prefix)',
+    ExpressionAttributeValues: {
+      ':pk': runStepRecordPK(input.runId),
+      ':prefix': 'STEP#',
+    },
+    ScanIndexForward: true,
+  });
+
+  const priorSteps = (result.Items ?? []).filter((item) => {
+    const stepIndex = typeof item.stepIndex === 'number' ? item.stepIndex : -1;
+    return stepIndex < input.step.stepIndex && item.status === 'SUCCESS';
+  });
+
+  const contextEntries = await Promise.all(
+    priorSteps.map(async (item) => {
+      const stepId = typeof item.stepId === 'string' ? item.stepId : null;
+      if (!stepId) {
+        return null;
+      }
+
+      if (Object.prototype.hasOwnProperty.call(item, 'output')) {
+        return [stepId, item.output] as const;
+      }
+
+      if (typeof item.outputRef === 'string' && deps.s3Client.getObject) {
+        const raw = await deps.s3Client.getObject({
+          Bucket: deps.artifactBucketName,
+          Key: item.outputRef,
+        });
+        return [stepId, JSON.parse(raw) as unknown] as const;
+      }
+
+      return null;
+    }),
+  );
+
+  return Object.fromEntries(
+    contextEntries.filter((entry): entry is readonly [string, unknown] => entry !== null),
+  );
 }
 
 export function createExecuteStepHandler(deps: ExecuteStepDeps) {
@@ -97,10 +166,15 @@ export function createExecuteStepHandler(deps: ExecuteStepDeps) {
     const startedAtMs = Date.now();
 
     try {
-      const stepResult = await connector.run(input.step.params, {
+      const priorStepContext = await buildPriorStepContext(deps, input);
+      const connectorContext = {
         ...input.accumulatedContext,
+        ...priorStepContext,
         tenantId: input.tenantId,
         traceId: input.traceId,
+      };
+      const stepResult = await connector.run(input.step.params, {
+        ...connectorContext,
       });
 
       const endedAt = now().toISOString();
@@ -108,6 +182,7 @@ export function createExecuteStepHandler(deps: ExecuteStepDeps) {
       const outputSize = getOutputSizeBytes(stepResult);
       const accumulatedContext = {
         ...input.accumulatedContext,
+        ...priorStepContext,
         [input.step.stepId]: stepResult,
       };
 
@@ -169,4 +244,50 @@ export function createExecuteStepHandler(deps: ExecuteStepDeps) {
       });
     }
   };
+}
+
+let productionHandlerPromise:
+  | Promise<(input: ExecuteStepInput) => Promise<ExecuteStepOutput>>
+  | undefined;
+
+async function getProductionHandler() {
+  productionHandlerPromise ??= (async () => {
+    const { PutObjectCommand, S3Client } = await import('@aws-sdk/client-s3');
+    const dynamoClient = DynamoDBDocumentClient.from(new DynamoDBClient({}));
+    const s3Client = new S3Client({});
+
+    return createExecuteStepHandler({
+      dynamoClient: {
+        async put(params) {
+          return dynamoClient.send(new PutCommand(params));
+        },
+        async query(params) {
+          const result = await dynamoClient.send(new QueryCommand(params));
+          return { Items: result.Items as Array<Record<string, unknown>> | undefined };
+        },
+        async update(params) {
+          return dynamoClient.send(new UpdateCommand(params));
+        },
+      },
+      s3Client: {
+        async getObject(params) {
+          const { GetObjectCommand } = await import('@aws-sdk/client-s3');
+          const response = await s3Client.send(new GetObjectCommand(params));
+          return (await response.Body?.transformToString()) ?? '';
+        },
+        async putObject(params) {
+          return s3Client.send(new PutObjectCommand(params));
+        },
+      },
+      mainTableName: process.env.MAIN_TABLE_NAME ?? '',
+      artifactBucketName: process.env.ARTIFACT_BUCKET_NAME ?? '',
+    });
+  })();
+
+  return productionHandlerPromise;
+}
+
+export async function handler(input: ExecuteStepInput): Promise<ExecuteStepOutput> {
+  const runtimeHandler = await getProductionHandler();
+  return runtimeHandler(input);
 }

@@ -1,7 +1,11 @@
 import { randomUUID } from 'node:crypto';
 
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import { DynamoDBDocumentClient, PutCommand, QueryCommand } from '@aws-sdk/lib-dynamodb';
+import {
+  BatchWriteCommand,
+  DynamoDBDocumentClient,
+  QueryCommand,
+} from '@aws-sdk/lib-dynamodb';
 
 export interface RunFailedEvent {
   detail: {
@@ -18,6 +22,27 @@ export interface NotificationDeps {
   mainTableName: string;
   clock?: () => Date;
   uuid?: () => string;
+}
+
+interface NotificationPreferences {
+  workflowId?: string;
+}
+
+function isSubscribed(
+  prefs: NotificationPreferences | undefined,
+  workflowId: string,
+): boolean {
+  return prefs?.workflowId === 'all' || prefs?.workflowId === workflowId;
+}
+
+function chunkItems<T>(items: T[], size: number): T[][] {
+  const chunks: T[][] = [];
+
+  for (let index = 0; index < items.length; index += size) {
+    chunks.push(items.slice(index, index + size));
+  }
+
+  return chunks;
 }
 
 export function createNotificationHandler(deps: NotificationDeps) {
@@ -39,26 +64,33 @@ export function createNotificationHandler(deps: NotificationDeps) {
       }),
     );
 
-    for (const user of users.Items ?? []) {
-      const prefs = user.notificationPrefs as { workflowId?: string } | undefined;
-      if (prefs?.workflowId && prefs.workflowId !== 'all' && prefs.workflowId !== workflowId) {
-        continue;
-      }
+    const notifications = (users.Items ?? [])
+      .filter((user) => isSubscribed(user.notificationPrefs as NotificationPreferences | undefined, workflowId))
+      .map((user) => {
+        const notificationId = uuid();
 
-      const notificationId = uuid();
+        return {
+          PutRequest: {
+            Item: {
+              PK: `USER#${user.userId}`,
+              SK: `NOTIFICATION#${createdAt}#${notificationId}`,
+              type: 'RUN_FAILED',
+              workflowId,
+              runId,
+              workflowName: event.detail.workflowName,
+              failedStepName: event.detail.failedStepName,
+              read: false,
+              createdAt,
+            },
+          },
+        };
+      });
+
+    for (const batch of chunkItems(notifications, 25)) {
       await deps.dynamoClient.send(
-        new PutCommand({
-          TableName: deps.mainTableName,
-          Item: {
-            PK: `USER#${user.userId}`,
-            SK: `NOTIFICATION#${createdAt}#${notificationId}`,
-            type: 'RUN_FAILED',
-            workflowId,
-            runId,
-            workflowName: event.detail.workflowName,
-            failedStepName: event.detail.failedStepName,
-            read: false,
-            createdAt,
+        new BatchWriteCommand({
+          RequestItems: {
+            [deps.mainTableName]: batch,
           },
         }),
       );
