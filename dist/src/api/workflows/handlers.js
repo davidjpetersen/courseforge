@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { compilePlan } from '../../../packages/utils/src/compile-plan.js';
-import { bumpMinor, compareSemver } from '../../../packages/utils/src/semver.js';
+import { bumpMinor } from '../../../packages/utils/src/semver.js';
+import { filterWorkflows, sortVersionsDescending, summarizeSteps, toVersionMetadata } from './logic.js';
 const JSON_HEADERS = { 'Content-Type': 'application/json' };
 function jsonResponse(statusCode, body) {
     return { statusCode, headers: JSON_HEADERS, body: JSON.stringify(body) };
@@ -36,9 +37,6 @@ function ensureActiveConnections(connections, expectedCount) {
     }
     const inactive = connections.find((connection) => connection.status !== 'active');
     return inactive ? `Connection ${inactive.connectionId} is not active` : null;
-}
-function summarizeSteps(steps) {
-    return steps.map((step) => step.name);
 }
 export function createCreateWorkflowHandler(workflowRepo, connectionRepo, recipeRegistry) {
     return async (event) => {
@@ -128,15 +126,7 @@ export function createListWorkflowsHandler(workflowRepo) {
         const statusFilter = event.queryStringParameters?.status;
         const environmentFilter = event.queryStringParameters?.environmentId;
         const workflows = await workflowRepo.listWorkflows(tenantId);
-        const filtered = workflows.filter((workflow) => {
-            if (statusFilter && workflow.status !== statusFilter) {
-                return false;
-            }
-            if (environmentFilter && workflow.environmentId !== environmentFilter) {
-                return false;
-            }
-            return true;
-        });
+        const filtered = filterWorkflows(workflows, statusFilter, environmentFilter);
         return jsonResponse(200, { workflows: filtered });
     };
 }
@@ -276,16 +266,7 @@ export function createListWorkflowVersionsHandler(workflowRepo) {
             return jsonResponse(400, { message: 'workflowId is required' });
         }
         const versions = await workflowRepo.listVersions(workflowId);
-        const metadataOnly = versions
-            .sort((a, b) => compareSemver(b.semver, a.semver))
-            .map((version) => ({
-            versionId: version.versionId,
-            workflowId: version.workflowId,
-            semver: version.semver,
-            createdBy: version.createdBy,
-            createdAt: version.createdAt,
-            recipeId: version.recipeId,
-        }));
+        const metadataOnly = sortVersionsDescending(versions).map(toVersionMetadata);
         return jsonResponse(200, { versions: metadataOnly });
     };
 }

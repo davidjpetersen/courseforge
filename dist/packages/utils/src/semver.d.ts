@@ -1,3 +1,4 @@
+export declare function parseSemver(version: string): [number, number, number];
 export declare function bumpMinor(version: string): string;
 export declare function bumpPatch(version: string): string;
 export declare function compareSemver(a: string, b: string): number;

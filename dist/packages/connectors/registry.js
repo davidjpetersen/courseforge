@@ -14,10 +14,9 @@ export const connectorRegistry = {
     'lti-provision': ltiProvisionConnector,
 };
 export function resolveConnector(connectorKey) {
-    const connector = connectorRegistry[connectorKey];
-    if (!connector) {
+    if (!Object.prototype.hasOwnProperty.call(connectorRegistry, connectorKey)) {
         throw new Error(`Unknown connector key: ${connectorKey}`);
     }
-    return connector;
+    return connectorRegistry[connectorKey];
 }
 //# sourceMappingURL=registry.js.map

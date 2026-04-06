@@ -1,2 +1,3 @@
 export { createArchiveWorkflowHandler, createCreateWorkflowHandler, createGetWorkflowHandler, createListWorkflowVersionsHandler, createListWorkflowsHandler, createPauseWorkflowHandler, createPublishWorkflowHandler, } from './handlers.js';
+export { filterWorkflows, getTransitionError, isValidTransition, sortVersionsDescending, summarizeSteps, toVersionMetadata, validateConnections, validateCreateRequest, } from './logic.js';
 //# sourceMappingURL=index.js.map

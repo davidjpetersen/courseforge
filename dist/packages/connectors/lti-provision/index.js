@@ -1,7 +1,7 @@
 function buildUrl(baseUrl, path) {
     return `${baseUrl.replace(/\/$/, '')}${path}`;
 }
-async function parseLmsError(response, lmsType) {
+export async function parseLmsError(response, lmsType) {
     let payload;
     try {
         payload = (await response.json());
@@ -28,7 +28,7 @@ async function parseLmsError(response, lmsType) {
         message: String(payload?.Message ?? 'Brightspace provisioning failed'),
     };
 }
-function createD2LSignature(apiKey, secret, path) {
+export function createD2LSignature(apiKey, secret, path) {
     const raw = `${apiKey}:${secret}:${path}`;
     return Buffer.from(raw).toString('base64url');
 }
@@ -173,5 +173,4 @@ export const ltiProvisionConnector = {
     },
 };
 export default ltiProvisionConnector;
-export { parseLmsError };
 //# sourceMappingURL=index.js.map

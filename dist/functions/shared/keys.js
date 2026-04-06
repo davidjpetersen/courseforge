@@ -20,7 +20,7 @@ export function runStepRecordPK(runId) {
     return `${RUN_PREFIX}${runId}`;
 }
 export function runStepRecordSK(stepIndex, stepId) {
-    return `${STEP_PREFIX}${stepIndex}#${stepId}`;
+    return `${STEP_PREFIX}${String(stepIndex).padStart(4, '0')}#${stepId}`;
 }
 export function auditEntryPK(tenantId) {
     return tenantPK(tenantId);

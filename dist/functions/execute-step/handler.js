@@ -1,3 +1,5 @@
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import { DynamoDBDocumentClient, PutCommand, UpdateCommand, } from '@aws-sdk/lib-dynamodb';
 import { runtimeConnectorRegistry } from '../shared/connectors.js';
 import { runStepRecordPK, runStepRecordSK } from '../shared/keys.js';
 const INLINE_OUTPUT_LIMIT_BYTES = 4 * 1024;
@@ -16,6 +18,7 @@ export function createExecuteStepHandler(deps) {
     const now = deps.clock ?? (() => new Date());
     const connectors = deps.connectors ?? runtimeConnectorRegistry;
     const metrics = deps.metrics;
+    const tracer = deps.tracer;
     return async (input) => {
         const startedAtIso = now().toISOString();
         const stepKey = {
@@ -51,11 +54,15 @@ export function createExecuteStepHandler(deps) {
             throw Object.assign(new Error(error.message), { code: error.code, failedStepId: input.step.stepId });
         }
         const startedAtMs = Date.now();
+        const subsegment = tracer?.startSubsegment(`connector:${input.step.connectorKey}:${input.step.stepId}`);
         try {
-            const stepResult = await connector.run(input.step.params, {
+            const connectorContext = {
                 ...input.accumulatedContext,
                 tenantId: input.tenantId,
                 traceId: input.traceId,
+            };
+            const stepResult = await connector.run(input.step.params, {
+                ...connectorContext,
             });
             const endedAt = now().toISOString();
             const durationMs = Date.now() - startedAtMs;
@@ -97,12 +104,14 @@ export function createExecuteStepHandler(deps) {
                     },
                 });
             }
-            metrics?.putMetric('courseforge/StepExecutionDuration', durationMs, 'Milliseconds');
             metrics?.putMetric('courseforge/StepSuccess', 1, 'Count');
+            metrics?.putMetric('courseforge/StepExecutionDuration', durationMs, 'Milliseconds');
+            subsegment?.close?.();
             return { accumulatedContext, stepResult };
         }
         catch (error) {
             const runStepError = toRunStepError(error);
+            const durationMs = Date.now() - startedAtMs;
             await deps.dynamoClient.update({
                 TableName: deps.mainTableName,
                 Key: stepKey,
@@ -114,7 +123,12 @@ export function createExecuteStepHandler(deps) {
                     ':error': runStepError,
                 },
             });
+            if (error instanceof Error) {
+                subsegment?.addError?.(error);
+            }
             metrics?.putMetric('courseforge/StepSuccess', 0, 'Count');
+            metrics?.putMetric('courseforge/StepExecutionDuration', durationMs, 'Milliseconds');
+            subsegment?.close?.(error instanceof Error ? error : undefined);
             throw Object.assign(error instanceof Error ? error : new Error(runStepError.message), {
                 code: runStepError.code,
                 rawResponse: runStepError.rawResponse,
@@ -122,5 +136,55 @@ export function createExecuteStepHandler(deps) {
             });
         }
     };
+}
+let productionHandlerPromise;
+async function createProductionTracer() {
+    try {
+        const awsXray = await import('aws-xray-sdk-core');
+        const getSegment = awsXray.getSegment;
+        if (!getSegment) {
+            return undefined;
+        }
+        return {
+            startSubsegment(name) {
+                const segment = getSegment();
+                return segment?.addNewSubsegment(name);
+            },
+        };
+    }
+    catch {
+        return undefined;
+    }
+}
+async function getProductionHandler() {
+    productionHandlerPromise ??= (async () => {
+        const { PutObjectCommand, S3Client } = await import('@aws-sdk/client-s3');
+        const dynamoClient = DynamoDBDocumentClient.from(new DynamoDBClient({}));
+        const s3Client = new S3Client({});
+        const tracer = await createProductionTracer();
+        return createExecuteStepHandler({
+            dynamoClient: {
+                async put(params) {
+                    return dynamoClient.send(new PutCommand(params));
+                },
+                async update(params) {
+                    return dynamoClient.send(new UpdateCommand(params));
+                },
+            },
+            s3Client: {
+                async putObject(params) {
+                    return s3Client.send(new PutObjectCommand(params));
+                },
+            },
+            mainTableName: process.env.MAIN_TABLE_NAME ?? '',
+            artifactBucketName: process.env.ARTIFACT_BUCKET_NAME ?? '',
+            tracer,
+        });
+    })();
+    return productionHandlerPromise;
+}
+export async function handler(input) {
+    const runtimeHandler = await getProductionHandler();
+    return runtimeHandler(input);
 }
 //# sourceMappingURL=handler.js.map

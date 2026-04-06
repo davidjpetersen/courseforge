@@ -1,7 +1,8 @@
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import { DynamoDBDocumentClient, GetCommand, QueryCommand, UpdateCommand, } from '@aws-sdk/lib-dynamodb';
 import { RunStatus } from '../../packages/types/src/index.js';
-import { workflowMetaSK, workflowPK } from '../../src/models/schema.js';
+import { tenantPK, workflowSK } from '../../src/models/schema.js';
 import { findRunRecordById } from '../shared/run-records.js';
-import { workflowVersionPK, workflowVersionSK } from '../shared/keys.js';
 function parseCompiledPlan(compiledPlan) {
     if (typeof compiledPlan === 'string') {
         return JSON.parse(compiledPlan);
@@ -17,26 +18,30 @@ export function createRunInitializerHandler(deps) {
         const workflowMeta = await deps.dynamoClient.get({
             TableName: deps.mainTableName,
             Key: {
-                PK: workflowPK(input.workflowId),
-                SK: workflowMetaSK(),
+                PK: tenantPK(input.tenantId),
+                SK: workflowSK(input.workflowId),
             },
         });
         if (!workflowMeta.Item) {
             throw new Error('workflow not found');
         }
-        const versionId = workflowMeta.Item.publishedVersionId;
-        if (typeof versionId !== 'string' || versionId.length === 0) {
+        const versionId = workflowMeta.Item.currentVersionId;
+        if (workflowMeta.Item.status !== 'PUBLISHED' ||
+            typeof versionId !== 'string' ||
+            versionId.length === 0) {
             throw new Error('no published version');
         }
-        const version = await deps.dynamoClient.get({
+        const versions = await deps.dynamoClient.query({
             TableName: deps.mainTableName,
-            Key: {
-                PK: workflowVersionPK(input.workflowId),
-                SK: workflowVersionSK(versionId),
+            KeyConditionExpression: 'PK = :pk AND begins_with(SK, :skPrefix)',
+            ExpressionAttributeValues: {
+                ':pk': workflowSK(input.workflowId),
+                ':skPrefix': 'VERSION#',
             },
         });
-        if (!version.Item) {
-            throw new Error('workflow not found');
+        const version = (versions.Items ?? []).find((item) => item.versionId === versionId);
+        if (!version) {
+            throw new Error('no published version');
         }
         const runRecord = await findRunRecordById(deps.dynamoClient, deps.mainTableName, input.tenantId, input.runId);
         if (!runRecord) {
@@ -62,7 +67,7 @@ export function createRunInitializerHandler(deps) {
             },
         });
         return {
-            steps: parseCompiledPlan(version.Item.compiledPlan),
+            steps: parseCompiledPlan(version.compiledPlan),
             workflowId: input.workflowId,
             runId: input.runId,
             tenantId: input.tenantId,
@@ -72,4 +77,20 @@ export function createRunInitializerHandler(deps) {
         };
     };
 }
+const dynamoClient = DynamoDBDocumentClient.from(new DynamoDBClient({}));
+export const handler = createRunInitializerHandler({
+    dynamoClient: {
+        async get(params) {
+            return dynamoClient.send(new GetCommand(params));
+        },
+        async query(params) {
+            const result = await dynamoClient.send(new QueryCommand(params));
+            return { Items: result.Items };
+        },
+        async update(params) {
+            return dynamoClient.send(new UpdateCommand(params));
+        },
+    },
+    mainTableName: process.env.MAIN_TABLE_NAME ?? '',
+});
 //# sourceMappingURL=handler.js.map

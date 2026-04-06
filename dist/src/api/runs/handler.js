@@ -14,7 +14,7 @@ export function createRunsHandler(repo) {
         const params = validation.parsed;
         let result;
         if (params.workflowId !== undefined) {
-            result = await repo.queryByWorkflow(params.workflowId, params);
+            result = await repo.queryByWorkflow(tenantId, params.workflowId, params);
         }
         else if (params.status !== undefined) {
             result = await repo.queryByTenantStatus(tenantId, params.status, params);

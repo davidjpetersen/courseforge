@@ -52,11 +52,18 @@ describe('createExecuteStepHandler', () => {
     });
     it('records step failure and rethrows the error', async () => {
         const update = vi.fn(async () => ({}));
+        const putMetric = vi.fn();
+        const close = vi.fn();
+        const addError = vi.fn();
         const handler = createExecuteStepHandler({
             dynamoClient: { put: vi.fn(async () => ({})), update },
             s3Client: { putObject: vi.fn(async () => ({})) },
             mainTableName: 'courseforge-main',
             artifactBucketName: 'artifacts',
+            metrics: { putMetric },
+            tracer: {
+                startSubsegment: vi.fn(() => ({ addError, close })),
+            },
             connectors: new Map([
                 ['echo', { run: async () => { throw Object.assign(new Error('boom'), { code: 'ConnectorError' }); } }],
             ]),
@@ -68,6 +75,65 @@ describe('createExecuteStepHandler', () => {
             message: 'boom',
             code: 'ConnectorError',
         });
+        expect(putMetric).toHaveBeenCalledWith('courseforge/StepSuccess', 0, 'Count');
+        expect(putMetric).toHaveBeenCalledWith('courseforge/StepExecutionDuration', expect.any(Number), 'Milliseconds');
+        expect(addError).toHaveBeenCalledWith(expect.any(Error));
+        expect(close).toHaveBeenCalledWith(expect.any(Error));
+    });
+    it('passes the accumulated context from the workflow runner into the connector', async () => {
+        const connectorRun = vi.fn(async () => ({ value: 'next' }));
+        const handler = createExecuteStepHandler({
+            dynamoClient: {
+                put: vi.fn(async () => ({})),
+                update: vi.fn(async () => ({})),
+            },
+            s3Client: { putObject: vi.fn(async () => ({})) },
+            mainTableName: 'courseforge-main',
+            artifactBucketName: 'artifacts',
+            connectors: new Map([
+                ['echo', { run: connectorRun }],
+            ]),
+        });
+        const result = await handler({
+            ...baseInput,
+            accumulatedContext: {
+                ...baseInput.accumulatedContext,
+                'step-0': { fromPrevious: true },
+            },
+            step: {
+                ...baseInput.step,
+                stepId: 'step-1',
+                stepIndex: 1,
+            },
+        });
+        expect(connectorRun).toHaveBeenCalledWith({ value: 'hello' }, expect.objectContaining({
+            existing: true,
+            'step-0': { fromPrevious: true },
+            tenantId: 'tenant-1',
+            traceId: 'trace-1',
+        }));
+        expect(result.accumulatedContext).toMatchObject({
+            existing: true,
+            'step-0': { fromPrevious: true },
+            'step-1': { value: 'next' },
+        });
+    });
+    it('creates and closes an X-Ray-style subsegment around connector execution', async () => {
+        const close = vi.fn();
+        const startSubsegment = vi.fn(() => ({ close }));
+        const handler = createExecuteStepHandler({
+            dynamoClient: {
+                put: vi.fn(async () => ({})),
+                update: vi.fn(async () => ({})),
+            },
+            s3Client: { putObject: vi.fn(async () => ({})) },
+            mainTableName: 'courseforge-main',
+            artifactBucketName: 'artifacts',
+            tracer: { startSubsegment },
+        });
+        await handler(baseInput);
+        expect(startSubsegment).toHaveBeenCalledWith('connector:echo:step-1');
+        expect(close).toHaveBeenCalledWith();
     });
 });
 //# sourceMappingURL=handler.test.js.map

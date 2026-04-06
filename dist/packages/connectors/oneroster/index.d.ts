@@ -62,11 +62,14 @@ export declare class BatchSyncThresholdError extends Error {
     constructor(errorRate: number, total: number);
 }
 export declare function buildEnrollmentsUrl(baseUrl: string, since?: string): string;
+export declare function filterEnrollmentsByOrg(enrollments: Record<string, unknown>[], targetOrgId?: string): Record<string, unknown>[];
+export declare function buildUserIdBatches(userIds: string[]): string[][];
 export declare function getAccessToken(baseUrl: string, clientId: string, clientSecret: string): Promise<string>;
 export declare function fetchEnrollments(baseUrl: string, accessToken: string, since?: string): Promise<Record<string, unknown>[]>;
 export declare function fetchUsers(baseUrl: string, accessToken: string, userIds: string[]): Promise<Record<string, unknown>[]>;
 export declare function applyFieldMappings(record: Record<string, unknown>, mappings: FieldMapping[]): Record<string, unknown>;
 export declare function syncToTarget(mappedRecords: Record<string, unknown>[], context: ConnectorContext): Promise<number>;
+export declare function ensureErrorThreshold(total: number, errorCount: number): void;
 export declare const oneRosterConnector: ConnectorDefinition<OneRosterParams, OneRosterResult>;
 export default oneRosterConnector;
 //# sourceMappingURL=index.d.ts.map

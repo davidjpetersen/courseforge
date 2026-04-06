@@ -39,4 +39,5 @@ export interface RunFinalizerDeps {
     clock?: () => Date;
 }
 export declare function createRunFinalizerHandler(deps: RunFinalizerDeps): (input: RunFinalizerInput) => Promise<RunFinalizerOutput>;
+export declare function handler(input: RunFinalizerInput): Promise<RunFinalizerOutput>;
 //# sourceMappingURL=handler.d.ts.map

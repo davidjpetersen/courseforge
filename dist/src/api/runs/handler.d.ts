@@ -10,7 +10,7 @@ export interface RunRepository {
         items: Run[];
         lastKey?: Record<string, unknown>;
     }>;
-    queryByWorkflow(workflowId: string, params: RunsQueryParams): Promise<{
+    queryByWorkflow(tenantId: string, workflowId: string, params: RunsQueryParams): Promise<{
         items: Run[];
         lastKey?: Record<string, unknown>;
     }>;

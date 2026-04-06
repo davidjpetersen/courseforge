@@ -29,4 +29,5 @@ export interface RunInitializerDeps {
     clock?: () => Date;
 }
 export declare function createRunInitializerHandler(deps: RunInitializerDeps): (input: RunInitializerInput) => Promise<RunInitializerOutput>;
+export declare const handler: (input: RunInitializerInput) => Promise<RunInitializerOutput>;
 //# sourceMappingURL=handler.d.ts.map

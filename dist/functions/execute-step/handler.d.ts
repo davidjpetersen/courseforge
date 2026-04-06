@@ -24,6 +24,13 @@ export interface S3ClientLike {
 export interface MetricsLike {
     putMetric(name: string, value: number, unit: string): void;
 }
+export interface TraceSubsegmentLike {
+    addError?(error: Error): void;
+    close?(error?: Error): void;
+}
+export interface TracerLike {
+    startSubsegment(name: string): TraceSubsegmentLike | undefined;
+}
 export interface ExecuteStepDeps {
     dynamoClient: DynamoClientLike;
     s3Client: S3ClientLike;
@@ -32,6 +39,8 @@ export interface ExecuteStepDeps {
     connectors?: Map<string, RuntimeConnector>;
     clock?: () => Date;
     metrics?: MetricsLike;
+    tracer?: TracerLike;
 }
 export declare function createExecuteStepHandler(deps: ExecuteStepDeps): (input: ExecuteStepInput) => Promise<ExecuteStepOutput>;
+export declare function handler(input: ExecuteStepInput): Promise<ExecuteStepOutput>;
 //# sourceMappingURL=handler.d.ts.map

@@ -29,7 +29,7 @@ describe('createRunsHandler', () => {
         const event = makeEvent({ queryStringParameters: { workflowId: 'wf-1' } });
         const response = await handler(event);
         expect(response.statusCode).toBe(200);
-        expect(mockRepo.queryByWorkflow).toHaveBeenCalledWith('wf-1', expect.objectContaining({ workflowId: 'wf-1' }));
+        expect(mockRepo.queryByWorkflow).toHaveBeenCalledWith('tenant-1', 'wf-1', expect.objectContaining({ workflowId: 'wf-1' }));
         expect(mockRepo.queryByTenant).not.toHaveBeenCalled();
         expect(mockRepo.queryByTenantStatus).not.toHaveBeenCalled();
     });

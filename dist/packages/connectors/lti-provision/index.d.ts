@@ -41,8 +41,8 @@ export interface LtiError {
     message: string;
     field?: string;
 }
-declare function parseLmsError(response: Response, lmsType: string): Promise<LtiError>;
+export declare function parseLmsError(response: Response, lmsType: string): Promise<LtiError>;
+export declare function createD2LSignature(apiKey: string, secret: string, path: string): string;
 export declare const ltiProvisionConnector: ConnectorDefinition<LtiProvisionParams, LtiProvisionResult>;
 export default ltiProvisionConnector;
-export { parseLmsError };
 //# sourceMappingURL=index.d.ts.map
