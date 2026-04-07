@@ -5,6 +5,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import type { Run } from '../../../packages/types/src/runs';
 import { RunStatus } from '../../../packages/types/src';
+import { EnvironmentSelector } from '../../components/EnvironmentSelector';
+import { useEnvironment } from '../../context/EnvironmentContext';
 
 const STATUS_CLASS: Record<Run['status'], string> = {
   SUCCESS: 'bg-emerald-100 text-emerald-800 ring-1 ring-inset ring-emerald-200',
@@ -55,6 +57,7 @@ function formatDuration(durationMs?: number): string {
 }
 
 export default function RunsPage() {
+  const { environmentId } = useEnvironment();
   const [runs, setRuns] = useState<Run[]>([]);
   const [cursor, setCursor] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
@@ -84,6 +87,7 @@ export default function RunsPage() {
     setLoading(true);
     setError(null);
     const params = new URLSearchParams();
+    if (environmentId) params.set('environmentId', environmentId);
     if (workflowId) params.set('workflowId', workflowId);
     if (statuses.length > 0) params.set('status', statuses.join(','));
     if (dateFrom) params.set('dateFrom', dateFrom);
@@ -107,8 +111,10 @@ export default function RunsPage() {
   }
 
   useEffect(() => {
+    setRuns([]);
+    setCursor(undefined);
     void load(false);
-  }, [workflowId, statuses, dateFrom, dateTo]);
+  }, [environmentId, workflowId, statuses, dateFrom, dateTo]);
 
   useEffect(() => {
     if (intervalRef.current !== null) {
@@ -130,7 +136,7 @@ export default function RunsPage() {
         intervalRef.current = null;
       }
     };
-  }, [hasActiveRun, workflowId, statuses, dateFrom, dateTo]);
+  }, [hasActiveRun, environmentId, workflowId, statuses, dateFrom, dateTo]);
 
   function toggleStatus(nextStatus: Run['status']) {
     setStatuses((current) =>
@@ -142,6 +148,11 @@ export default function RunsPage() {
 
   return (
     <main className="min-h-screen space-y-6 bg-[radial-gradient(circle_at_top_left,_rgba(14,165,233,0.12),_transparent_35%),linear-gradient(180deg,_#f8fafc_0%,_#eef2ff_100%)] p-6">
+      <div className="flex items-center justify-between">
+        <div />
+        <EnvironmentSelector />
+      </div>
+
       <div className="space-y-2">
         <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Run history</h1>
         <p className="text-sm text-slate-600">

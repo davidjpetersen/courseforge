@@ -176,3 +176,12 @@ export interface ConnectorDefinition {
     baseUrl?: string,
   ) => Promise<TestResult>;
 }
+
+export interface EnvironmentRecord {
+  environmentId: string;
+  tenantId: string;
+  name: string;
+  description: string;
+  isDefault: boolean;
+  createdAt: string; // ISO 8601
+}

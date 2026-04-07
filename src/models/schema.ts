@@ -20,6 +20,7 @@ export const KEY_PREFIX = {
   WORKFLOW_ENTITY: 'WF#',
   CONNECTION: 'CONNECTION#',
   AUDIT: 'AUDIT#',
+  ENV: 'ENV#',
   WEBHOOK_SECRET: 'WEBHOOK_SECRET#',
   RUN: 'RUN#',
   SCHEDULE: 'SCHEDULE#',
@@ -69,6 +70,10 @@ export function workflowMetaSK(): string {
 
 export function connectionSK(connectionId: string): string {
   return `${KEY_PREFIX.CONNECTION}${connectionId}`;
+}
+
+export function envSK(environmentId: string): string {
+  return `${KEY_PREFIX.ENV}${environmentId}`;
 }
 
 export function auditSK(timestamp: string, id: string): string {
