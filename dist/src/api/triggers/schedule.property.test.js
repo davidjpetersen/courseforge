@@ -21,13 +21,13 @@ function makeCreateDeps(overrides = {}) {
                 async get() {
                     return {};
                 },
-                put,
+                put: put,
                 async update() {
                     return {};
                 },
             },
             schedulerClient: {
-                createSchedule,
+                createSchedule: createSchedule,
                 async deleteSchedule() {
                     return {};
                 },
@@ -84,6 +84,8 @@ describe('Property 10: Cron expression syntax validation', () => {
             const { deps } = makeCreateDeps();
             const handler = createCreateScheduleHandler(deps);
             const response = await handler({
+                httpMethod: 'POST',
+                path: `/triggers/${workflowId}/schedules`,
                 pathParameters: { workflowId },
                 headers: { 'x-tenant-id': 'tenant-prop10' },
                 body: JSON.stringify({ cronExpression }),
@@ -103,6 +105,8 @@ describe('Property 10: Cron expression syntax validation', () => {
             const { deps } = makeCreateDeps();
             const handler = createCreateScheduleHandler(deps);
             const response = await handler({
+                httpMethod: 'POST',
+                path: `/triggers/${workflowId}/schedules`,
                 pathParameters: { workflowId },
                 headers: { 'x-tenant-id': 'tenant-prop10' },
                 body: JSON.stringify({ cronExpression }),
@@ -124,6 +128,8 @@ describe('Property 11: Minimum schedule interval enforcement', () => {
             const { deps } = makeCreateDeps();
             const handler = createCreateScheduleHandler(deps);
             const response = await handler({
+                httpMethod: 'POST',
+                path: `/triggers/${workflowId}/schedules`,
                 pathParameters: { workflowId },
                 headers: { 'x-tenant-id': 'tenant-prop11' },
                 body: JSON.stringify({ cronExpression: '* * * * *' }),
@@ -137,6 +143,8 @@ describe('Property 11: Minimum schedule interval enforcement', () => {
             const { deps } = makeCreateDeps();
             const handler = createCreateScheduleHandler(deps);
             const response = await handler({
+                httpMethod: 'POST',
+                path: `/triggers/${workflowId}/schedules`,
                 pathParameters: { workflowId },
                 headers: { 'x-tenant-id': 'tenant-prop11' },
                 body: JSON.stringify({ cronExpression }),
@@ -157,6 +165,8 @@ describe('Property 12: Schedule creation produces complete outputs', () => {
             const { deps } = makeCreateDeps({ createSchedule, put });
             const handler = createCreateScheduleHandler(deps);
             const response = await handler({
+                httpMethod: 'POST',
+                path: `/triggers/${workflowId}/schedules`,
                 pathParameters: { workflowId },
                 headers: { 'x-tenant-id': tenantId },
                 body: JSON.stringify({ cronExpression }),
@@ -190,6 +200,8 @@ describe('Property 13: Schedule deletion soft-deletes record', () => {
             const { deps, deleteSchedule, update } = makeDeleteDeps(existingItem);
             const handler = createDeleteScheduleHandler(deps);
             const response = await handler({
+                httpMethod: 'DELETE',
+                path: `/triggers/${workflowId}/schedules/${scheduleId}`,
                 pathParameters: { workflowId, scheduleId },
                 headers: null,
                 body: null,

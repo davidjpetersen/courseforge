@@ -21,8 +21,8 @@ function makeCreateDeps(overrides: {
   createSchedule?: ReturnType<typeof vi.fn>;
   put?: ReturnType<typeof vi.fn>;
 } = {}) {
-  const createSchedule = overrides.createSchedule ?? vi.fn(async () => ({}));
-  const put = overrides.put ?? vi.fn(async () => ({}));
+  const createSchedule = overrides.createSchedule ?? vi.fn(async () => ({}) as unknown);
+  const put = overrides.put ?? vi.fn(async () => ({}) as unknown);
 
   return {
     deps: {
@@ -30,13 +30,13 @@ function makeCreateDeps(overrides: {
         async get() {
           return {};
         },
-        put,
+        put: put as unknown as (params: { TableName: string; Item: Record<string, unknown> }) => Promise<unknown>,
         async update() {
           return {};
         },
       },
       schedulerClient: {
-        createSchedule,
+        createSchedule: createSchedule as unknown as (input: Record<string, unknown>) => Promise<unknown>,
         async deleteSchedule() {
           return {};
         },
@@ -107,6 +107,8 @@ describe('Property 10: Cron expression syntax validation', () => {
           const handler = createCreateScheduleHandler(deps);
 
           const response = await handler({
+            httpMethod: 'POST',
+            path: `/triggers/${workflowId}/schedules`,
             pathParameters: { workflowId },
             headers: { 'x-tenant-id': 'tenant-prop10' },
             body: JSON.stringify({ cronExpression }),
@@ -140,6 +142,8 @@ describe('Property 10: Cron expression syntax validation', () => {
           const handler = createCreateScheduleHandler(deps);
 
           const response = await handler({
+            httpMethod: 'POST',
+            path: `/triggers/${workflowId}/schedules`,
             pathParameters: { workflowId },
             headers: { 'x-tenant-id': 'tenant-prop10' },
             body: JSON.stringify({ cronExpression }),
@@ -169,6 +173,8 @@ describe('Property 11: Minimum schedule interval enforcement', () => {
         const handler = createCreateScheduleHandler(deps);
 
         const response = await handler({
+          httpMethod: 'POST',
+          path: `/triggers/${workflowId}/schedules`,
           pathParameters: { workflowId },
           headers: { 'x-tenant-id': 'tenant-prop11' },
           body: JSON.stringify({ cronExpression: '* * * * *' }),
@@ -191,6 +197,8 @@ describe('Property 11: Minimum schedule interval enforcement', () => {
           const handler = createCreateScheduleHandler(deps);
 
           const response = await handler({
+            httpMethod: 'POST',
+            path: `/triggers/${workflowId}/schedules`,
             pathParameters: { workflowId },
             headers: { 'x-tenant-id': 'tenant-prop11' },
             body: JSON.stringify({ cronExpression }),
@@ -221,12 +229,14 @@ describe('Property 12: Schedule creation produces complete outputs', () => {
       fc.asyncProperty(
         fc.record({ cronExpression: arbValidCron, workflowId: arbId, tenantId: arbId }),
         async ({ cronExpression, workflowId, tenantId }) => {
-          const createSchedule = vi.fn(async () => ({}));
-          const put = vi.fn(async () => ({}));
-          const { deps } = makeCreateDeps({ createSchedule, put });
+          const createSchedule = vi.fn(async () => ({}) as unknown);
+          const put = vi.fn(async () => ({}) as unknown);
+          const { deps } = makeCreateDeps({ createSchedule, put } as Record<string, ReturnType<typeof vi.fn>>);
           const handler = createCreateScheduleHandler(deps);
 
           const response = await handler({
+            httpMethod: 'POST',
+            path: `/triggers/${workflowId}/schedules`,
             pathParameters: { workflowId },
             headers: { 'x-tenant-id': tenantId },
             body: JSON.stringify({ cronExpression }),
@@ -241,7 +251,7 @@ describe('Property 12: Schedule creation produces complete outputs', () => {
           expect(put).toHaveBeenCalledTimes(1);
 
           // Verify DynamoDB item has correct PK/SK key pattern
-          const putCall = put.mock.calls[0] as [{ TableName: string; Item: Record<string, unknown> }];
+          const putCall = put.mock.calls[0] as unknown as [{ TableName: string; Item: Record<string, unknown> }];
           const item = putCall[0].Item;
           expect(item.PK).toBe(schedulePK(workflowId));
 
@@ -276,6 +286,8 @@ describe('Property 13: Schedule deletion soft-deletes record', () => {
           const handler = createDeleteScheduleHandler(deps);
 
           const response = await handler({
+            httpMethod: 'DELETE',
+            path: `/triggers/${workflowId}/schedules/${scheduleId}`,
             pathParameters: { workflowId, scheduleId },
             headers: null,
             body: null,
@@ -294,7 +306,7 @@ describe('Property 13: Schedule deletion soft-deletes record', () => {
           expect(update).toHaveBeenCalledTimes(1);
 
           // The update must set deletedAt to a valid ISO 8601 string (not physically delete)
-          const updateCall = update.mock.calls[0] as [
+          const updateCall = update.mock.calls[0] as unknown as [
             {
               TableName: string;
               Key: Record<string, unknown>;

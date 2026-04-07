@@ -20,6 +20,8 @@ describe('Property 9: Webhook secret hash round-trip', () => {
                 mainTableName: 'courseforge-main',
             });
             const response = await handler({
+                httpMethod: 'POST',
+                path: `/triggers/${workflowId}/webhook-secret`,
                 pathParameters: { workflowId },
                 headers: { 'x-tenant-id': tenantId },
                 body: null,
