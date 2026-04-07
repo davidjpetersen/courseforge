@@ -60,6 +60,41 @@ describe('validateCredentials', () => {
       errors: [{ field: 'connectorKey', message: 'Unknown connector' }],
     });
   });
+
+  it('rejects extra fields not in the schema', () => {
+    const result = validateCredentials(
+      'canvas-lms',
+      { baseUrl: 'https://canvas.example.edu', apiKey: 'secret', extraField: 'nope' },
+      connectorRegistry,
+    );
+    expect(result.valid).toBe(false);
+  });
+
+  it('rejects wrong types for credential fields', () => {
+    const result = validateCredentials(
+      'canvas-lms',
+      { baseUrl: 123, apiKey: true },
+      connectorRegistry,
+    );
+    expect(result.valid).toBe(false);
+    if (!result.valid) {
+      expect(result.errors.length).toBeGreaterThan(0);
+    }
+  });
+
+  it('rejects empty object for a connector requiring fields', () => {
+    const result = validateCredentials('blackboard', {}, connectorRegistry);
+    expect(result.valid).toBe(false);
+    if (!result.valid) {
+      expect(result.errors).toEqual(
+        expect.arrayContaining([
+          { field: 'baseUrl', message: 'is required' },
+          { field: 'username', message: 'is required' },
+          { field: 'password', message: 'is required' },
+        ]),
+      );
+    }
+  });
 });
 
 describe('connection logic helpers', () => {
@@ -125,6 +160,66 @@ describe('connection logic helpers', () => {
       { workflowId: 'wf-1', name: 'Top level', status: 'active' },
       { workflowId: 'wf-2', name: 'Config list', status: 'paused' },
     ]);
+  });
+
+  it('returns empty array when filtering an empty workflow list', () => {
+    expect(filterDependentWorkflows([], 'conn-1')).toEqual([]);
+  });
+
+  it('returns empty array when no workflows match the connectionId', () => {
+    const workflows: Workflow[] = [
+      {
+        workflowId: 'wf-1',
+        tenantId: 'tenant-1',
+        templateId: 'tpl-1',
+        name: 'Unrelated',
+        configuration: { connectionId: 'conn-99' },
+        dslDefinition: '{}',
+        status: 'active',
+        createdBy: 'user-1',
+        createdAt: '2024-01-01T00:00:00Z',
+        updatedAt: '2024-01-01T00:00:00Z',
+      },
+    ];
+    expect(filterDependentWorkflows(workflows, 'conn-1')).toEqual([]);
+  });
+
+  it('returns all workflows when every one matches the connectionId', () => {
+    const workflows: Workflow[] = [
+      {
+        workflowId: 'wf-1',
+        tenantId: 'tenant-1',
+        templateId: 'tpl-1',
+        name: 'First',
+        configuration: {},
+        dslDefinition: '{}',
+        status: 'active',
+        connectionIds: ['conn-1'],
+        createdBy: 'user-1',
+        createdAt: '2024-01-01T00:00:00Z',
+        updatedAt: '2024-01-01T00:00:00Z',
+      },
+      {
+        workflowId: 'wf-2',
+        tenantId: 'tenant-1',
+        templateId: 'tpl-1',
+        name: 'Second',
+        configuration: { connectionId: 'conn-1' },
+        dslDefinition: '{}',
+        status: 'paused',
+        createdBy: 'user-1',
+        createdAt: '2024-01-01T00:00:00Z',
+        updatedAt: '2024-01-01T00:00:00Z',
+      },
+    ];
+    expect(filterDependentWorkflows(workflows, 'conn-1')).toEqual([
+      { workflowId: 'wf-1', name: 'First', status: 'active' },
+      { workflowId: 'wf-2', name: 'Second', status: 'paused' },
+    ]);
+  });
+
+  it('returns false for zero dependents', () => {
+    expect(hasPublishedDependents([])).toBe(false);
   });
 
   it('detects published dependents across current and future status shapes', () => {

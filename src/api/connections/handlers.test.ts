@@ -106,6 +106,34 @@ describe('connection handlers', () => {
     expect(JSON.parse(result.body).status).toBe('pending');
   });
 
+  it('create returns 400 on unknown connector', async () => {
+    const handler = createConnectionHandler(
+      makeConnectionRepo(),
+      makeSecretsService(),
+      connectorRegistry,
+    );
+
+    const result = await handler(
+      makeEvent({
+        httpMethod: 'POST',
+        body: JSON.stringify({
+          tenantId: 'tenant-1',
+          connectorKey: 'nonexistent-connector',
+          displayName: 'Unknown',
+          authType: 'apikey',
+          credentials: { baseUrl: 'https://example.com' },
+        }),
+      }),
+    );
+
+    expect(result.statusCode).toBe(400);
+    expect(JSON.parse(result.body).errors).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ field: 'connectorKey' }),
+      ]),
+    );
+  });
+
   it('create returns 400 on bad input', async () => {
     const handler = createConnectionHandler(
       makeConnectionRepo(),
@@ -205,6 +233,39 @@ describe('connection handlers', () => {
     expect(JSON.parse(result.body).workflows).toHaveLength(1);
   });
 
+  it('dependencies returns empty list when no dependents', async () => {
+    const handler = getDependenciesHandler(
+      makeConnectionRepo(),
+      makeWorkflowRepo([]),
+    );
+
+    const result = await handler(
+      makeEvent({
+        pathParameters: { id: 'conn-1' },
+        queryStringParameters: { tenantId: 'tenant-1' },
+      }),
+    );
+
+    expect(result.statusCode).toBe(200);
+    expect(JSON.parse(result.body).workflows).toHaveLength(0);
+  });
+
+  it('dependencies returns 404 on missing connection', async () => {
+    const handler = getDependenciesHandler(
+      makeConnectionRepo(null),
+      makeWorkflowRepo([]),
+    );
+
+    const result = await handler(
+      makeEvent({
+        pathParameters: { id: 'conn-1' },
+        queryStringParameters: { tenantId: 'tenant-1' },
+      }),
+    );
+
+    expect(result.statusCode).toBe(404);
+  });
+
   it('rotate returns 200 on success', async () => {
     const audit = makeAuditRepo();
     const handler = rotateConnectionHandler(
@@ -253,6 +314,28 @@ describe('connection handlers', () => {
     expect(result.statusCode).toBe(422);
   });
 
+  it('rotate returns 404 on missing connection', async () => {
+    const handler = rotateConnectionHandler(
+      makeConnectionRepo(null),
+      makeSecretsService(),
+      connectorRegistry,
+      makeAuditRepo(),
+    );
+
+    const result = await handler(
+      makeEvent({
+        httpMethod: 'PUT',
+        pathParameters: { id: 'conn-1' },
+        body: JSON.stringify({
+          tenantId: 'tenant-1',
+          credentials: { baseUrl: 'https://example.com', apiKey: 'secret' },
+        }),
+      }),
+    );
+
+    expect(result.statusCode).toBe(404);
+  });
+
   it('delete returns 204 on success', async () => {
     const handler = deleteConnectionHandler(
       makeConnectionRepo(),
@@ -270,6 +353,25 @@ describe('connection handlers', () => {
     );
 
     expect(result.statusCode).toBe(204);
+  });
+
+  it('delete returns 404 on missing connection', async () => {
+    const handler = deleteConnectionHandler(
+      makeConnectionRepo(null),
+      makeSecretsService(),
+      makeWorkflowRepo([]),
+      makeAuditRepo(),
+    );
+
+    const result = await handler(
+      makeEvent({
+        httpMethod: 'DELETE',
+        pathParameters: { id: 'conn-1' },
+        queryStringParameters: { tenantId: 'tenant-1' },
+      }),
+    );
+
+    expect(result.statusCode).toBe(404);
   });
 
   it('delete returns 409 on published dependents', async () => {

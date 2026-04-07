@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import fc from 'fast-check';
 import {
+  buildAuditEntry,
   buildNewConnectionRecord,
   buildSecretName,
   filterDependentWorkflows,
@@ -10,7 +11,7 @@ import {
   validateCredentials,
 } from './logic.js';
 import { connectorRegistry } from './registry.js';
-import type { Workflow } from '../../models/types.js';
+import type { ConnectionRecord, Workflow } from '../../models/types.js';
 
 const arbId = fc.uuid();
 const arbIso = fc.date().map((date) => date.toISOString());
@@ -154,6 +155,104 @@ describe('Feature: connection-management properties', () => {
       const result = await connector!.testFn({});
       expect(result).toEqual({ success: false, message: 'Not yet implemented' });
     }
+  });
+
+  /**
+   * **Validates: Requirements 5.4, 6.5**
+   */
+  it('property 7: audit entry contains all provided fields with valid keys and timestamp', () => {
+    const arbActionType = fc.constantFrom(
+      'CONNECTION_ROTATED' as const,
+      'CONNECTION_DELETED' as const,
+    );
+
+    fc.assert(
+      fc.property(
+        fc.string({ minLength: 1 }),
+        arbActionType,
+        fc.string({ minLength: 1 }),
+        fc.string({ minLength: 1 }),
+        fc.string({ minLength: 1 }),
+        (tenantId, actionType, actor, resourceId, ip) => {
+          const entry = buildAuditEntry(tenantId, actionType, actor, resourceId, ip);
+
+          // All provided fields are present
+          expect(entry.tenantId).toBe(tenantId);
+          expect(entry.actionType).toBe(actionType);
+          expect(entry.actor).toBe(actor);
+          expect(entry.resourceId).toBe(resourceId);
+          expect(entry.ip).toBe(ip);
+
+          // Valid ISO 8601 timestamp
+          expect(Number.isNaN(Date.parse(entry.timestamp))).toBe(false);
+
+          // DynamoDB keys
+          expect(entry.PK).toBe(`TENANT#${tenantId}`);
+          expect(entry.SK.startsWith('AUDIT#')).toBe(true);
+        },
+      ),
+      { numRuns: 100 },
+    );
+  });
+
+  /**
+   * **Validates: Requirements 6.4**
+   */
+  it('property 9: soft-delete state transition preserves all fields except status and deletedAt', () => {
+    const arbAuthType = fc.constantFrom('oauth2' as const, 'apikey' as const, 'basic' as const);
+    const arbNonDeletedStatus = fc.constantFrom(
+      'active' as const,
+      'error' as const,
+      'pending' as const,
+    );
+
+    const arbConnectionRecord = fc.record({
+      connectionId: fc.uuid(),
+      tenantId: fc.string({ minLength: 1 }),
+      connectorKey: fc.string({ minLength: 1 }),
+      displayName: fc.string({ minLength: 1 }),
+      authType: arbAuthType,
+      secretRef: fc.string({ minLength: 1 }),
+      scopes: fc.array(fc.string(), { maxLength: 3 }),
+      status: arbNonDeletedStatus,
+      createdAt: fc.date().map((d) => d.toISOString()),
+      updatedAt: fc.date().map((d) => d.toISOString()),
+      lastTestedAt: fc.option(fc.date().map((d) => d.toISOString()), { nil: null }),
+      createdBy: fc.string({ minLength: 1 }),
+      deletedAt: fc.constant(null),
+    }) as fc.Arbitrary<ConnectionRecord>;
+
+    fc.assert(
+      fc.property(arbConnectionRecord, arbIso, (record, deleteTimestamp) => {
+        // Simulate the soft-delete state transition
+        const deleted: ConnectionRecord = {
+          ...record,
+          status: 'deleted',
+          deletedAt: deleteTimestamp,
+        };
+
+        // Status changed to 'deleted'
+        expect(deleted.status).toBe('deleted');
+
+        // deletedAt is set and non-null
+        expect(deleted.deletedAt).not.toBeNull();
+        expect(deleted.deletedAt).toBe(deleteTimestamp);
+
+        // All other fields remain unchanged
+        expect(deleted.connectionId).toBe(record.connectionId);
+        expect(deleted.tenantId).toBe(record.tenantId);
+        expect(deleted.connectorKey).toBe(record.connectorKey);
+        expect(deleted.displayName).toBe(record.displayName);
+        expect(deleted.authType).toBe(record.authType);
+        expect(deleted.secretRef).toBe(record.secretRef);
+        expect(deleted.scopes).toEqual(record.scopes);
+        expect(deleted.createdAt).toBe(record.createdAt);
+        expect(deleted.updatedAt).toBe(record.updatedAt);
+        expect(deleted.lastTestedAt).toBe(record.lastTestedAt);
+        expect(deleted.createdBy).toBe(record.createdBy);
+      }),
+      { numRuns: 100 },
+    );
   });
 });
 

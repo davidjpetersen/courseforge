@@ -21,7 +21,8 @@
     "src/**/*",
     "functions/**/*",
     "packages/connectors/**/*",
-    "packages/utils/**/*"
+    "packages/utils/**/*",
+    "packages/types/**/*"
   ],
   "exclude": [
     "node_modules",

@@ -9,6 +9,7 @@ export default defineConfig({
       'functions/**/*.test.ts',
       'packages/connectors/**/*.test.ts',
       'packages/utils/**/*.test.ts',
+      'packages/types/**/*.test.ts',
     ],
   },
 });
