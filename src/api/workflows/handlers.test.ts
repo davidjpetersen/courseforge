@@ -444,28 +444,59 @@ describe('POST /api/workflows/:workflowId/publish - Publish Workflow', () => {
     const result = await handler(makeEvent({ pathParameters: { workflowId: WORKFLOW_ID } }));
     expect(result.statusCode).toBe(400);
   });
+
+  it('returns 400 when tenantId is missing', async () => {
+    const handler = makePublishHandler(baseWorkflow, [baseVersion]);
+    const result = await handler(makeEvent({ headers: {}, pathParameters: { workflowId: WORKFLOW_ID } }));
+    expect(result.statusCode).toBe(400);
+    expect(parseBody(result.body)).toMatchObject({ message: 'tenantId and workflowId are required' });
+  });
+
+  it('returns 400 when workflowId is missing', async () => {
+    const handler = makePublishHandler(baseWorkflow, [baseVersion]);
+    const result = await handler(makeEvent({ pathParameters: null }));
+    expect(result.statusCode).toBe(400);
+    expect(parseBody(result.body)).toMatchObject({ message: 'tenantId and workflowId are required' });
+  });
 });
 
 // ── Pause Workflow ──
 
 describe('POST /api/workflows/:workflowId/pause - Pause Workflow', () => {
   let schedulesDisabled = false;
+  let updatedWorkflow: WorkflowRecord | null = null;
+  let auditEntry: { actionType: string; tenantId: string; workflowId: string } | null = null;
 
   function makePauseHandler(workflow: WorkflowRecord | null) {
     schedulesDisabled = false;
+    updatedWorkflow = null;
+    auditEntry = null;
     return createPauseWorkflowHandler(
-      makeWorkflowRepo(workflow ? [workflow] : []),
+      makeWorkflowRepo(workflow ? [workflow] : [], [], {
+        updateWorkflow: async (w) => { updatedWorkflow = w; },
+      }),
       makeTriggerRepo({ disableSchedules: async () => { schedulesDisabled = true; } }),
-      makeAuditRepo(),
+      { write: async (entry) => { auditEntry = entry; } },
     );
   }
 
-  it('returns 200 with status PAUSED for a published workflow', async () => {
+  it('returns 200 with workflowId and status PAUSED for a published workflow', async () => {
     const published = { ...baseWorkflow, status: 'PUBLISHED' as const };
     const handler = makePauseHandler(published);
     const result = await handler(makeEvent({ pathParameters: { workflowId: WORKFLOW_ID } }));
     expect(result.statusCode).toBe(200);
-    expect((parseBody(result.body) as Record<string, string>).status).toBe('PAUSED');
+    const body = parseBody(result.body) as Record<string, string>;
+    expect(body.status).toBe('PAUSED');
+    expect(body.workflowId).toBe(WORKFLOW_ID);
+  });
+
+  it('updates workflow record to PAUSED status', async () => {
+    const published = { ...baseWorkflow, status: 'PUBLISHED' as const };
+    const handler = makePauseHandler(published);
+    await handler(makeEvent({ pathParameters: { workflowId: WORKFLOW_ID } }));
+    expect(updatedWorkflow).not.toBeNull();
+    expect(updatedWorkflow!.status).toBe('PAUSED');
+    expect(updatedWorkflow!.updatedAt).not.toBe(baseWorkflow.updatedAt);
   });
 
   it('disables schedules when pausing', async () => {
@@ -473,6 +504,16 @@ describe('POST /api/workflows/:workflowId/pause - Pause Workflow', () => {
     const handler = makePauseHandler(published);
     await handler(makeEvent({ pathParameters: { workflowId: WORKFLOW_ID } }));
     expect(schedulesDisabled).toBe(true);
+  });
+
+  it('writes audit log entry with WORKFLOW_PAUSED', async () => {
+    const published = { ...baseWorkflow, status: 'PUBLISHED' as const };
+    const handler = makePauseHandler(published);
+    await handler(makeEvent({ pathParameters: { workflowId: WORKFLOW_ID } }));
+    expect(auditEntry).not.toBeNull();
+    expect(auditEntry!.actionType).toBe('WORKFLOW_PAUSED');
+    expect(auditEntry!.tenantId).toBe(TENANT_ID);
+    expect(auditEntry!.workflowId).toBe(WORKFLOW_ID);
   });
 
   it('returns 409 when workflow is not published', async () => {
@@ -491,6 +532,13 @@ describe('POST /api/workflows/:workflowId/pause - Pause Workflow', () => {
   it('returns 400 when tenantId is missing', async () => {
     const handler = makePauseHandler(baseWorkflow);
     const result = await handler(makeEvent({ headers: {}, pathParameters: { workflowId: WORKFLOW_ID } }));
+    expect(result.statusCode).toBe(400);
+  });
+
+  it('returns 400 when workflowId is missing', async () => {
+    const published = { ...baseWorkflow, status: 'PUBLISHED' as const };
+    const handler = makePauseHandler(published);
+    const result = await handler(makeEvent({ pathParameters: null }));
     expect(result.statusCode).toBe(400);
   });
 });
@@ -527,6 +575,14 @@ describe('POST /api/workflows/:workflowId/archive - Archive Workflow', () => {
     const result = await handler(makeEvent({ pathParameters: { workflowId: WORKFLOW_ID } }));
     expect(result.statusCode).toBe(409);
     expect(parseBody(result.body)).toMatchObject({ message: 'Pause the workflow before archiving' });
+  });
+
+  it('returns 409 when workflow is already ARCHIVED', async () => {
+    const archived = { ...baseWorkflow, status: 'ARCHIVED' as const };
+    const handler = makeArchiveHandler(archived);
+    const result = await handler(makeEvent({ pathParameters: { workflowId: WORKFLOW_ID } }));
+    expect(result.statusCode).toBe(409);
+    expect(parseBody(result.body)).toMatchObject({ message: 'Workflow is already archived' });
   });
 
   it('returns 404 when workflow does not exist', async () => {

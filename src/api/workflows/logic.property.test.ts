@@ -142,15 +142,66 @@ describe('Feature: workflow-management-api, Property 3: Workflow List Filtering'
 
 // ── Property 4: Step Summary Correctness ──
 
+/**
+ * Validates: Requirements 3.5, 3.6
+ *
+ * Generates StepDefinition arrays where some steps include secretRef values
+ * in their params, then verifies summarizeSteps returns only step names in
+ * order with no secretRef values leaking into the output.
+ */
+
+/**
+ * Generates StepDefinition arrays where secretRef values in params are
+ * prefixed with "secret:" to ensure they are distinguishable from step names.
+ */
+const arbStepWithSecretRef = fc.record<StepDefinition>({
+  stepId: fc.string({ minLength: 1 }),
+  name: fc.string({ minLength: 1 }),
+  type: fc.constantFrom<'trigger' | 'action'>('trigger', 'action'),
+  params: fc.record({
+    secretRef: fc.option(
+      fc.string({ minLength: 1 }).map((s) => `secret:${s}`),
+      { nil: undefined },
+    ),
+    value: fc.option(fc.string(), { nil: undefined }),
+    connectionKey: fc.option(fc.string(), { nil: undefined }),
+  }),
+});
+
 describe('Feature: workflow-management-api, Property 4: Step Summary Correctness', () => {
-  it('returns step names in order and excludes secretRef values', () => {
+  it('returns an array with the same length as the input', () => {
     fc.assert(
-      fc.property(fc.array(arbStepDefinition, { maxLength: 20 }), (steps) => {
+      fc.property(fc.array(arbStepWithSecretRef, { maxLength: 20 }), (steps) => {
         const result = summarizeSteps(steps);
         expect(result).toHaveLength(steps.length);
+      }),
+      { numRuns: 100 },
+    );
+  });
+
+  it('returns step names in the same order as the input', () => {
+    fc.assert(
+      fc.property(fc.array(arbStepWithSecretRef, { maxLength: 20 }), (steps) => {
+        const result = summarizeSteps(steps);
         expect(result).toEqual(steps.map((s) => s.name));
+      }),
+      { numRuns: 100 },
+    );
+  });
+
+  it('does not include any secretRef values from step params in the output', () => {
+    fc.assert(
+      fc.property(fc.array(arbStepWithSecretRef, { maxLength: 20 }), (steps) => {
+        const result = summarizeSteps(steps);
+        const secretRefs = steps
+          .map((s) => s.params.secretRef)
+          .filter((ref): ref is string => typeof ref === 'string' && ref.length > 0);
+
         for (const item of result) {
-          expect(typeof item).toBe('string');
+          for (const secret of secretRefs) {
+            expect(item).not.toBe(secret);
+            expect(item).not.toContain(secret);
+          }
         }
       }),
       { numRuns: 100 },
@@ -189,19 +240,40 @@ describe('Feature: workflow-management-api, Property 5: Version Sorting by Semve
 
 // ── Property 6: Version Metadata Projection ──
 
+/**
+ * Validates: Requirements 7.5
+ */
 describe('Feature: workflow-management-api, Property 6: Version Metadata Projection', () => {
-  it('includes exactly the six metadata fields and excludes compiledPlan and paramSnapshot', () => {
+  it('returns an object with exactly the six metadata fields and correct values', () => {
     fc.assert(
       fc.property(arbVersionRecord(), (version) => {
         const metadata = toVersionMetadata(version);
-        expect(metadata).toHaveProperty('versionId', version.versionId);
-        expect(metadata).toHaveProperty('workflowId', version.workflowId);
-        expect(metadata).toHaveProperty('semver', version.semver);
-        expect(metadata).toHaveProperty('createdBy', version.createdBy);
-        expect(metadata).toHaveProperty('createdAt', version.createdAt);
-        expect(metadata).toHaveProperty('recipeId', version.recipeId);
+        const keys = Object.keys(metadata);
+        expect(keys).toHaveLength(6);
+        expect(keys.sort()).toEqual(
+          ['createdAt', 'createdBy', 'recipeId', 'semver', 'versionId', 'workflowId'],
+        );
+        expect(metadata).toEqual({
+          versionId: version.versionId,
+          workflowId: version.workflowId,
+          semver: version.semver,
+          createdBy: version.createdBy,
+          createdAt: version.createdAt,
+          recipeId: version.recipeId,
+        });
+      }),
+      { numRuns: 100 },
+    );
+  });
+
+  it('excludes compiledPlan and paramSnapshot from the result', () => {
+    fc.assert(
+      fc.property(arbVersionRecord(), (version) => {
+        const metadata = toVersionMetadata(version) as Record<string, unknown>;
         expect(metadata).not.toHaveProperty('compiledPlan');
         expect(metadata).not.toHaveProperty('paramSnapshot');
+        expect(metadata).not.toHaveProperty('PK');
+        expect(metadata).not.toHaveProperty('SK');
       }),
       { numRuns: 100 },
     );
@@ -210,6 +282,9 @@ describe('Feature: workflow-management-api, Property 6: Version Metadata Project
 
 // ── Property 17: Workflow Lifecycle State Machine ──
 
+/**
+ * Validates: Requirements 10.1, 10.2, 10.3
+ */
 describe('Feature: workflow-management-api, Property 17: Workflow Lifecycle State Machine', () => {
   const validPairs = new Set([
     'DRAFT:PUBLISHED',

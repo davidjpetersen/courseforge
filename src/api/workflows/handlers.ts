@@ -399,6 +399,10 @@ async function updateStatus(
     return jsonResponse(409, { message: 'Pause the workflow before archiving' });
   }
 
+  if (status === 'ARCHIVED' && workflow.status === 'ARCHIVED') {
+    return jsonResponse(409, { message: 'Workflow is already archived' });
+  }
+
   if (status === 'PAUSED') {
     await triggerRepo.disableSchedules(workflowId);
   }

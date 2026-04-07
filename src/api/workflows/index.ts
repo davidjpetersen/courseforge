@@ -28,6 +28,7 @@ export {
   toVersionMetadata,
   validateConnections,
   validateCreateRequest,
+  type ConnectionInfo,
   type ValidationError,
   type VersionMetadata,
 } from './logic.js';
