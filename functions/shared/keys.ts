@@ -1,4 +1,4 @@
-import { auditSK, tenantPK, workflowPK } from '../../src/models/schema.js';
+import { auditSK, KEY_PREFIX, tenantPK } from '../../src/models/schema.js';
 
 const VERSION_PREFIX = 'VERSION#';
 const RUN_PREFIX = 'RUN#';
@@ -7,7 +7,7 @@ const NOTIFICATION_PREFIX = 'NOTIFICATION#';
 const USER_PREFIX = 'USER#';
 
 export function workflowVersionPK(workflowId: string): string {
-  return workflowPK(workflowId);
+  return `${KEY_PREFIX.WORKFLOW}${workflowId}`;
 }
 
 export function workflowVersionSK(versionId: string): string {

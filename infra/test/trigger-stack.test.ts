@@ -1,6 +1,33 @@
 import * as cdk from 'aws-cdk-lib';
 import { Match, Template } from 'aws-cdk-lib/assertions';
-import { describe, expect, it } from 'vitest';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import { describe, expect, it, vi } from 'vitest';
+
+// Mock NodejsFunction to avoid esbuild bundling in the Vitest worker thread
+vi.mock('aws-cdk-lib/aws-lambda-nodejs', async () => {
+  class MockNodejsFunction extends lambda.Function {
+    constructor(scope: cdk.App | cdk.Stack | cdk.NestedStack, id: string, props: any) {
+      super(scope as any, id, {
+        runtime: props.runtime ?? lambda.Runtime.NODEJS_20_X,
+        handler: props.handler ?? 'index.handler',
+        code: lambda.Code.fromInline('exports.handler = async () => undefined;'),
+        timeout: props.timeout,
+        memorySize: props.memorySize,
+        environment: props.environment,
+        tracing: props.tracing,
+      });
+    }
+  }
+
+  return {
+    NodejsFunction: MockNodejsFunction,
+    OutputFormat: {
+      ESM: 'esm',
+      CJS: 'cjs',
+    },
+  };
+});
+
 import { FoundationStack } from '../lib/foundation-stack';
 import { OrchestrationStack } from '../lib/orchestration-stack';
 import { TriggerStack } from '../lib/trigger-stack';

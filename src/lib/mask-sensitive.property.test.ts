@@ -21,8 +21,14 @@ describe('maskSensitiveFields — property-based tests', () => {
   });
 
   it('masking never introduces new keys', () => {
+    // Use a key generator that excludes __proto__ since assigning to __proto__
+    // on a plain object sets the prototype rather than creating an own property.
+    const safeObject = fc.dictionary(
+      fc.string().filter((k) => k !== '__proto__'),
+      fc.jsonValue(),
+    );
     fc.assert(
-      fc.property(fc.object(), (obj) => {
+      fc.property(safeObject, (obj) => {
         const result = maskSensitiveFields(obj) as Record<string, unknown>;
         const originalKeys = Object.keys(obj);
         const resultKeys = Object.keys(result);
