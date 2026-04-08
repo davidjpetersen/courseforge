@@ -27,6 +27,8 @@ export const KEY_PREFIX = {
   STEP: 'STEP#',
   USER: 'USER#',
   NOTIFICATION: 'NOTIFICATION#',
+  APIKEY: 'APIKEY#',
+  RATELIMIT: 'RATELIMIT#',
 } as const;
 
 export const SK_VALUES = {
@@ -115,6 +117,17 @@ export function userPK(userId: string): string {
 export function notificationSK(timestamp: string, notificationId: string): string {
   return `${KEY_PREFIX.NOTIFICATION}${timestamp}#${notificationId}`;
 }
+
+export function apiKeySK(keyId: string): string {
+  return `${KEY_PREFIX.APIKEY}${keyId}`;
+}
+
+export function rateLimitPK(tenantId: string, endpointGroup: string): string {
+  return `${KEY_PREFIX.RATELIMIT}${tenantId}#${endpointGroup}`;
+}
+
+export const RATE_LIMIT_SK = 'BUCKET';
+export const GSI_HASHED_KEY = 'GSI_HASHED_KEY';
 
 export const GSI_WORKFLOW_RUNS = 'GSI_WORKFLOW_RUNS';
 export const GSI_TENANT_STATUS = 'GSI_TENANT_STATUS';
