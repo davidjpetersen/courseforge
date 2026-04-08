@@ -48,7 +48,7 @@ describe('writeAuditLog', () => {
 
     // Fix Date.now so both calls share the same ISO timestamp
     const fixed = new Date('2025-01-15T00:00:00.000Z');
-    vi.spyOn(globalThis, 'Date').mockImplementation(() => fixed as unknown as Date);
+    vi.spyOn(globalThis, 'Date').mockImplementation(function () { return fixed; } as unknown as typeof Date);
 
     await writeAuditLog(client, 'TestTable', buildInput());
     await writeAuditLog(client, 'TestTable', buildInput());
