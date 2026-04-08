@@ -114,6 +114,25 @@ export function userPK(userId: string): string {
   return `${KEY_PREFIX.USER}${userId}`;
 }
 
+export function userSK(userId: string): string {
+  return `${KEY_PREFIX.USER}${userId}`;
+}
+
+// ── Auth Key Prefixes ──
+
+export const KEY_PREFIX_AUTH = {
+  EMAIL: 'EMAIL#',
+  INVITE: 'INVITE#',
+} as const;
+
+export function emailPK(email: string): string {
+  return `${KEY_PREFIX_AUTH.EMAIL}${email}`;
+}
+
+export function inviteSK(inviteId: string): string {
+  return `${KEY_PREFIX_AUTH.INVITE}${inviteId}`;
+}
+
 export function notificationSK(timestamp: string, notificationId: string): string {
   return `${KEY_PREFIX.NOTIFICATION}${timestamp}#${notificationId}`;
 }

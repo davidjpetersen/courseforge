@@ -9,17 +9,20 @@
     "test:watch": "vitest"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/node": "^20.11.0",
     "fast-check": "^3.15.0",
     "typescript": "^5.3.3",
     "vitest": "^4.1.2"
   },
   "dependencies": {
-    "@aws-sdk/client-eventbridge": "^3.490.0",
     "@aws-sdk/client-dynamodb": "^3.490.0",
+    "@aws-sdk/client-eventbridge": "^3.490.0",
     "@aws-sdk/client-s3": "^3.490.0",
     "@aws-sdk/client-secrets-manager": "^3.1024.0",
     "@aws-sdk/lib-dynamodb": "^3.490.0",
-    "ajv": "^8.18.0"
+    "ajv": "^8.18.0",
+    "bcrypt": "^6.0.0",
+    "jose": "^6.2.2"
   }
 }
