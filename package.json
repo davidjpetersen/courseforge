@@ -4,14 +4,20 @@
   "description": "CourseForge Connect Recipe Library — workflow template catalog and wizard",
   "type": "module",
   "scripts": {
-    "build": "tsc",
-    "test": "vitest --run",
-    "test:watch": "vitest"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "test": "vitest --run"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.2.2",
     "@types/bcrypt": "^6.0.0",
     "@types/node": "^20.11.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
     "fast-check": "^3.15.0",
+    "postcss": "^8.5.9",
+    "tailwindcss": "^4.2.2",
     "typescript": "^5.3.3",
     "vitest": "^4.1.2"
   },
@@ -23,6 +29,9 @@
     "@aws-sdk/lib-dynamodb": "^3.490.0",
     "ajv": "^8.18.0",
     "bcrypt": "^6.0.0",
-    "jose": "^6.2.2"
+    "jose": "^6.2.2",
+    "next": "^16.2.3",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5"
   }
 }
