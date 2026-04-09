@@ -1,0 +1,160 @@
+{
+  "/TriggerStack-prod/SchedulesTable": [
+    {
+      "type": "aws:cdk:hasPhysicalName",
+      "data": {
+        "Ref": "SchedulesTableFBEB0188"
+      }
+    }
+  ],
+  "/TriggerStack-prod/SchedulesGroup": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SchedulesGroup"
+    }
+  ],
+  "/TriggerStack-prod/WebhookBaseUrl": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "WebhookBaseUrl"
+    }
+  ],
+  "/TriggerStack-prod/SchedulesTableName": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SchedulesTableName"
+    }
+  ],
+  "/TriggerStack-prod/ScheduledTriggerTargetArn": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ScheduledTriggerTargetArn"
+    }
+  ],
+  "/TriggerStack-prod/ScheduledTriggerRoleArn": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ScheduledTriggerRoleArn"
+    }
+  ],
+  "/TriggerStack-prod/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    }
+  ],
+  "/TriggerStack-prod/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    }
+  ],
+  "/TriggerStack-prod/SchedulesTable/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SchedulesTableFBEB0188"
+    }
+  ],
+  "/TriggerStack-prod/WebhookIngressFn/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "WebhookIngressFn2C60AD93"
+    }
+  ],
+  "/TriggerStack-prod/ScheduledTriggerFn/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ScheduledTriggerFn8CA68EED"
+    }
+  ],
+  "/TriggerStack-prod/WebhookApi/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "WebhookApi28122C53"
+    }
+  ],
+  "/TriggerStack-prod/TriggerDlq/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "TriggerDlq5D6571E3"
+    }
+  ],
+  "/TriggerStack-prod/TriggerRoutingRule/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "TriggerRoutingRuleB0244251"
+    }
+  ],
+  "/TriggerStack-prod/SchedulerTargetRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SchedulerTargetRole1EE67F5A"
+    }
+  ],
+  "/TriggerStack-prod/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    }
+  ],
+  "/TriggerStack-prod/WebhookIngressFn/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "WebhookIngressFnServiceRole683F1F41"
+    }
+  ],
+  "/TriggerStack-prod/ScheduledTriggerFn/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ScheduledTriggerFnServiceRole415D9D7E"
+    }
+  ],
+  "/TriggerStack-prod/WebhookApi/DefaultStage/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "WebhookApiDefaultStageC0BC9CA5"
+    }
+  ],
+  "/TriggerStack-prod/WebhookApi/POST--webhook--{workflowId}/WebhookIngressIntegration-Permission": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "WebhookApiPOSTwebhookworkflowIdWebhookIngressIntegrationPermissionFF281951"
+    }
+  ],
+  "/TriggerStack-prod/WebhookApi/POST--webhook--{workflowId}/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "WebhookApiPOSTwebhookworkflowId1FBE774E"
+    }
+  ],
+  "/TriggerStack-prod/TriggerDlq/Policy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "TriggerDlqPolicy1664206F"
+    }
+  ],
+  "/TriggerStack-prod/SchedulerTargetRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SchedulerTargetRoleDefaultPolicyDA4C264D"
+    }
+  ],
+  "/TriggerStack-prod/WebhookIngressFn/ServiceRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "WebhookIngressFnServiceRoleDefaultPolicyF00D495C"
+    }
+  ],
+  "/TriggerStack-prod/ScheduledTriggerFn/ServiceRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ScheduledTriggerFnServiceRoleDefaultPolicy95DF733E"
+    }
+  ],
+  "/TriggerStack-prod/WebhookApi/POST--webhook--{workflowId}/WebhookIngressIntegration/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "WebhookApiPOSTwebhookworkflowIdWebhookIngressIntegrationDFE613A6"
+    }
+  ]
+}

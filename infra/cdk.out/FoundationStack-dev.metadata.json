@@ -90,5 +90,41 @@
       "type": "aws:cdk:logicalId",
       "data": "CDKMetadata"
     }
+  ],
+  "/FoundationStack-dev/Exports/Output{\"Fn::GetAtt\":[\"MainTable74195DAB\",\"Arn\"]}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputFnGetAttMainTable74195DABArnE0EC388B"
+    }
+  ],
+  "/FoundationStack-dev/Exports/Output{\"Ref\":\"MainTable74195DAB\"}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputRefMainTable74195DAB4503BD7E"
+    }
+  ],
+  "/FoundationStack-dev/Exports/Output{\"Fn::GetAtt\":[\"ArtifactBucket7410C9EF\",\"Arn\"]}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputFnGetAttArtifactBucket7410C9EFArnA3946625"
+    }
+  ],
+  "/FoundationStack-dev/Exports/Output{\"Ref\":\"ArtifactBucket7410C9EF\"}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputRefArtifactBucket7410C9EF659B6D66"
+    }
+  ],
+  "/FoundationStack-dev/Exports/Output{\"Fn::GetAtt\":[\"DomainEventBus7D687A9A\",\"Arn\"]}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputFnGetAttDomainEventBus7D687A9AArnF9B20F52"
+    }
+  ],
+  "/FoundationStack-dev/Exports/Output{\"Ref\":\"DomainEventBus7D687A9A\"}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputRefDomainEventBus7D687A9AB6C30B94"
+    }
   ]
 }

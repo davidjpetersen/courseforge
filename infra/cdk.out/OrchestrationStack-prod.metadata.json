@@ -1,0 +1,152 @@
+{
+  "/OrchestrationStack-prod/WorkflowRunnerStateMachineArn": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "WorkflowRunnerStateMachineArn"
+    }
+  ],
+  "/OrchestrationStack-prod/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    }
+  ],
+  "/OrchestrationStack-prod/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    }
+  ],
+  "/OrchestrationStack-prod/RunInitializerFn/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RunInitializerFnA666B15B"
+    }
+  ],
+  "/OrchestrationStack-prod/ExecuteStepFn/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExecuteStepFnBC3E715E"
+    }
+  ],
+  "/OrchestrationStack-prod/RunFinalizerFn/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RunFinalizerFn3A4AFF8A"
+    }
+  ],
+  "/OrchestrationStack-prod/NotificationFn/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "NotificationFn432224A6"
+    }
+  ],
+  "/OrchestrationStack-prod/WorkflowRunner/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "WorkflowRunnerC889BF61"
+    }
+  ],
+  "/OrchestrationStack-prod/RunFailedRule/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RunFailedRule3E56E7A4"
+    }
+  ],
+  "/OrchestrationStack-prod/RunFailedRule/AllowEventRuleOrchestrationStackprodNotificationFn77682A6D": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RunFailedRuleAllowEventRuleOrchestrationStackprodNotificationFn77682A6D0A81B96B"
+    }
+  ],
+  "/OrchestrationStack-prod/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    }
+  ],
+  "/OrchestrationStack-prod/Exports/Output{\"Ref\":\"WorkflowRunnerC889BF61\"}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputRefWorkflowRunnerC889BF61A0F582AA"
+    }
+  ],
+  "/OrchestrationStack-prod/Exports/Output{\"Fn::GetAtt\":[\"WorkflowRunnerEventsRole5499A97C\",\"Arn\"]}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputFnGetAttWorkflowRunnerEventsRole5499A97CArn8BC5EA51"
+    }
+  ],
+  "/OrchestrationStack-prod/RunInitializerFn/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RunInitializerFnServiceRoleFC275875"
+    }
+  ],
+  "/OrchestrationStack-prod/ExecuteStepFn/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExecuteStepFnServiceRole80E5292C"
+    }
+  ],
+  "/OrchestrationStack-prod/RunFinalizerFn/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RunFinalizerFnServiceRoleDB54682C"
+    }
+  ],
+  "/OrchestrationStack-prod/NotificationFn/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "NotificationFnServiceRole1B82F5D5"
+    }
+  ],
+  "/OrchestrationStack-prod/WorkflowRunner/Role/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "WorkflowRunnerRoleB903890B"
+    }
+  ],
+  "/OrchestrationStack-prod/WorkflowRunner/EventsRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "WorkflowRunnerEventsRole5499A97C"
+    }
+  ],
+  "/OrchestrationStack-prod/RunInitializerFn/ServiceRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RunInitializerFnServiceRoleDefaultPolicy31E44501"
+    }
+  ],
+  "/OrchestrationStack-prod/ExecuteStepFn/ServiceRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExecuteStepFnServiceRoleDefaultPolicy5CCAFBD2"
+    }
+  ],
+  "/OrchestrationStack-prod/RunFinalizerFn/ServiceRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RunFinalizerFnServiceRoleDefaultPolicyFC2583C5"
+    }
+  ],
+  "/OrchestrationStack-prod/NotificationFn/ServiceRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "NotificationFnServiceRoleDefaultPolicy784434D9"
+    }
+  ],
+  "/OrchestrationStack-prod/WorkflowRunner/Role/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "WorkflowRunnerRoleDefaultPolicy13C64D26"
+    }
+  ],
+  "/OrchestrationStack-prod/WorkflowRunner/EventsRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "WorkflowRunnerEventsRoleDefaultPolicy25A76001"
+    }
+  ]
+}

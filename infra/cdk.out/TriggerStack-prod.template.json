@@ -1,0 +1,714 @@
+{
+ "Resources": {
+  "SchedulesTableFBEB0188": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "PK",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "SK",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "PK",
+      "KeyType": "HASH"
+     },
+     {
+      "AttributeName": "SK",
+      "KeyType": "RANGE"
+     }
+    ],
+    "PointInTimeRecoverySpecification": {
+     "PointInTimeRecoveryEnabled": true
+    },
+    "SSESpecification": {
+     "SSEEnabled": true
+    },
+    "TableName": "courseforge-schedules"
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "TriggerStack-prod/SchedulesTable/Resource"
+   }
+  },
+  "SchedulesGroup": {
+   "Type": "AWS::Scheduler::ScheduleGroup",
+   "Properties": {
+    "Name": "courseforge-schedules"
+   },
+   "Metadata": {
+    "aws:cdk:path": "TriggerStack-prod/SchedulesGroup"
+   }
+  },
+  "WebhookIngressFnServiceRole683F1F41": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "TriggerStack-prod/WebhookIngressFn/ServiceRole/Resource"
+   }
+  },
+  "WebhookIngressFnServiceRoleDefaultPolicyF00D495C": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::ImportValue": "FoundationStack-prod:ExportsOutputFnGetAttMainTable74195DABArnE0EC388B"
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::ImportValue": "FoundationStack-prod:ExportsOutputFnGetAttMainTable74195DABArnE0EC388B"
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::ImportValue": "FoundationStack-prod:ExportsOutputFnGetAttMainTable74195DABArnE0EC388B"
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::ImportValue": "FoundationStack-prod:ExportsOutputFnGetAttMainTable74195DABArnE0EC388B"
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": "events:PutEvents",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::ImportValue": "FoundationStack-prod:ExportsOutputFnGetAttDomainEventBus7D687A9AArnF9B20F52"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "WebhookIngressFnServiceRoleDefaultPolicyF00D495C",
+    "Roles": [
+     {
+      "Ref": "WebhookIngressFnServiceRole683F1F41"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "TriggerStack-prod/WebhookIngressFn/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "WebhookIngressFn2C60AD93": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "ZipFile": "exports.handler = async () => ({ statusCode: 202, body: \"{}\" });"
+    },
+    "Environment": {
+     "Variables": {
+      "EVENT_BUS_NAME": {
+       "Fn::ImportValue": "FoundationStack-prod:ExportsOutputRefDomainEventBus7D687A9AB6C30B94"
+      },
+      "MAIN_TABLE_NAME": {
+       "Fn::ImportValue": "FoundationStack-prod:ExportsOutputRefMainTable74195DAB4503BD7E"
+      }
+     }
+    },
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "WebhookIngressFnServiceRole683F1F41",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 10
+   },
+   "DependsOn": [
+    "WebhookIngressFnServiceRoleDefaultPolicyF00D495C",
+    "WebhookIngressFnServiceRole683F1F41"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "TriggerStack-prod/WebhookIngressFn/Resource"
+   }
+  },
+  "ScheduledTriggerFnServiceRole415D9D7E": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "TriggerStack-prod/ScheduledTriggerFn/ServiceRole/Resource"
+   }
+  },
+  "ScheduledTriggerFnServiceRoleDefaultPolicy95DF733E": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::ImportValue": "FoundationStack-prod:ExportsOutputFnGetAttMainTable74195DABArnE0EC388B"
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::ImportValue": "FoundationStack-prod:ExportsOutputFnGetAttMainTable74195DABArnE0EC388B"
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::ImportValue": "FoundationStack-prod:ExportsOutputFnGetAttMainTable74195DABArnE0EC388B"
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::ImportValue": "FoundationStack-prod:ExportsOutputFnGetAttMainTable74195DABArnE0EC388B"
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "SchedulesTableFBEB0188",
+          "Arn"
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "SchedulesTableFBEB0188",
+          "Arn"
+         ]
+        }
+       ]
+      },
+      {
+       "Action": "events:PutEvents",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::ImportValue": "FoundationStack-prod:ExportsOutputFnGetAttDomainEventBus7D687A9AArnF9B20F52"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ScheduledTriggerFnServiceRoleDefaultPolicy95DF733E",
+    "Roles": [
+     {
+      "Ref": "ScheduledTriggerFnServiceRole415D9D7E"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "TriggerStack-prod/ScheduledTriggerFn/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "ScheduledTriggerFn8CA68EED": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "ZipFile": "exports.handler = async () => undefined;"
+    },
+    "Environment": {
+     "Variables": {
+      "EVENT_BUS_NAME": {
+       "Fn::ImportValue": "FoundationStack-prod:ExportsOutputRefDomainEventBus7D687A9AB6C30B94"
+      },
+      "MAIN_TABLE_NAME": {
+       "Fn::ImportValue": "FoundationStack-prod:ExportsOutputRefMainTable74195DAB4503BD7E"
+      },
+      "SCHEDULES_TABLE_NAME": {
+       "Ref": "SchedulesTableFBEB0188"
+      }
+     }
+    },
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "ScheduledTriggerFnServiceRole415D9D7E",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 10
+   },
+   "DependsOn": [
+    "ScheduledTriggerFnServiceRoleDefaultPolicy95DF733E",
+    "ScheduledTriggerFnServiceRole415D9D7E"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "TriggerStack-prod/ScheduledTriggerFn/Resource"
+   }
+  },
+  "WebhookApi28122C53": {
+   "Type": "AWS::ApiGatewayV2::Api",
+   "Properties": {
+    "Name": "courseforge-webhook-api",
+    "ProtocolType": "HTTP"
+   },
+   "Metadata": {
+    "aws:cdk:path": "TriggerStack-prod/WebhookApi/Resource"
+   }
+  },
+  "WebhookApiDefaultStageC0BC9CA5": {
+   "Type": "AWS::ApiGatewayV2::Stage",
+   "Properties": {
+    "ApiId": {
+     "Ref": "WebhookApi28122C53"
+    },
+    "AutoDeploy": true,
+    "StageName": "$default"
+   },
+   "Metadata": {
+    "aws:cdk:path": "TriggerStack-prod/WebhookApi/DefaultStage/Resource"
+   }
+  },
+  "WebhookApiPOSTwebhookworkflowIdWebhookIngressIntegrationDFE613A6": {
+   "Type": "AWS::ApiGatewayV2::Integration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "WebhookApi28122C53"
+    },
+    "IntegrationType": "AWS_PROXY",
+    "IntegrationUri": {
+     "Fn::GetAtt": [
+      "WebhookIngressFn2C60AD93",
+      "Arn"
+     ]
+    },
+    "PayloadFormatVersion": "2.0"
+   },
+   "Metadata": {
+    "aws:cdk:path": "TriggerStack-prod/WebhookApi/POST--webhook--{workflowId}/WebhookIngressIntegration/Resource"
+   }
+  },
+  "WebhookApiPOSTwebhookworkflowIdWebhookIngressIntegrationPermissionFF281951": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "WebhookIngressFn2C60AD93",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:REPLACE_WITH_PROD_ACCOUNT:",
+       {
+        "Ref": "WebhookApi28122C53"
+       },
+       "/*/*/webhook/{workflowId}"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TriggerStack-prod/WebhookApi/POST--webhook--{workflowId}/WebhookIngressIntegration-Permission"
+   }
+  },
+  "WebhookApiPOSTwebhookworkflowId1FBE774E": {
+   "Type": "AWS::ApiGatewayV2::Route",
+   "Properties": {
+    "ApiId": {
+     "Ref": "WebhookApi28122C53"
+    },
+    "AuthorizationType": "NONE",
+    "RouteKey": "POST /webhook/{workflowId}",
+    "Target": {
+     "Fn::Join": [
+      "",
+      [
+       "integrations/",
+       {
+        "Ref": "WebhookApiPOSTwebhookworkflowIdWebhookIngressIntegrationDFE613A6"
+       }
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TriggerStack-prod/WebhookApi/POST--webhook--{workflowId}/Resource"
+   }
+  },
+  "TriggerDlq5D6571E3": {
+   "Type": "AWS::SQS::Queue",
+   "Properties": {
+    "QueueName": "courseforge-trigger-dlq"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "TriggerStack-prod/TriggerDlq/Resource"
+   }
+  },
+  "TriggerDlqPolicy1664206F": {
+   "Type": "AWS::SQS::QueuePolicy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sqs:SendMessage",
+       "Condition": {
+        "ArnEquals": {
+         "aws:SourceArn": {
+          "Fn::GetAtt": [
+           "TriggerRoutingRuleB0244251",
+           "Arn"
+          ]
+         }
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "events.amazonaws.com"
+       },
+       "Resource": {
+        "Fn::GetAtt": [
+         "TriggerDlq5D6571E3",
+         "Arn"
+        ]
+       },
+       "Sid": "AllowEventRuleTriggerStackprodTriggerRoutingRuleF366C298"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Queues": [
+     {
+      "Ref": "TriggerDlq5D6571E3"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "TriggerStack-prod/TriggerDlq/Policy/Resource"
+   }
+  },
+  "TriggerRoutingRuleB0244251": {
+   "Type": "AWS::Events::Rule",
+   "Properties": {
+    "EventBusName": {
+     "Fn::ImportValue": "FoundationStack-prod:ExportsOutputRefDomainEventBus7D687A9AB6C30B94"
+    },
+    "EventPattern": {
+     "source": [
+      "courseforge.trigger"
+     ]
+    },
+    "State": "ENABLED",
+    "Targets": [
+     {
+      "Arn": {
+       "Fn::ImportValue": "OrchestrationStack-prod:ExportsOutputRefWorkflowRunnerC889BF61A0F582AA"
+      },
+      "DeadLetterConfig": {
+       "Arn": {
+        "Fn::GetAtt": [
+         "TriggerDlq5D6571E3",
+         "Arn"
+        ]
+       }
+      },
+      "Id": "Target0",
+      "RoleArn": {
+       "Fn::ImportValue": "OrchestrationStack-prod:ExportsOutputFnGetAttWorkflowRunnerEventsRole5499A97CArn8BC5EA51"
+      }
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "TriggerStack-prod/TriggerRoutingRule/Resource"
+   }
+  },
+  "SchedulerTargetRole1EE67F5A": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "scheduler.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "TriggerStack-prod/SchedulerTargetRole/Resource"
+   }
+  },
+  "SchedulerTargetRoleDefaultPolicyDA4C264D": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "lambda:InvokeFunction",
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "ScheduledTriggerFn8CA68EED",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "ScheduledTriggerFn8CA68EED",
+             "Arn"
+            ]
+           },
+           ":*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "SchedulerTargetRoleDefaultPolicyDA4C264D",
+    "Roles": [
+     {
+      "Ref": "SchedulerTargetRole1EE67F5A"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "TriggerStack-prod/SchedulerTargetRole/DefaultPolicy/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/12OzU7DMBCEn6V3ZylRDlxRJX5OlIQ72jjb4Naxg+1NFFl+dxSniIqL55vVeHZLKKsH2O9w9oXsLoVWLcQmoLwInP1n7BaDg+1aiB/YahKHk8mQhJdf1LEmB4eTaa7m2Vkehcah7RDiExsZlDXrr1s+khuU98qaJBQOEGu7VWc9Wq3kknOZksBR9RhoxmUqIb6EMD6Oag2sstomYJ8LNlhHteWw0asJ1Dv8Xf7P5lwS/ttDfGfiXLNBfv+uubFJ0EQmeIg1Xy9nTSmJmrxlJ/PojcPIIQljO4Kzv5vKCu4r2O/OXqnCsQlqIKg3/QHkyuw5iAEAAA=="
+   },
+   "Metadata": {
+    "aws:cdk:path": "TriggerStack-prod/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "WebhookBaseUrl": {
+   "Value": {
+    "Fn::GetAtt": [
+     "WebhookApi28122C53",
+     "ApiEndpoint"
+    ]
+   }
+  },
+  "SchedulesTableName": {
+   "Value": {
+    "Ref": "SchedulesTableFBEB0188"
+   }
+  },
+  "ScheduledTriggerTargetArn": {
+   "Value": {
+    "Fn::GetAtt": [
+     "ScheduledTriggerFn8CA68EED",
+     "Arn"
+    ]
+   }
+  },
+  "ScheduledTriggerRoleArn": {
+   "Value": {
+    "Fn::GetAtt": [
+     "SchedulerTargetRole1EE67F5A",
+     "Arn"
+    ]
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

@@ -1,16 +1,16 @@
 {
   "version": "53.0.0",
   "files": {
-    "89686bf436fd3dab3c16e6336bba67e5b13e4dd30ff852b37e83525d641b8954": {
-      "displayName": "FoundationStack-prod Template",
+    "dfaf5ea89c10bc90bbe4368b1062bc4233acae5a14af6c16c31ae7cde77db927": {
+      "displayName": "TriggerStack-prod Template",
       "source": {
-        "path": "FoundationStack-prod.template.json",
+        "path": "TriggerStack-prod.template.json",
         "packaging": "file"
       },
       "destinations": {
-        "REPLACE_WITH_PROD_ACCOUNT-us-east-1-540236d6": {
+        "REPLACE_WITH_PROD_ACCOUNT-us-east-1-c7a6645d": {
           "bucketName": "cdk-hnb659fds-assets-REPLACE_WITH_PROD_ACCOUNT-us-east-1",
-          "objectKey": "89686bf436fd3dab3c16e6336bba67e5b13e4dd30ff852b37e83525d641b8954.json",
+          "objectKey": "dfaf5ea89c10bc90bbe4368b1062bc4233acae5a14af6c16c31ae7cde77db927.json",
           "region": "us-east-1",
           "assumeRoleArn": "arn:${AWS::Partition}:iam::REPLACE_WITH_PROD_ACCOUNT:role/cdk-hnb659fds-file-publishing-role-REPLACE_WITH_PROD_ACCOUNT-us-east-1"
         }

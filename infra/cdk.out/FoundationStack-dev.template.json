@@ -229,6 +229,63 @@
    "Value": {
     "Ref": "ArtifactBucket7410C9EF"
    }
+  },
+  "ExportsOutputFnGetAttMainTable74195DABArnE0EC388B": {
+   "Value": {
+    "Fn::GetAtt": [
+     "MainTable74195DAB",
+     "Arn"
+    ]
+   },
+   "Export": {
+    "Name": "FoundationStack-dev:ExportsOutputFnGetAttMainTable74195DABArnE0EC388B"
+   }
+  },
+  "ExportsOutputRefMainTable74195DAB4503BD7E": {
+   "Value": {
+    "Ref": "MainTable74195DAB"
+   },
+   "Export": {
+    "Name": "FoundationStack-dev:ExportsOutputRefMainTable74195DAB4503BD7E"
+   }
+  },
+  "ExportsOutputFnGetAttArtifactBucket7410C9EFArnA3946625": {
+   "Value": {
+    "Fn::GetAtt": [
+     "ArtifactBucket7410C9EF",
+     "Arn"
+    ]
+   },
+   "Export": {
+    "Name": "FoundationStack-dev:ExportsOutputFnGetAttArtifactBucket7410C9EFArnA3946625"
+   }
+  },
+  "ExportsOutputRefArtifactBucket7410C9EF659B6D66": {
+   "Value": {
+    "Ref": "ArtifactBucket7410C9EF"
+   },
+   "Export": {
+    "Name": "FoundationStack-dev:ExportsOutputRefArtifactBucket7410C9EF659B6D66"
+   }
+  },
+  "ExportsOutputFnGetAttDomainEventBus7D687A9AArnF9B20F52": {
+   "Value": {
+    "Fn::GetAtt": [
+     "DomainEventBus7D687A9A",
+     "Arn"
+    ]
+   },
+   "Export": {
+    "Name": "FoundationStack-dev:ExportsOutputFnGetAttDomainEventBus7D687A9AArnF9B20F52"
+   }
+  },
+  "ExportsOutputRefDomainEventBus7D687A9AB6C30B94": {
+   "Value": {
+    "Ref": "DomainEventBus7D687A9A"
+   },
+   "Export": {
+    "Name": "FoundationStack-dev:ExportsOutputRefDomainEventBus7D687A9AB6C30B94"
+   }
   }
  },
  "Parameters": {
