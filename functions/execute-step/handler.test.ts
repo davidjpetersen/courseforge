@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { createExecuteStepHandler } from './handler.js';
+import { createExecuteStepHandler } from './handler';
 
 const baseInput = {
   runId: 'run-1',

@@ -1,7 +1,7 @@
 import fc from 'fast-check';
 import { describe, expect, it, vi } from 'vitest';
 
-import { createRunFinalizerHandler } from './handler.js';
+import { createRunFinalizerHandler } from './handler';
 
 const arbStatus = fc.constantFrom<'SUCCESS' | 'FAILED'>('SUCCESS', 'FAILED');
 const arbJsonSafe = fc.jsonValue().map((value) => JSON.parse(JSON.stringify(value)));

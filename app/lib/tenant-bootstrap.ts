@@ -1,7 +1,7 @@
-import type { DynamoClient } from '../../packages/utils/src/audit.js';
-import { writeAuditLog } from '../../packages/utils/src/audit.js';
-import { tenantPK, envSK, SK_VALUES } from '../../src/models/schema.js';
-import { ActionType } from '../../packages/types/src/audit.js';
+import type { DynamoClient } from '../../packages/utils/src/audit';
+import { writeAuditLog } from '../../packages/utils/src/audit';
+import { tenantPK, envSK, SK_VALUES } from '../../src/models/schema';
+import { ActionType } from '../../packages/types/src/audit';
 
 export interface BootstrapInput {
   tenantId: string;

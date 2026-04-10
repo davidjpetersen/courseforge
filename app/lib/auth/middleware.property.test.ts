@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import fc from 'fast-check';
 
-import { withAuth } from './middleware.js';
-import { signToken } from './jwt.js';
-import type { AuthContext, UserRole, JWTPayload } from './types.js';
+import { withAuth } from './middleware';
+import { signToken } from './jwt';
+import type { AuthContext, UserRole, JWTPayload } from './types';
 
 // ── Setup: deterministic JWT secret ──
 

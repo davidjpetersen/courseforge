@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
-import { WorkflowStatus } from '../../packages/types/src/index.js';
-import { createScheduledTriggerHandler } from './handler.js';
+import { WorkflowStatus } from '../../packages/types/src/index';
+import { createScheduledTriggerHandler } from './handler';
 
 describe('createScheduledTriggerHandler', () => {
   it('publishes events, writes a run, and updates the schedule for published workflows', async () => {

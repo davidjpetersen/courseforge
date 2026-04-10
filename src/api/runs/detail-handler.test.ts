@@ -1,8 +1,8 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { createRunDetailHandler, S3Client } from './detail-handler.js';
-import type { RunRepository } from './handler.js';
-import type { APIGatewayProxyEvent } from '../triggers/shared.js';
-import type { Run, RunStep } from '../../../packages/types/src/runs.js';
+import { createRunDetailHandler, S3Client } from './detail-handler';
+import type { RunRepository } from './handler';
+import type { APIGatewayProxyEvent } from '../triggers/shared';
+import type { Run, RunStep } from '../../../packages/types/src/runs';
 
 function makeEvent(overrides: Partial<APIGatewayProxyEvent> = {}): APIGatewayProxyEvent {
   return {

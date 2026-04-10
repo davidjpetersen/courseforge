@@ -4,7 +4,7 @@ import {
   auditSK,
   buildSecretName as buildSecretNameFromSchema,
   tenantPK,
-} from '../../models/schema.js';
+} from '../../models/schema';
 import type {
   AuditLogEntry,
   ConnectionListItem,
@@ -14,7 +14,7 @@ import type {
   DependentWorkflow,
   TestResult,
   Workflow,
-} from '../../models/types.js';
+} from '../../models/types';
 
 const ajv = new Ajv({ allErrors: true, strict: false });
 

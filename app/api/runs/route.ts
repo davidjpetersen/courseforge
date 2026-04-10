@@ -2,8 +2,8 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 import { NextRequest, NextResponse } from 'next/server';
 
-import { createRunsHandler } from '../../../src/api/runs/handler.js';
-import { createDynamoRunRepository } from '../../../src/api/runs/repository.js';
+import { createRunsHandler } from '../../../src/api/runs/handler';
+import { createDynamoRunRepository } from '../../../src/api/runs/repository';
 
 const client = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 const tableName = process.env.MAIN_TABLE_NAME ?? process.env.RUNS_TABLE_NAME ?? 'CourseForgeRuns';

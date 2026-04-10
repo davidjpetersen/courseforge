@@ -5,7 +5,7 @@ import {
   type APIGatewayProxyEvent,
   type EnvironmentRepository,
   type WorkflowRepository,
-} from './handler.js';
+} from './handler';
 
 function makeEvent(overrides: Partial<APIGatewayProxyEvent> = {}): APIGatewayProxyEvent {
   return {

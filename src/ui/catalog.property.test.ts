@@ -4,9 +4,9 @@ import {
   buildCardViewModel,
   buildDetailViewModel,
   buildCatalogViewModel,
-} from './catalog.js';
-import { groupByCategory, toSummary } from '../api/templates/logic.js';
-import type { Template } from '../models/types.js';
+} from './catalog';
+import { groupByCategory, toSummary } from '../api/templates/logic';
+import type { Template } from '../models/types';
 
 // ── Generators ──
 

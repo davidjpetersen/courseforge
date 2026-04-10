@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { getStatusBadge, STATUS_BADGE_MAP } from './status-badge.js';
-import { RunStatus } from '../../packages/types/src/events.js';
+import { getStatusBadge, STATUS_BADGE_MAP } from './status-badge';
+import { RunStatus } from '../../packages/types/src/events';
 
 describe('Status Badge', () => {
   describe('STATUS_BADGE_MAP', () => {

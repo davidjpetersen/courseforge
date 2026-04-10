@@ -24,7 +24,7 @@ import {
   notificationSK,
   GSI_WORKFLOW_RUNS,
   GSI_TENANT_STATUS,
-} from './schema.js';
+} from './schema';
 
 describe('DynamoDB key builders', () => {
   it('builds template PK', () => {

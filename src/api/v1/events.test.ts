@@ -5,7 +5,7 @@ import {
   type EventHandlerDeps,
   type DomainEventInput,
   type RunInput,
-} from './events.js';
+} from './events';
 
 // ── Helpers ──
 

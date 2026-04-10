@@ -6,8 +6,8 @@ import {
   type AuditFilters,
   type AuditRepository,
   type APIGatewayProxyEvent,
-} from './handler.js';
-import { ActionType, type AuditEntry, type ResourceType } from '../../../packages/types/src/audit.js';
+} from './handler';
+import { ActionType, type AuditEntry, type ResourceType } from '../../../packages/types/src/audit';
 
 // ── Arbitraries ──
 

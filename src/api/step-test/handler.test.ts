@@ -6,7 +6,7 @@ import {
   type StepTestTemplateProvider,
   type APIGatewayProxyEvent,
   type StepTestResponse,
-} from './handler.js';
+} from './handler';
 
 // ── Helpers ──
 

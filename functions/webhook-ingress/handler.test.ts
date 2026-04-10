@@ -1,9 +1,9 @@
 import { createHash } from 'node:crypto';
 
 import { describe, expect, it } from 'vitest';
-import { webhookSecretSK, workflowMetaSK, workflowPK } from '../../src/models/schema.js';
-import { WorkflowStatus } from '../../packages/types/src/index.js';
-import { createWebhookIngressHandler } from './handler.js';
+import { webhookSecretSK, workflowMetaSK, workflowPK } from '../../src/models/schema';
+import { WorkflowStatus } from '../../packages/types/src/index';
+import { createWebhookIngressHandler } from './handler';
 
 function sha256(value: string): string {
   return createHash('sha256').update(value).digest('hex');

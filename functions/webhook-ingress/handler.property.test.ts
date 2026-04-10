@@ -3,9 +3,9 @@ import { createHash } from 'node:crypto';
 import fc from 'fast-check';
 import { describe, expect, it, vi } from 'vitest';
 
-import { tenantPK, runSK, webhookSecretSK, workflowMetaSK, workflowPK } from '../../src/models/schema.js';
-import { WorkflowStatus } from '../../packages/types/src/index.js';
-import { createWebhookIngressHandler } from './handler.js';
+import { tenantPK, runSK, webhookSecretSK, workflowMetaSK, workflowPK } from '../../src/models/schema';
+import { WorkflowStatus } from '../../packages/types/src/index';
+import { createWebhookIngressHandler } from './handler';
 
 // ── Helpers ──
 

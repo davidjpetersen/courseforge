@@ -1,9 +1,9 @@
 import { QueryCommand } from '@aws-sdk/lib-dynamodb';
 import { NextRequest, NextResponse } from 'next/server';
 
-import { createV1RunHandler, type V1RunRepository, type V1RunRecord, type V1RunStep } from '../../../../../src/api/v1/runs.js';
-import { tenantPK } from '../../../../../src/models/schema.js';
-import { runV1Middleware, client, tableName } from '../../_middleware.js';
+import { createV1RunHandler, type V1RunRepository, type V1RunRecord, type V1RunStep } from '../../../../../src/api/v1/runs';
+import { tenantPK } from '../../../../../src/models/schema';
+import { runV1Middleware, client, tableName } from '../../_middleware';
 
 const runRepo: V1RunRepository = {
   async list(tenantId: string) {

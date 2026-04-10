@@ -3,19 +3,19 @@ import {
   createSearchHandler,
   type SearchClient,
   type APIGatewayProxyEvent,
-} from './handler.js';
+} from './handler';
 import {
   searchTemplates,
   generateSuggestions,
   buildSearchResponse,
-} from './logic.js';
-import type { Template } from '../../models/types.js';
+} from './logic';
+import type { Template } from '../../models/types';
 import {
   ROSTER_OPS_TEMPLATE,
   COURSE_LIFECYCLE_TEMPLATE,
   NOTIFICATIONS_TEMPLATE,
   SEED_TEMPLATES,
-} from '../../data/seed-templates.js';
+} from '../../data/seed-templates';
 
 // ── Helpers ──
 

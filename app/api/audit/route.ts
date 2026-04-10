@@ -6,7 +6,7 @@ import {
   createQueryAuditHandler,
   type AuditRepository,
   type AuditFilters,
-} from '../../../src/api/audit/handler.js';
+} from '../../../src/api/audit/handler';
 
 const client = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 const tableName = process.env.MAIN_TABLE_NAME ?? 'CourseForgeRuns';

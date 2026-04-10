@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { createRunInitializerHandler } from './handler.js';
+import { createRunInitializerHandler } from './handler';
 
 type Item = Record<string, unknown>;
 

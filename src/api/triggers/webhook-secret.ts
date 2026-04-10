@@ -1,12 +1,12 @@
 import { createHash, randomBytes } from 'node:crypto';
 
-import { tenantPK, webhookSecretSK } from '../../models/schema.js';
+import { tenantPK, webhookSecretSK } from '../../models/schema';
 import {
   jsonResponse,
   resolveTenantId,
   type APIGatewayProxyEvent,
   type APIGatewayProxyResult,
-} from './shared.js';
+} from './shared';
 
 export interface DynamoWriteClient {
   put(params: { TableName: string; Item: Record<string, unknown> }): Promise<unknown>;

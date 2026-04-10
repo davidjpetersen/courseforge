@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 
-import { writeAuditLog, type DynamoClient, type WriteAuditInput } from './audit.js';
-import { ActionType } from '../../types/src/audit.js';
+import { writeAuditLog, type DynamoClient, type WriteAuditInput } from './audit';
+import { ActionType } from '../../types/src/audit';
 
 function buildInput(overrides?: Partial<WriteAuditInput>): WriteAuditInput {
   return {

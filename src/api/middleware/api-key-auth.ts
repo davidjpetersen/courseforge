@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 
-import type { ApiKeyRepository } from '../developer-keys/repository.js';
+import type { ApiKeyRepository } from '../developer-keys/repository';
 
 // ── Types ──
 

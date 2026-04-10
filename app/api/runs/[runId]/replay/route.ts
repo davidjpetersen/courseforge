@@ -3,7 +3,7 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient, PutCommand, QueryCommand } from '@aws-sdk/lib-dynamodb';
 import { NextRequest, NextResponse } from 'next/server';
 
-import { createReplayHandler } from '../../../../../src/api/replay/handler.js';
+import { createReplayHandler } from '../../../../../src/api/replay/handler';
 
 const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 const eventBridgeClient = new EventBridgeClient({});

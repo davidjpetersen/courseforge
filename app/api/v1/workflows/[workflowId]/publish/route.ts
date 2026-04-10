@@ -1,9 +1,9 @@
 import { GetCommand, PutCommand, QueryCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import { NextRequest, NextResponse } from 'next/server';
 
-import { createV1WorkflowHandler, type V1WorkflowRepository, type V1WorkflowRecord } from '../../../../../../src/api/v1/workflows.js';
-import { tenantPK } from '../../../../../../src/models/schema.js';
-import { runV1Middleware, client, tableName } from '../../../_middleware.js';
+import { createV1WorkflowHandler, type V1WorkflowRepository, type V1WorkflowRecord } from '../../../../../../src/api/v1/workflows';
+import { tenantPK } from '../../../../../../src/models/schema';
+import { runV1Middleware, client, tableName } from '../../../_middleware';
 
 const workflowRepo: V1WorkflowRepository = {
   async create(workflow: V1WorkflowRecord) {

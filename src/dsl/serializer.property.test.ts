@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import fc from 'fast-check';
-import { serializeConfig, deserializeConfig, DSLValidationError } from './serializer.js';
+import { serializeConfig, deserializeConfig, DSLValidationError } from './serializer';
 import type {
   WizardConfiguration,
   WizardStepConfig,
   WorkflowMetadata,
   FieldValue,
-} from '../models/types.js';
+} from '../models/types';
 
 // ── Generators ──
 

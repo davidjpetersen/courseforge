@@ -14,8 +14,8 @@ import type {
   StepDefinition,
   FieldDefinition,
   FieldValue,
-} from '../models/types.js';
-import type { Storage } from './filter.js';
+} from '../models/types';
+import type { Storage } from './filter';
 
 // ── Wizard State Types ──
 

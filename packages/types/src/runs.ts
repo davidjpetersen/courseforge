@@ -1,4 +1,4 @@
-import type { RunStatus } from './events.js';
+import type { RunStatus } from './events';
 
 export interface Run {
   runId: string;

@@ -4,9 +4,9 @@
  * Creates an InviteRecord with 48h expiry and returns an invite URL.
  */
 
-import { tenantPK, inviteSK } from '../../../../src/models/schema.js';
-import { isValidEmail } from '../../../lib/auth/validation.js';
-import type { AuthContext, UserRole, InviteRecord } from '../../../lib/auth/types.js';
+import { tenantPK, inviteSK } from '../../../../src/models/schema';
+import { isValidEmail } from '../../../lib/auth/validation';
+import type { AuthContext, UserRole, InviteRecord } from '../../../lib/auth/types';
 
 const VALID_ROLES: UserRole[] = ['admin', 'builder', 'viewer'];
 const INVITE_EXPIRY_MS = 48 * 60 * 60 * 1000; // 48 hours

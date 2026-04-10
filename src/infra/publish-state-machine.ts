@@ -13,8 +13,8 @@
  * in Lambda-based orchestration.
  */
 
-import type { Workflow, WorkflowDSL } from '../models/types.js';
-import type { PublishRequest } from '../api/publish/handler.js';
+import type { Workflow, WorkflowDSL } from '../models/types';
+import type { PublishRequest } from '../api/publish/handler';
 
 // ── State Machine Types ──
 

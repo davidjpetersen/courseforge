@@ -4,7 +4,7 @@ import {
   type APIGatewayProxyEvent,
   type PromoteRepository,
   type WorkflowRecord,
-} from './handler.js';
+} from './handler';
 
 // ── Helpers ──
 

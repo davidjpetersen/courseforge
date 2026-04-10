@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import type { FieldDefinition, StepDefinition } from '../models/types.js';
-import type { WizardStepState } from './wizard.js';
+import type { FieldDefinition, StepDefinition } from '../models/types';
+import type { WizardStepState } from './wizard';
 import {
   validateField,
   validateStep,
@@ -8,7 +8,7 @@ import {
   findFirstErrorStep,
   buildValidationSummary,
   isPublishEnabled,
-} from './validation.js';
+} from './validation';
 
 // ── Helpers ──
 

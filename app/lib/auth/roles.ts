@@ -4,7 +4,7 @@
  * admin (3) > builder (2) > viewer (1)
  */
 
-import type { UserRole } from './types.js';
+import type { UserRole } from './types';
 
 export const ROLE_LEVEL: Record<UserRole, number> = {
   admin: 3,

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { createRunInitializerHandler } from './handler.js';
+import { createRunInitializerHandler } from './handler';
 
 const input = {
   tenantId: 'tenant-1',

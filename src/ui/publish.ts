@@ -4,7 +4,7 @@
  * Pure TypeScript functions (no React, no DOM).
  */
 
-import type { PublishRequest, PublishResponse } from '../api/publish/handler.js';
+import type { PublishRequest, PublishResponse } from '../api/publish/handler';
 
 // ── 10.3 PublishConfirmation View Model ──
 

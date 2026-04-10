@@ -2,7 +2,7 @@ export {
   createWebhookSecretHandler,
   type DynamoWriteClient,
   type WebhookSecretHandlerDeps,
-} from './webhook-secret.js';
+} from './webhook-secret';
 
 export {
   buildSchedulePreview,
@@ -12,9 +12,9 @@ export {
   type DeleteScheduleHandlerDeps,
   type DynamoScheduleClient,
   type SchedulerClientLike,
-} from './schedule.js';
+} from './schedule';
 
 export {
   type APIGatewayProxyEvent,
   type APIGatewayProxyResult,
-} from './shared.js';
+} from './shared';

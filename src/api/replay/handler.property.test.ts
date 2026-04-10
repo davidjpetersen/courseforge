@@ -1,7 +1,7 @@
 import fc from 'fast-check';
 import { describe, expect, it, vi } from 'vitest';
 
-import { createReplayHandler } from './handler.js';
+import { createReplayHandler } from './handler';
 
 describe('Replay handler properties', () => {
   it('rejects any non-FAILED run status with 422', async () => {

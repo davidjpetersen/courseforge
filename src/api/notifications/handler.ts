@@ -1,6 +1,6 @@
-import type { Notification } from '../../../packages/types/src/runs.js';
-import type { APIGatewayProxyEvent, APIGatewayProxyResult } from '../triggers/shared.js';
-import { jsonResponse, getHeader } from '../triggers/shared.js';
+import type { Notification } from '../../../packages/types/src/runs';
+import type { APIGatewayProxyEvent, APIGatewayProxyResult } from '../triggers/shared';
+import { jsonResponse, getHeader } from '../triggers/shared';
 
 export interface NotificationRepository {
   queryByUser(userId: string, limit: number): Promise<Notification[]>;

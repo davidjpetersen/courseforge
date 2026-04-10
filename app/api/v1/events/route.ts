@@ -2,9 +2,9 @@ import { EventBridgeClient, PutEventsCommand } from '@aws-sdk/client-eventbridge
 import { GetCommand, PutCommand, QueryCommand } from '@aws-sdk/lib-dynamodb';
 import { NextRequest, NextResponse } from 'next/server';
 
-import { createV1EventHandler, type EventHandlerDeps } from '../../../../src/api/v1/events.js';
-import { tenantPK } from '../../../../src/models/schema.js';
-import { runV1Middleware, client, tableName } from '../_middleware.js';
+import { createV1EventHandler, type EventHandlerDeps } from '../../../../src/api/v1/events';
+import { tenantPK } from '../../../../src/models/schema';
+import { runV1Middleware, client, tableName } from '../_middleware';
 
 const eventBridgeClient = new EventBridgeClient({});
 const eventBusName = process.env.EVENT_BUS_NAME ?? 'default';

@@ -5,7 +5,7 @@ import {
   compilePlan,
   type Connection,
   type Recipe,
-} from './compile-plan.js';
+} from './compile-plan';
 
 const baseRecipe: Recipe = {
   recipeId: 'recipe-1',

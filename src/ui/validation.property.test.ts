@@ -5,15 +5,15 @@ import type {
   FieldValue,
   StepDefinition,
   FieldType,
-} from '../models/types.js';
-import type { WizardStepState } from './wizard.js';
+} from '../models/types';
+import type { WizardStepState } from './wizard';
 import {
   validateField,
   validateStep,
   validateAllSteps,
   findFirstErrorStep,
   isPublishEnabled,
-} from './validation.js';
+} from './validation';
 
 // ── Generators ──
 

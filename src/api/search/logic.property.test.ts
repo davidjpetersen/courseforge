@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import fc from 'fast-check';
-import { searchTemplates } from './logic.js';
-import type { Template } from '../../models/types.js';
+import { searchTemplates } from './logic';
+import type { Template } from '../../models/types';
 
 // ── Generators ──
 

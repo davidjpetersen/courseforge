@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import {
   createListWorkflowsByEnvHandler,
   type WorkflowRepository,
-} from '../../../../../src/api/environments/handler.js';
+} from '../../../../../src/api/environments/handler';
 
 const client = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 const tableName = process.env.MAIN_TABLE_NAME ?? 'CourseForgeRuns';

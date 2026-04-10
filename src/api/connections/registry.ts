@@ -1,4 +1,4 @@
-import type { ConnectorDefinition, SecretValue, TestResult } from '../../models/types.js';
+import type { ConnectorDefinition, SecretValue, TestResult } from '../../models/types';
 
 async function runJsonGet(
   url: string,

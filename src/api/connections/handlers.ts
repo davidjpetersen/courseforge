@@ -1,4 +1,4 @@
-import type { Workflow } from '../../models/types.js';
+import type { Workflow } from '../../models/types';
 import {
   buildAuditEntry,
   buildNewConnectionRecord,
@@ -8,12 +8,12 @@ import {
   mapConnectionToListItem,
   mapTestResultToStatus,
   validateCredentials,
-} from './logic.js';
+} from './logic';
 import type {
   AuditLogEntry,
   ConnectionRecord,
   ConnectorDefinition,
-} from '../../models/types.js';
+} from '../../models/types';
 
 export interface APIGatewayProxyEvent {
   httpMethod: string;

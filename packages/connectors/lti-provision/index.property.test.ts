@@ -1,6 +1,6 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
-import { createD2LSignature, parseLmsError } from './index.js';
+import { createD2LSignature, parseLmsError } from './index';
 
 const safeSegment = fc.string({ maxLength: 30 }).filter((value) => !value.includes('\u0000'));
 

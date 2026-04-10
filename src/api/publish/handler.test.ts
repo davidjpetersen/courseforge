@@ -12,8 +12,8 @@ import {
   buildFirstRunUrl,
   type StepFunctionsClient,
   type APIGatewayProxyEvent,
-} from './handler.js';
-import type { Workflow } from '../../models/types.js';
+} from './handler';
+import type { Workflow } from '../../models/types';
 
 // ── Helpers ──
 

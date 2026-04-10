@@ -5,11 +5,11 @@
  * marks the invite accepted, signs a JWT, and returns user data.
  */
 
-import { isValidPassword } from '../../../lib/auth/validation.js';
-import { hashPassword } from '../../../lib/auth/password.js';
-import { signToken } from '../../../lib/auth/jwt.js';
-import { tenantPK, userSK, emailPK, inviteSK, SK_VALUES } from '../../../../src/models/schema.js';
-import type { InviteRecord, UserRecord, EmailIndexRecord } from '../../../lib/auth/types.js';
+import { isValidPassword } from '../../../lib/auth/validation';
+import { hashPassword } from '../../../lib/auth/password';
+import { signToken } from '../../../lib/auth/jwt';
+import { tenantPK, userSK, emailPK, inviteSK, SK_VALUES } from '../../../../src/models/schema';
+import type { InviteRecord, UserRecord, EmailIndexRecord } from '../../../lib/auth/types';
 
 export interface AcceptInviteInput {
   inviteId: string;

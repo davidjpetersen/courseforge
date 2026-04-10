@@ -1,4 +1,4 @@
-import { auditSK, KEY_PREFIX, tenantPK } from '../../src/models/schema.js';
+import { auditSK, KEY_PREFIX, tenantPK } from '../../src/models/schema';
 
 const VERSION_PREFIX = 'VERSION#';
 const RUN_PREFIX = 'RUN#';

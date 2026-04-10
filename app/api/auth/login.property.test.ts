@@ -9,9 +9,9 @@ vi.mock('bcrypt', () => ({
   },
 }));
 
-import { handleLogin, type LoginClient } from './login/handler.js';
-import type { UserRecord, EmailIndexRecord } from '../../lib/auth/types.js';
-import { emailPK, tenantPK, userSK, SK_VALUES } from '../../../src/models/schema.js';
+import { handleLogin, type LoginClient } from './login/handler';
+import type { UserRecord, EmailIndexRecord } from '../../lib/auth/types';
+import { emailPK, tenantPK, userSK, SK_VALUES } from '../../../src/models/schema';
 
 // ── Setup ──
 

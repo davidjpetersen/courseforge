@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { serializeConfig, deserializeConfig, DSLValidationError } from './serializer.js';
+import { serializeConfig, deserializeConfig, DSLValidationError } from './serializer';
 import type {
   WizardConfiguration,
   WorkflowDSL,
   WorkflowMetadata,
-} from '../models/types.js';
+} from '../models/types';
 
 // ── Fixtures ──
 

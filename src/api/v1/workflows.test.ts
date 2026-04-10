@@ -4,7 +4,7 @@ import {
   validateCreateBody,
   type V1WorkflowRecord,
   type V1WorkflowRepository,
-} from './workflows.js';
+} from './workflows';
 
 // ── Helpers ──
 

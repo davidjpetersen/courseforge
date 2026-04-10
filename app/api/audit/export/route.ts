@@ -6,9 +6,9 @@ import {
   createExportAuditHandler,
   type AuditRepository,
   type AuditFilters,
-} from '../../../../src/api/audit/handler.js';
-import { writeAuditLog } from '../../../../packages/utils/src/audit.js';
-import type { AuditEntry } from '../../../../packages/types/src/audit.js';
+} from '../../../../src/api/audit/handler';
+import { writeAuditLog } from '../../../../packages/utils/src/audit';
+import type { AuditEntry } from '../../../../packages/types/src/audit';
 
 const dynamo = new DynamoDBClient({});
 const client = DynamoDBDocumentClient.from(dynamo);

@@ -1,9 +1,9 @@
 import { createHash } from 'node:crypto';
 import { describe, it, expect, vi } from 'vitest';
 
-import { createApiKeyAuthMiddleware } from './api-key-auth.js';
-import type { AuthContext, APIGatewayProxyResult } from './api-key-auth.js';
-import type { ApiKeyRecord } from '../../../packages/types/src/api-keys.js';
+import { createApiKeyAuthMiddleware } from './api-key-auth';
+import type { AuthContext, APIGatewayProxyResult } from './api-key-auth';
+import type { ApiKeyRecord } from '../../../packages/types/src/api-keys';
 
 // ── Helpers ──
 

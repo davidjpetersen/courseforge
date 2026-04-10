@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import fc from 'fast-check';
 
-import { bootstrapTenant } from './tenant-bootstrap.js';
-import type { DynamoClient } from '../../packages/utils/src/audit.js';
-import { ActionType } from '../../packages/types/src/audit.js';
+import { bootstrapTenant } from './tenant-bootstrap';
+import type { DynamoClient } from '../../packages/utils/src/audit';
+import { ActionType } from '../../packages/types/src/audit';
 
 // ── Arbitraries ──
 

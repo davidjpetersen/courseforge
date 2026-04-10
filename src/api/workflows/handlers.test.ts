@@ -17,8 +17,8 @@ import {
   type WorkflowRecord,
   type WorkflowRepository,
   type WorkflowVersionRecord,
-} from './handlers.js';
-import type { Connection, Recipe, StepDefinition } from '../../../packages/utils/src/compile-plan.js';
+} from './handlers';
+import type { Connection, Recipe, StepDefinition } from '../../../packages/utils/src/compile-plan';
 
 // ── Fixtures ──
 

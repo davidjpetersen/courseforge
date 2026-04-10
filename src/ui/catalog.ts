@@ -5,8 +5,8 @@
  * into structured output objects representing what the UI would render.
  */
 
-import type { Template } from '../models/types.js';
-import { groupByCategory, toSummary, type TemplateSummary } from '../api/templates/logic.js';
+import type { Template } from '../models/types';
+import { groupByCategory, toSummary, type TemplateSummary } from '../api/templates/logic';
 
 // ── Card View Model ──
 

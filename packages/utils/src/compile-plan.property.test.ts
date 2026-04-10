@@ -8,7 +8,7 @@ import {
   type Recipe,
   type RecipeStep,
   type StepDefinition,
-} from './compile-plan.js';
+} from './compile-plan';
 
 // ── Arbitraries ──
 

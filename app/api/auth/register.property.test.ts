@@ -9,7 +9,7 @@ vi.mock('bcrypt', () => ({
   },
 }));
 
-import { handleRegister, type RegisterClient } from './register/handler.js';
+import { handleRegister, type RegisterClient } from './register/handler';
 
 // ── Setup ──
 

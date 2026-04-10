@@ -9,15 +9,15 @@
  */
 
 import { describe, it, expect, vi } from 'vitest';
-import { SEED_TEMPLATES, ROSTER_OPS_TEMPLATE } from '../data/seed-templates.js';
-import { createWizardState, setFieldValue, goToNextStep, getProgressIndicator } from '../ui/wizard.js';
-import { validateStep, validateAllSteps, isPublishEnabled } from '../ui/validation.js';
-import { buildStepTestButtonViewModel, initialStepTestState } from '../ui/step-test.js';
-import { serializeConfig } from '../dsl/serializer.js';
-import { buildPublishConfirmationViewModel } from '../ui/publish.js';
-import type { PublishRequest, PublishResponse } from '../api/publish/handler.js';
-import type { StepTestResponse, ConnectedSystemClient } from '../api/step-test/handler.js';
-import type { Workflow, WorkflowMetadata } from '../models/types.js';
+import { SEED_TEMPLATES, ROSTER_OPS_TEMPLATE } from '../data/seed-templates';
+import { createWizardState, setFieldValue, goToNextStep, getProgressIndicator } from '../ui/wizard';
+import { validateStep, validateAllSteps, isPublishEnabled } from '../ui/validation';
+import { buildStepTestButtonViewModel, initialStepTestState } from '../ui/step-test';
+import { serializeConfig } from '../dsl/serializer';
+import { buildPublishConfirmationViewModel } from '../ui/publish';
+import type { PublishRequest, PublishResponse } from '../api/publish/handler';
+import type { StepTestResponse, ConnectedSystemClient } from '../api/step-test/handler';
+import type { Workflow, WorkflowMetadata } from '../models/types';
 
 describe('End-to-end wizard flow', () => {
   it('select template → configure → test step → publish → verify workflow record', () => {

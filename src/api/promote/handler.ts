@@ -1,5 +1,5 @@
-import type { WriteAuditInput } from '../../../packages/utils/src/audit.js';
-import { ActionType } from '../../../packages/types/src/audit.js';
+import type { WriteAuditInput } from '../../../packages/utils/src/audit';
+import { ActionType } from '../../../packages/types/src/audit';
 
 // ── Minimal API Gateway types (local, matching environments/handler.ts pattern) ──
 

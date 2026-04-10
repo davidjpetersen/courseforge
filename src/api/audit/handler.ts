@@ -1,7 +1,7 @@
-import type { AuditEntry } from '../../../packages/types/src/audit.js';
-import type { WriteAuditInput } from '../../../packages/utils/src/audit.js';
-import { ActionType } from '../../../packages/types/src/audit.js';
-import { formatAuditCsv } from './csv.js';
+import type { AuditEntry } from '../../../packages/types/src/audit';
+import type { WriteAuditInput } from '../../../packages/utils/src/audit';
+import { ActionType } from '../../../packages/types/src/audit';
+import { formatAuditCsv } from './csv';
 
 // ── Minimal API Gateway types (local, matching environments/handler.ts pattern) ──
 

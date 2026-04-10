@@ -1,8 +1,8 @@
-import type { Run, RunStep } from '../../../packages/types/src/runs.js';
-import type { APIGatewayProxyEvent, APIGatewayProxyResult } from '../triggers/shared.js';
-import { jsonResponse, resolveTenantId } from '../triggers/shared.js';
-import { validateRunsQueryParams, encodeCursor } from './validation.js';
-import type { RunsQueryParams } from './validation.js';
+import type { Run, RunStep } from '../../../packages/types/src/runs';
+import type { APIGatewayProxyEvent, APIGatewayProxyResult } from '../triggers/shared';
+import { jsonResponse, resolveTenantId } from '../triggers/shared';
+import { validateRunsQueryParams, encodeCursor } from './validation';
+import type { RunsQueryParams } from './validation';
 
 export interface RunsResponse {
   runs: Run[];

@@ -9,9 +9,9 @@ vi.mock('bcrypt', () => ({
   },
 }));
 
-import { handleAcceptInvite, type AcceptInviteClient } from './accept-invite/handler.js';
-import type { UserRole, InviteRecord } from '../../lib/auth/types.js';
-import { tenantPK, inviteSK } from '../../../src/models/schema.js';
+import { handleAcceptInvite, type AcceptInviteClient } from './accept-invite/handler';
+import type { UserRole, InviteRecord } from '../../lib/auth/types';
+import { tenantPK, inviteSK } from '../../../src/models/schema';
 
 // ── Setup ──
 

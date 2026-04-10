@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { Notification } from '../../packages/types/src/runs.js';
+import type { Notification } from '../../packages/types/src/runs';
 import {
   createNotificationBellState,
   updateNotifications,
@@ -9,7 +9,7 @@ import {
   getVisibleNotifications,
   shouldShowBadge,
   formatRelativeTime,
-} from './notification-bell.js';
+} from './notification-bell';
 
 function makeNotification(overrides: Partial<Notification> = {}): Notification {
   return {

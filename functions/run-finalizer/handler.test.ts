@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { createRunFinalizerHandler } from './handler.js';
+import { createRunFinalizerHandler } from './handler';
 
 const baseInput = {
   runId: 'run-1',

@@ -9,7 +9,7 @@ import {
   type Storage,
   type Category,
   type FilterState,
-} from './filter.js';
+} from './filter';
 
 // ── In-memory mock storage ──
 

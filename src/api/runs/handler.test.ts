@@ -1,7 +1,7 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { createRunsHandler, RunRepository } from './handler.js';
-import type { APIGatewayProxyEvent } from '../triggers/shared.js';
-import { encodeCursor } from './validation.js';
+import { createRunsHandler, RunRepository } from './handler';
+import type { APIGatewayProxyEvent } from '../triggers/shared';
+import { encodeCursor } from './validation';
 
 function makeEvent(overrides: Partial<APIGatewayProxyEvent> = {}): APIGatewayProxyEvent {
   return {

@@ -6,9 +6,9 @@ import {
   UpdateCommand,
 } from '@aws-sdk/lib-dynamodb';
 
-import { auditEntryPK, auditEntrySK } from '../shared/keys.js';
-import { findRunRecordById } from '../shared/run-records.js';
-import type { AuditEntry, RunFinalizerInput, RunFinalizerOutput } from '../shared/types.js';
+import { auditEntryPK, auditEntrySK } from '../shared/keys';
+import { findRunRecordById } from '../shared/run-records';
+import type { AuditEntry, RunFinalizerInput, RunFinalizerOutput } from '../shared/types';
 
 export interface DynamoClientLike {
   query(params: {

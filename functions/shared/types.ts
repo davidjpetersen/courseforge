@@ -1,4 +1,4 @@
-import { RunStatus } from '../../packages/types/src/index.js';
+import { RunStatus } from '../../packages/types/src/index';
 
 export interface StepRetryPolicy {
   maxAttempts: number;

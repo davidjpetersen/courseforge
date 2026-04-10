@@ -4,7 +4,7 @@
  * POST /steps/{stepId}/test — dry-run validation against connected system.
  */
 
-import type { FieldValue } from '../../models/types.js';
+import type { FieldValue } from '../../models/types';
 
 // ── Request / Response types ──
 

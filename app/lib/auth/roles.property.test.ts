@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import fc from 'fast-check';
 
-import { ROLE_LEVEL, hasRole } from './roles.js';
-import type { UserRole } from './types.js';
+import { ROLE_LEVEL, hasRole } from './roles';
+import type { UserRole } from './types';
 
 // ── Arbitraries ──
 

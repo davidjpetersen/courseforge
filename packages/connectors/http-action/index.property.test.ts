@@ -1,7 +1,7 @@
 // Feature: event-triggering-routing
 import fc from 'fast-check';
 import { describe, expect, it, vi } from 'vitest';
-import { executeHttpAction, HttpActionError } from './index.js';
+import { executeHttpAction, HttpActionError } from './index';
 
 // ---------------------------------------------------------------------------
 // Helpers

@@ -12,7 +12,7 @@ import type {
   WorkflowDSLStep,
   WorkflowMetadata,
   FieldValue,
-} from '../models/types.js';
+} from '../models/types';
 
 // ── Serialization Error ──
 

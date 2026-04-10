@@ -1,8 +1,8 @@
-import type { Run, RunStep } from '../../../packages/types/src/runs.js';
-import type { APIGatewayProxyEvent, APIGatewayProxyResult } from '../triggers/shared.js';
-import { jsonResponse, resolveTenantId } from '../triggers/shared.js';
-import { maskSensitiveFields } from '../../../app/lib/mask-sensitive.js';
-import type { RunRepository } from './handler.js';
+import type { Run, RunStep } from '../../../packages/types/src/runs';
+import type { APIGatewayProxyEvent, APIGatewayProxyResult } from '../triggers/shared';
+import { jsonResponse, resolveTenantId } from '../triggers/shared';
+import { maskSensitiveFields } from '../../../app/lib/mask-sensitive';
+import type { RunRepository } from './handler';
 
 export interface S3Client {
   getObjectTruncated(bucket: string, key: string, maxBytes: number): Promise<string>;

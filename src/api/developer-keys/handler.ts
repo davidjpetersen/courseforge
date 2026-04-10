@@ -1,8 +1,8 @@
 import { randomBytes, createHash } from 'node:crypto';
 import { randomUUID } from 'node:crypto';
 
-import type { ApiKeyRecord, ApiKeyScope } from '../../../packages/types/src/api-keys.js';
-import type { ApiKeyRepository } from './repository.js';
+import type { ApiKeyRecord, ApiKeyScope } from '../../../packages/types/src/api-keys';
+import type { ApiKeyRepository } from './repository';
 
 // ── Minimal API Gateway types (matching existing pattern) ──
 

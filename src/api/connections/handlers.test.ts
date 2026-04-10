@@ -11,9 +11,9 @@ import {
   type ConnectionRepository,
   type SecretsService,
   type WorkflowRepository,
-} from './handlers.js';
-import type { ConnectionRecord, Workflow } from '../../models/types.js';
-import { connectorRegistry } from './registry.js';
+} from './handlers';
+import type { ConnectionRecord, Workflow } from '../../models/types';
+import { connectorRegistry } from './registry';
 
 function mockFetch(ok: boolean, status: number): typeof fetch {
   return vi.fn(async () => ({ ok, status } as unknown as Response)) as unknown as typeof fetch;

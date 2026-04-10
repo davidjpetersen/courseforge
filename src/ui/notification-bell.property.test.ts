@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
-import { formatRelativeTime } from './notification-bell.js';
+import { formatRelativeTime } from './notification-bell';
 
 /**
  * Validates: Requirement 7.4

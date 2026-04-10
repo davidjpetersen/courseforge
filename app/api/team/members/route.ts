@@ -9,9 +9,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient, QueryCommand } from '@aws-sdk/lib-dynamodb';
 
-import { requireAdmin } from '../../../lib/auth/middleware.js';
-import { handleListMembers } from './handler.js';
-import type { MembersClient } from './handler.js';
+import { requireAdmin } from '../../../lib/auth/middleware';
+import { handleListMembers } from './handler';
+import type { MembersClient } from './handler';
 
 const rawClient = new DynamoDBClient({});
 const ddb = DynamoDBDocumentClient.from(rawClient);

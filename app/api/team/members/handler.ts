@@ -4,8 +4,8 @@
  * Queries DynamoDB for all USER# records in the tenant.
  */
 
-import { tenantPK, KEY_PREFIX } from '../../../../src/models/schema.js';
-import type { AuthContext, UserRecord } from '../../../lib/auth/types.js';
+import { tenantPK, KEY_PREFIX } from '../../../../src/models/schema';
+import type { AuthContext, UserRecord } from '../../../lib/auth/types';
 
 export interface MembersResult {
   status: number;

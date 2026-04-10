@@ -2,7 +2,7 @@ import { BatchWriteCommand } from '@aws-sdk/lib-dynamodb';
 import fc from 'fast-check';
 import { describe, expect, it, vi } from 'vitest';
 
-import { createNotificationHandler } from './handler.js';
+import { createNotificationHandler } from './handler';
 
 const arbPrefs = fc.oneof(
   fc.constant(undefined),

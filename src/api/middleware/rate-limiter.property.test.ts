@@ -5,9 +5,9 @@ import {
   classifyEndpointGroup,
   computeRefill,
   createRateLimiter,
-} from './rate-limiter.js';
-import type { RateLimitBucket, RateLimitRepository } from './rate-limiter.js';
-import type { EndpointGroup } from '../../../packages/types/src/api-keys.js';
+} from './rate-limiter';
+import type { RateLimitBucket, RateLimitRepository } from './rate-limiter';
+import type { EndpointGroup } from '../../../packages/types/src/api-keys';
 
 // ── In-memory repository for Properties 7 & 8 ──
 

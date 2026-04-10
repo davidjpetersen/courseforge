@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { WorkflowStatus, RunStatus } from './events.js';
+import { WorkflowStatus, RunStatus } from './events';
 import {
   WorkflowStatus as IndexWorkflowStatus,
   RunStatus as IndexRunStatus,
   DomainEvent,
-} from './index.js';
+} from './index';
 
 describe('WorkflowStatus enum', () => {
   it('has exactly DRAFT, PUBLISHED, PAUSED, ARCHIVED values', () => {

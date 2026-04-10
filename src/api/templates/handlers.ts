@@ -5,13 +5,13 @@
  * GET /templates/{templateId} — get template detail with missing connections
  */
 
-import type { Template } from '../../models/types.js';
+import type { Template } from '../../models/types';
 import {
   buildListResponse,
   buildDetailResponse,
   type TemplateListResponse,
   type TemplateDetailResponse,
-} from './logic.js';
+} from './logic';
 
 // ── Minimal API Gateway types (avoids heavy @types/aws-lambda dep) ──
 

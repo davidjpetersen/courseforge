@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
-import { sortFailedFirst } from './run-list.js';
-import { RunStatus } from '../../packages/types/src/events.js';
-import type { Run } from '../../packages/types/src/runs.js';
+import { sortFailedFirst } from './run-list';
+import { RunStatus } from '../../packages/types/src/events';
+import type { Run } from '../../packages/types/src/runs';
 
 /**
  * Validates: Requirements 5.5

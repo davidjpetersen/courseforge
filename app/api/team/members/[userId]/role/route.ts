@@ -9,9 +9,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient, PutCommand, GetCommand } from '@aws-sdk/lib-dynamodb';
 
-import { requireAdmin } from '../../../../../lib/auth/middleware.js';
-import { handleChangeRole } from './handler.js';
-import type { ChangeRoleClient } from './handler.js';
+import { requireAdmin } from '../../../../../lib/auth/middleware';
+import { handleChangeRole } from './handler';
+import type { ChangeRoleClient } from './handler';
 
 const rawClient = new DynamoDBClient({});
 const ddb = DynamoDBDocumentClient.from(rawClient);

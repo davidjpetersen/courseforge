@@ -1,9 +1,9 @@
 import { describe, expect, it, beforeEach } from 'vitest';
 import { createHash } from 'node:crypto';
 
-import { createApiKeyHandler } from './handler.js';
-import type { ApiKeyRepository } from './repository.js';
-import type { ApiKeyRecord, ApiKeyScope } from '../../../packages/types/src/api-keys.js';
+import { createApiKeyHandler } from './handler';
+import type { ApiKeyRepository } from './repository';
+import type { ApiKeyRecord, ApiKeyScope } from '../../../packages/types/src/api-keys';
 
 // ── In-memory mock repository (same pattern as property tests) ──
 

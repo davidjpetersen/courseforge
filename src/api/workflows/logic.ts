@@ -1,6 +1,6 @@
-import { compareSemver } from '../../../packages/utils/src/semver.js';
-import type { StepDefinition } from '../../../packages/utils/src/compile-plan.js';
-import type { WorkflowRecord, WorkflowVersionRecord, WorkflowStatus } from './handlers.js';
+import { compareSemver } from '../../../packages/utils/src/semver';
+import type { StepDefinition } from '../../../packages/utils/src/compile-plan';
+import type { WorkflowRecord, WorkflowVersionRecord, WorkflowStatus } from './handlers';
 
 // ── Types ──────────────────────────────────────────────────────────────
 

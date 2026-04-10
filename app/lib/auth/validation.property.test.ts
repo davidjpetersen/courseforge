@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import fc from 'fast-check';
 
-import { isValidEmail, isValidPassword, MIN_PASSWORD_LENGTH } from './validation.js';
+import { isValidEmail, isValidPassword, MIN_PASSWORD_LENGTH } from './validation';
 
 // ── Property 3: Registration input validation ──
 

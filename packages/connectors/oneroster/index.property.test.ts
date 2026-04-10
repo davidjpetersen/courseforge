@@ -8,7 +8,7 @@ import {
   ensureErrorThreshold,
   filterEnrollmentsByOrg,
   type FieldMapping,
-} from './index.js';
+} from './index';
 
 const baseUrlArbitrary = fc.webUrl().filter((url) => {
   try {

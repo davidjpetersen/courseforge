@@ -4,10 +4,10 @@
  * Sets a user's status to 'suspended' and writes an audit log entry.
  */
 
-import { tenantPK, userSK } from '../../../../../../src/models/schema.js';
-import { writeAuditLog } from '../../../../../../packages/utils/src/audit.js';
-import { ActionType } from '../../../../../../packages/types/src/audit.js';
-import type { AuthContext, UserRecord } from '../../../../../lib/auth/types.js';
+import { tenantPK, userSK } from '../../../../../../src/models/schema';
+import { writeAuditLog } from '../../../../../../packages/utils/src/audit';
+import { ActionType } from '../../../../../../packages/types/src/audit';
+import type { AuthContext, UserRecord } from '../../../../../lib/auth/types';
 
 export interface SuspendResult {
   status: number;

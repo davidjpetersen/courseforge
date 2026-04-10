@@ -4,7 +4,7 @@ import { DynamoDBDocumentClient, QueryCommand } from '@aws-sdk/lib-dynamodb';
 import { NextRequest, NextResponse } from 'next/server';
 
 import type { Run, RunStep } from '../../../../packages/types/src/runs';
-import { findRunRecordById } from '../../../../functions/shared/run-records.js';
+import { findRunRecordById } from '../../../../functions/shared/run-records';
 import { maskSensitiveFields } from '../../../lib/mask-sensitive';
 
 const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({}));

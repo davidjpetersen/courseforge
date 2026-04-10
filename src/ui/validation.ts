@@ -9,8 +9,8 @@ import type {
   FieldValue,
   StepDefinition,
   FieldType,
-} from '../models/types.js';
-import type { WizardStepState } from './wizard.js';
+} from '../models/types';
+import type { WizardStepState } from './wizard';
 
 // ── Types ──
 

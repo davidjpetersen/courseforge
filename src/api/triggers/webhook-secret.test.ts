@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 
 import { describe, expect, it } from 'vitest';
-import { createWebhookSecretHandler } from './webhook-secret.js';
+import { createWebhookSecretHandler } from './webhook-secret';
 
 describe('createWebhookSecretHandler', () => {
   it('returns a raw token and stores only its SHA-256 hash', async () => {

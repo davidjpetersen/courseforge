@@ -6,7 +6,7 @@ import {
   type V1RunRecord,
   type V1RunStep,
   type V1RunRepository,
-} from './runs.js';
+} from './runs';
 
 // ── Arbitraries ──
 

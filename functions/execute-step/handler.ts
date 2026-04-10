@@ -5,10 +5,10 @@ import {
   UpdateCommand,
 } from '@aws-sdk/lib-dynamodb';
 
-import type { RuntimeConnector } from '../shared/connectors.js';
-import { runtimeConnectorRegistry } from '../shared/connectors.js';
-import { runStepRecordPK, runStepRecordSK } from '../shared/keys.js';
-import type { ExecuteStepInput, ExecuteStepOutput, RunStepError } from '../shared/types.js';
+import type { RuntimeConnector } from '../shared/connectors';
+import { runtimeConnectorRegistry } from '../shared/connectors';
+import { runStepRecordPK, runStepRecordSK } from '../shared/keys';
+import type { ExecuteStepInput, ExecuteStepOutput, RunStepError } from '../shared/types';
 
 const INLINE_OUTPUT_LIMIT_BYTES = 4 * 1024;
 

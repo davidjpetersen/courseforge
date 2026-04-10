@@ -10,8 +10,8 @@ import {
   buildPublishConfirmationViewModel,
   buildPublishErrorViewModel,
   buildNoErrorViewModel,
-} from './publish.js';
-import type { PublishRequest, PublishResponse } from '../api/publish/handler.js';
+} from './publish';
+import type { PublishRequest, PublishResponse } from '../api/publish/handler';
 
 // ── Helpers ──
 

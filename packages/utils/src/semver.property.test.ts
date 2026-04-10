@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import fc from 'fast-check';
 
-import { bumpMinor, bumpPatch, compareSemver, parseSemver } from './semver.js';
+import { bumpMinor, bumpPatch, compareSemver, parseSemver } from './semver';
 
 // ── Arbitrary: valid semver triple ──
 

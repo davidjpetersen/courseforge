@@ -10,11 +10,11 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient, GetCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import { NextRequest, NextResponse } from 'next/server';
 
-import { createApiKeyAuthMiddleware, type AuthContext } from '../../../src/api/middleware/api-key-auth.js';
-import { createRateLimiter, type RateLimitRepository } from '../../../src/api/middleware/rate-limiter.js';
-import { enforceScopeForRequest } from '../../../src/api/middleware/scope-enforcer.js';
-import { createDynamoApiKeyRepository } from '../../../src/api/developer-keys/repository.js';
-import { rateLimitPK, RATE_LIMIT_SK } from '../../../src/models/schema.js';
+import { createApiKeyAuthMiddleware, type AuthContext } from '../../../src/api/middleware/api-key-auth';
+import { createRateLimiter, type RateLimitRepository } from '../../../src/api/middleware/rate-limiter';
+import { enforceScopeForRequest } from '../../../src/api/middleware/scope-enforcer';
+import { createDynamoApiKeyRepository } from '../../../src/api/developer-keys/repository';
+import { rateLimitPK, RATE_LIMIT_SK } from '../../../src/models/schema';
 
 const client = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 const tableName = process.env.MAIN_TABLE_NAME ?? 'CourseForgeRuns';

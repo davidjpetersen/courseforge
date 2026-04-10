@@ -1,5 +1,5 @@
-import type { Run } from '../../packages/types/src/runs.js';
-import { RunStatus } from '../../packages/types/src/events.js';
+import type { Run } from '../../packages/types/src/runs';
+import { RunStatus } from '../../packages/types/src/events';
 
 export interface RunFilters {
   workflowId?: string;

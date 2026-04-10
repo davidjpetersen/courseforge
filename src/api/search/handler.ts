@@ -7,8 +7,8 @@
  * can be tested with in-memory implementations.
  */
 
-import type { Template } from '../../models/types.js';
-import { buildSearchResponse, type SearchResponse } from './logic.js';
+import type { Template } from '../../models/types';
+import { buildSearchResponse, type SearchResponse } from './logic';
 
 // ── Minimal API Gateway types ──
 

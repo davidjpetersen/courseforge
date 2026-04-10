@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { RunStatus } from '../../packages/types/src/events.js';
-import type { Run } from '../../packages/types/src/runs.js';
+import { RunStatus } from '../../packages/types/src/events';
+import type { Run } from '../../packages/types/src/runs';
 import {
   createRunDetailState,
   ERROR_CODE_MAP,
@@ -9,7 +9,7 @@ import {
   shouldPollDetail,
   formatDuration,
   buildReplayBadgeText,
-} from './run-detail.js';
+} from './run-detail';
 
 function makeRun(overrides: Partial<Run> = {}): Run {
   return {

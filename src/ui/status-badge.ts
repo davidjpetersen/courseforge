@@ -1,4 +1,4 @@
-import { RunStatus } from '../../packages/types/src/events.js';
+import { RunStatus } from '../../packages/types/src/events';
 
 export interface StatusBadgeViewModel {
   label: string;

@@ -5,8 +5,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import {
   createPromoteHandler,
   type PromoteRepository,
-} from '../../../../../src/api/promote/handler.js';
-import { writeAuditLog } from '../../../../../packages/utils/src/audit.js';
+} from '../../../../../src/api/promote/handler';
+import { writeAuditLog } from '../../../../../packages/utils/src/audit';
 
 const client = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 const tableName = process.env.MAIN_TABLE_NAME ?? 'CourseForgeRuns';

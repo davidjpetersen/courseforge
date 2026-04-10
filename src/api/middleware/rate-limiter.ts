@@ -1,4 +1,4 @@
-import type { EndpointGroup } from '../../../packages/types/src/api-keys.js';
+import type { EndpointGroup } from '../../../packages/types/src/api-keys';
 
 // ── Types ──
 

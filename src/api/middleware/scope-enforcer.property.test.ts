@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import fc from 'fast-check';
 
-import { enforceScopeForRequest } from './scope-enforcer.js';
+import { enforceScopeForRequest } from './scope-enforcer';
 
 // ── Arbitraries ──
 

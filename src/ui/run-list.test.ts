@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { RunStatus } from '../../packages/types/src/events.js';
-import type { Run } from '../../packages/types/src/runs.js';
+import { RunStatus } from '../../packages/types/src/events';
+import type { Run } from '../../packages/types/src/runs';
 import {
   sortFailedFirst,
   shouldPoll,
   appendPage,
   buildEmptyStateMessage,
   createRunListState,
-} from './run-list.js';
+} from './run-list';
 
 function makeRun(overrides: Partial<Run> = {}): Run {
   return {

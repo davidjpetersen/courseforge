@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import fc from 'fast-check';
-import type { StepDefinition, FieldDefinition } from '../models/types.js';
+import type { StepDefinition, FieldDefinition } from '../models/types';
 import {
   isStepTestable,
   buildStepTestButtonViewModel,
   initialStepTestState,
-} from './step-test.js';
+} from './step-test';
 
 // ── Generators ──
 

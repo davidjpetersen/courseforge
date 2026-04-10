@@ -3,9 +3,9 @@ import {
   createNotificationsHandler,
   createNotificationReadHandler,
   NotificationRepository,
-} from './handler.js';
-import type { APIGatewayProxyEvent } from '../triggers/shared.js';
-import type { Notification } from '../../../packages/types/src/runs.js';
+} from './handler';
+import type { APIGatewayProxyEvent } from '../triggers/shared';
+import type { Notification } from '../../../packages/types/src/runs';
 
 function makeEvent(overrides: Partial<APIGatewayProxyEvent> = {}): APIGatewayProxyEvent {
   return {

@@ -5,10 +5,10 @@
  * user suspended, wrong password) to prevent user enumeration.
  */
 
-import { verifyPassword } from '../../../lib/auth/password.js';
-import { signToken } from '../../../lib/auth/jwt.js';
-import { emailPK, tenantPK, userSK, SK_VALUES } from '../../../../src/models/schema.js';
-import type { UserRecord, EmailIndexRecord } from '../../../lib/auth/types.js';
+import { verifyPassword } from '../../../lib/auth/password';
+import { signToken } from '../../../lib/auth/jwt';
+import { emailPK, tenantPK, userSK, SK_VALUES } from '../../../../src/models/schema';
+import type { UserRecord, EmailIndexRecord } from '../../../lib/auth/types';
 
 const INVALID_CREDENTIALS = { error: 'Invalid credentials' } as const;
 

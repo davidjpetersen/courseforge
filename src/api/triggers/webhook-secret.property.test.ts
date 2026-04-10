@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto';
 import fc from 'fast-check';
 import { describe, expect, it, vi } from 'vitest';
 
-import { createWebhookSecretHandler } from './webhook-secret.js';
+import { createWebhookSecretHandler } from './webhook-secret';
 
 const arbId = fc.stringOf(fc.constantFrom(...'abcdefghijklmnopqrstuvwxyz0123456789-_'), {
   minLength: 1,

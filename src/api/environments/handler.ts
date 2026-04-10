@@ -1,4 +1,4 @@
-import type { EnvironmentRecord } from '../../models/types.js';
+import type { EnvironmentRecord } from '../../models/types';
 
 export interface APIGatewayProxyEvent {
   httpMethod: string;

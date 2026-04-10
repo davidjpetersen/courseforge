@@ -1,4 +1,4 @@
-import type { AuditEntry } from '../../../packages/types/src/audit.js';
+import type { AuditEntry } from '../../../packages/types/src/audit';
 
 const HEADER = 'timestamp,actor,actorEmail,actionType,resourceType,resourceId,detail';
 

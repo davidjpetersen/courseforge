@@ -7,8 +7,8 @@
 import fc from 'fast-check';
 import { describe, expect, it, vi } from 'vitest';
 
-import { schedulePK, scheduleSK } from '../../models/schema.js';
-import { createCreateScheduleHandler, createDeleteScheduleHandler } from './schedule.js';
+import { schedulePK, scheduleSK } from '../../models/schema';
+import { createCreateScheduleHandler, createDeleteScheduleHandler } from './schedule';
 
 // ── Shared helpers ──────────────────────────────────────────────────────────
 

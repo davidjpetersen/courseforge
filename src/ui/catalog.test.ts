@@ -3,8 +3,8 @@ import {
   buildCardViewModel,
   buildDetailViewModel,
   buildCatalogViewModel,
-} from './catalog.js';
-import type { Template } from '../models/types.js';
+} from './catalog';
+import type { Template } from '../models/types';
 
 // ── Helpers ──
 

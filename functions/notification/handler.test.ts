@@ -1,7 +1,7 @@
 import { BatchWriteCommand, QueryCommand } from '@aws-sdk/lib-dynamodb';
 import { describe, expect, it, vi } from 'vitest';
 
-import { createNotificationHandler } from './handler.js';
+import { createNotificationHandler } from './handler';
 
 describe('createNotificationHandler', () => {
   it('writes one notification per subscribed user using batch write', async () => {

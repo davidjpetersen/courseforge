@@ -5,7 +5,7 @@ import {
   buildEnrollmentsUrl,
   oneRosterConnector,
   type OneRosterParams,
-} from './index.js';
+} from './index';
 
 describe('applyFieldMappings', () => {
   it('maps fields correctly', () => {

@@ -5,7 +5,7 @@
  * Thin adapter that maps internal Template records to the public Recipe shape.
  */
 
-import type { Template } from '../../models/types.js';
+import type { Template } from '../../models/types';
 
 // ── Minimal API Gateway types (matching existing pattern) ──
 

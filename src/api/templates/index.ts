@@ -8,7 +8,7 @@ export {
   type TemplateSummary,
   type TemplateListResponse,
   type TemplateDetailResponse,
-} from './logic.js';
+} from './logic';
 
 export {
   createListTemplatesHandler,
@@ -17,4 +17,4 @@ export {
   type TenantConnectionProvider,
   type APIGatewayProxyEvent,
   type APIGatewayProxyResult,
-} from './handlers.js';
+} from './handlers';

@@ -5,7 +5,7 @@
  * property-tested with arbitrary inputs.
  */
 
-import type { Template } from '../../models/types.js';
+import type { Template } from '../../models/types';
 
 // ── List Response Shapes ──
 

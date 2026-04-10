@@ -6,7 +6,7 @@
  */
 
 import { SignJWT, jwtVerify } from 'jose';
-import type { JWTPayload } from './types.js';
+import type { JWTPayload } from './types';
 
 const COOKIE_NAME = 'courseforge_session';
 const TOKEN_EXPIRY = '1h';

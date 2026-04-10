@@ -17,9 +17,9 @@ import {
   type WorkflowRecordCreator,
   type PipelineActivator,
   type EventEmitter,
-} from '../infra/publish-state-machine.js';
-import type { PublishRequest } from '../api/publish/handler.js';
-import type { Workflow, WorkflowDSL } from '../models/types.js';
+} from '../infra/publish-state-machine';
+import type { PublishRequest } from '../api/publish/handler';
+import type { Workflow, WorkflowDSL } from '../models/types';
 
 describe('Publish pipeline integration', () => {
   // ── Shared fixtures ──

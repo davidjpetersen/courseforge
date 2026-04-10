@@ -5,9 +5,9 @@ import {
   requireAdmin,
   requireBuilder,
   requireViewer,
-} from './middleware.js';
-import { signToken } from './jwt.js';
-import type { AuthContext, JWTPayload } from './types.js';
+} from './middleware';
+import { signToken } from './jwt';
+import type { AuthContext, JWTPayload } from './types';
 
 // ── Setup ──
 

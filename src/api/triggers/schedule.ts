@@ -1,13 +1,13 @@
 import { randomUUID } from 'node:crypto';
 
-import { schedulePK, scheduleSK } from '../../models/schema.js';
+import { schedulePK, scheduleSK } from '../../models/schema';
 import {
   jsonResponse,
   parseJsonBody,
   resolveTenantId,
   type APIGatewayProxyEvent,
   type APIGatewayProxyResult,
-} from './shared.js';
+} from './shared';
 
 export interface DynamoScheduleClient {
   get(params: {

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import fc from 'fast-check';
 
-import type { WorkflowRecord, WorkflowStatus, WorkflowVersionRecord } from './handlers.js';
+import type { WorkflowRecord, WorkflowStatus, WorkflowVersionRecord } from './handlers';
 import {
   filterWorkflows,
   isValidTransition,
@@ -10,9 +10,9 @@ import {
   toVersionMetadata,
   validateConnections,
   validateCreateRequest,
-} from './logic.js';
-import type { Connection, StepDefinition } from '../../../packages/utils/src/compile-plan.js';
-import { compareSemver } from '../../../packages/utils/src/semver.js';
+} from './logic';
+import type { Connection, StepDefinition } from '../../../packages/utils/src/compile-plan';
+import { compareSemver } from '../../../packages/utils/src/semver';
 
 // ── Arbitraries ──
 

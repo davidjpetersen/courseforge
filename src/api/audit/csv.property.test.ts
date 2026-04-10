@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import fc from 'fast-check';
 
-import { formatAuditCsv } from './csv.js';
-import { ActionType, type AuditEntry, type ResourceType } from '../../../packages/types/src/audit.js';
+import { formatAuditCsv } from './csv';
+import { ActionType, type AuditEntry, type ResourceType } from '../../../packages/types/src/audit';
 
 // ── Arbitraries ──
 

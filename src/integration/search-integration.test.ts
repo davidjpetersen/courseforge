@@ -8,8 +8,8 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { SEED_TEMPLATES } from '../data/seed-templates.js';
-import { buildSearchResponse, searchTemplates } from '../api/search/logic.js';
+import { SEED_TEMPLATES } from '../data/seed-templates';
+import { buildSearchResponse, searchTemplates } from '../api/search/logic';
 
 describe('Search integration', () => {
   const templates = SEED_TEMPLATES;

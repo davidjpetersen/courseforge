@@ -4,10 +4,10 @@
  * Updates a user's role and writes an audit log entry.
  */
 
-import { tenantPK, userSK } from '../../../../../../src/models/schema.js';
-import { writeAuditLog } from '../../../../../../packages/utils/src/audit.js';
-import { ActionType } from '../../../../../../packages/types/src/audit.js';
-import type { AuthContext, UserRole, UserRecord } from '../../../../../lib/auth/types.js';
+import { tenantPK, userSK } from '../../../../../../src/models/schema';
+import { writeAuditLog } from '../../../../../../packages/utils/src/audit';
+import { ActionType } from '../../../../../../packages/types/src/audit';
+import type { AuthContext, UserRole, UserRecord } from '../../../../../lib/auth/types';
 
 const VALID_ROLES: UserRole[] = ['admin', 'builder', 'viewer'];
 

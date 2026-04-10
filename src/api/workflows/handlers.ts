@@ -1,8 +1,8 @@
 import { randomUUID } from 'node:crypto';
 
-import { compilePlan, type Connection, type Recipe, type StepDefinition } from '../../../packages/utils/src/compile-plan.js';
-import { bumpMinor } from '../../../packages/utils/src/semver.js';
-import { filterWorkflows, sortVersionsDescending, summarizeSteps, toVersionMetadata } from './logic.js';
+import { compilePlan, type Connection, type Recipe, type StepDefinition } from '../../../packages/utils/src/compile-plan';
+import { bumpMinor } from '../../../packages/utils/src/semver';
+import { filterWorkflows, sortVersionsDescending, summarizeSteps, toVersionMetadata } from './logic';
 
 export type WorkflowStatus = 'DRAFT' | 'PUBLISHED' | 'PAUSED' | 'ARCHIVED';
 

@@ -2,9 +2,9 @@ import { createHash } from 'node:crypto';
 import { describe, it, expect } from 'vitest';
 import fc from 'fast-check';
 
-import { createApiKeyAuthMiddleware } from './api-key-auth.js';
-import type { AuthContext, APIGatewayProxyResult } from './api-key-auth.js';
-import type { ApiKeyRecord, ApiKeyScope } from '../../../packages/types/src/api-keys.js';
+import { createApiKeyAuthMiddleware } from './api-key-auth';
+import type { AuthContext, APIGatewayProxyResult } from './api-key-auth';
+import type { ApiKeyRecord, ApiKeyScope } from '../../../packages/types/src/api-keys';
 
 // ── Helpers ──
 

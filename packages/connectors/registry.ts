@@ -2,9 +2,9 @@ import {
   executeHttpAction,
   type ConnectorContext,
   type HttpActionParams,
-} from './http-action/index.js';
-import oneRosterConnector from './oneroster/index.js';
-import ltiProvisionConnector from './lti-provision/index.js';
+} from './http-action/index';
+import oneRosterConnector from './oneroster/index';
+import ltiProvisionConnector from './lti-provision/index';
 
 export interface Connector {
   run(params: unknown, context: ConnectorContext): Promise<unknown>;

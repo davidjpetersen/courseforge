@@ -3,11 +3,11 @@ import {
   createQueryAuditHandler,
   createExportAuditHandler,
   AuditRepository,
-} from './handler.js';
-import type { APIGatewayProxyEvent } from './handler.js';
-import type { WriteAuditInput } from '../../../packages/utils/src/audit.js';
-import { ActionType } from '../../../packages/types/src/audit.js';
-import type { AuditEntry } from '../../../packages/types/src/audit.js';
+} from './handler';
+import type { APIGatewayProxyEvent } from './handler';
+import type { WriteAuditInput } from '../../../packages/utils/src/audit';
+import { ActionType } from '../../../packages/types/src/audit';
+import type { AuditEntry } from '../../../packages/types/src/audit';
 
 function makeEvent(overrides: Partial<APIGatewayProxyEvent> = {}): APIGatewayProxyEvent {
   return {

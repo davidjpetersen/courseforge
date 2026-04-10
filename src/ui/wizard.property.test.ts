@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import fc from 'fast-check';
-import type { Template, StepDefinition, FieldDefinition, FieldValue } from '../models/types.js';
+import type { Template, StepDefinition, FieldDefinition, FieldValue } from '../models/types';
 import {
   createWizardState,
   getProgressIndicator,
@@ -10,7 +10,7 @@ import {
   goToStep,
   setFieldValue,
   buildStepViewModel,
-} from './wizard.js';
+} from './wizard';
 
 // ── Generators ──
 

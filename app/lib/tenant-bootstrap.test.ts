@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 
-import { bootstrapTenant, type BootstrapInput } from './tenant-bootstrap.js';
-import type { DynamoClient } from '../../packages/utils/src/audit.js';
+import { bootstrapTenant, type BootstrapInput } from './tenant-bootstrap';
+import type { DynamoClient } from '../../packages/utils/src/audit';
 
 function buildInput(overrides?: Partial<BootstrapInput>): BootstrapInput {
   return {

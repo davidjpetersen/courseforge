@@ -1,7 +1,7 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 
-import type { StepDefinition } from './types.js';
+import type { StepDefinition } from './types';
 
 // ── Generators ──
 

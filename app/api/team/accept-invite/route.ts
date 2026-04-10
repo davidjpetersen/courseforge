@@ -9,9 +9,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient, PutCommand, GetCommand } from '@aws-sdk/lib-dynamodb';
 
-import { setSessionCookie } from '../../../lib/auth/jwt.js';
-import { handleAcceptInvite } from './handler.js';
-import type { AcceptInviteClient } from './handler.js';
+import { setSessionCookie } from '../../../lib/auth/jwt';
+import { handleAcceptInvite } from './handler';
+import type { AcceptInviteClient } from './handler';
 
 const rawClient = new DynamoDBClient({});
 const ddb = DynamoDBDocumentClient.from(rawClient);

@@ -7,8 +7,8 @@ import {
   type PromoteRepository,
   type WorkflowRecord,
   type WorkflowVersionRecord,
-} from './handler.js';
-import { ActionType } from '../../../packages/types/src/audit.js';
+} from './handler';
+import { ActionType } from '../../../packages/types/src/audit';
 
 // ── Arbitraries ──
 

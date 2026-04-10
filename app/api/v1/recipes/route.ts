@@ -1,9 +1,9 @@
 import { ScanCommand } from '@aws-sdk/lib-dynamodb';
 import { NextRequest, NextResponse } from 'next/server';
 
-import { createV1RecipeHandler, type RecipeRepository } from '../../../../src/api/v1/recipes.js';
-import type { Template } from '../../../../src/models/types.js';
-import { runV1Middleware, client, tableName } from '../_middleware.js';
+import { createV1RecipeHandler, type RecipeRepository } from '../../../../src/api/v1/recipes';
+import type { Template } from '../../../../src/models/types';
+import { runV1Middleware, client, tableName } from '../_middleware';
 
 const recipeRepo: RecipeRepository = {
   async listAll(): Promise<Template[]> {

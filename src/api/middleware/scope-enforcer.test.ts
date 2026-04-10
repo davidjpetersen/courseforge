@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 
-import { enforceScopeForRequest } from './scope-enforcer.js';
+import { enforceScopeForRequest } from './scope-enforcer';
 
 describe('Scope Enforcer – unit tests (Requirements 14.1–14.3)', () => {
   // ── read scope ──

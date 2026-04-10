@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { ltiProvisionConnector } from './index.js';
+import { ltiProvisionConnector } from './index';
 
 describe('lti-provision result normalization', () => {
   it('normalizes Canvas validation response', async () => {

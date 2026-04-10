@@ -6,8 +6,8 @@ import {
 } from '@aws-sdk/lib-dynamodb';
 import type { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 
-import type { ApiKeyRecord } from '../../../packages/types/src/api-keys.js';
-import { tenantPK, apiKeySK, GSI_HASHED_KEY } from '../../models/schema.js';
+import type { ApiKeyRecord } from '../../../packages/types/src/api-keys';
+import { tenantPK, apiKeySK, GSI_HASHED_KEY } from '../../models/schema';
 
 export interface ApiKeyRepository {
   create(record: ApiKeyRecord): Promise<void>;

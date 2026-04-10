@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import fc from 'fast-check';
 
-import { handleInvite, type InviteClient } from './invite/handler.js';
-import type { AuthContext, UserRole } from '../../lib/auth/types.js';
+import { handleInvite, type InviteClient } from './invite/handler';
+import type { AuthContext, UserRole } from '../../lib/auth/types';
 
 // ── Setup ──
 

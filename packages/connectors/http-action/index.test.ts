@@ -3,7 +3,7 @@ import {
   executeHttpAction,
   GetSecretValueCommand,
   HttpActionError,
-} from './index.js';
+} from './index';
 
 function makeResponse(
   status: number,

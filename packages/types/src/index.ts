@@ -5,10 +5,10 @@ export {
   type TriggerType,
   WorkflowStatus,
   RunStatus,
-} from './events.js';
+} from './events';
 
-export type { Run, RunStep, Notification } from './runs.js';
+export type { Run, RunStep, Notification } from './runs';
 
-export { ActionType, type ResourceType, type AuditEntry } from './audit.js';
+export { ActionType, type ResourceType, type AuditEntry } from './audit';
 
-export type { ApiKeyRecord, ApiKeyScope, EndpointGroup } from './api-keys.js';
+export type { ApiKeyRecord, ApiKeyScope, EndpointGroup } from './api-keys';

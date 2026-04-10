@@ -2,8 +2,8 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 import { NextRequest, NextResponse } from 'next/server';
 
-import { createApiKeyHandler } from '../../../../src/api/developer-keys/handler.js';
-import { createDynamoApiKeyRepository } from '../../../../src/api/developer-keys/repository.js';
+import { createApiKeyHandler } from '../../../../src/api/developer-keys/handler';
+import { createDynamoApiKeyRepository } from '../../../../src/api/developer-keys/repository';
 
 const client = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 const tableName = process.env.MAIN_TABLE_NAME ?? 'CourseForgeRuns';

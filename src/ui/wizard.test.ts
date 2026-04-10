@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import type { Template, StepDefinition } from '../models/types.js';
-import type { Storage } from './filter.js';
+import type { Template, StepDefinition } from '../models/types';
+import type { Storage } from './filter';
 import {
   createWizardState,
   getProgressIndicator,
@@ -16,7 +16,7 @@ import {
   saveWizardState,
   loadWizardState,
   clearWizardState,
-} from './wizard.js';
+} from './wizard';
 
 // ── Helpers ──
 

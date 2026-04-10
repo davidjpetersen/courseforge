@@ -1,4 +1,4 @@
-import type { Notification } from '../../packages/types/src/runs.js';
+import type { Notification } from '../../packages/types/src/runs';
 
 export interface NotificationBellState {
   notifications: Notification[];

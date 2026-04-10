@@ -9,9 +9,9 @@ import {
   mapConnectionToListItem,
   mapTestResultToStatus,
   validateCredentials,
-} from './logic.js';
-import { connectorRegistry } from './registry.js';
-import type { ConnectionRecord, Workflow } from '../../models/types.js';
+} from './logic';
+import { connectorRegistry } from './registry';
+import type { ConnectionRecord, Workflow } from '../../models/types';
 
 const arbId = fc.uuid();
 const arbIso = fc.date().map((date) => date.toISOString());

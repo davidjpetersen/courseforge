@@ -1,9 +1,9 @@
 import { randomUUID } from 'node:crypto';
 
-import { RunStatus } from '../../../packages/types/src/index.js';
-import { runRecordPK, runRecordSK } from '../../../functions/shared/keys.js';
-import { findRunRecordById } from '../../../functions/shared/run-records.js';
-import type { ReplayResponse } from '../../../functions/shared/types.js';
+import { RunStatus } from '../../../packages/types/src/index';
+import { runRecordPK, runRecordSK } from '../../../functions/shared/keys';
+import { findRunRecordById } from '../../../functions/shared/run-records';
+import type { ReplayResponse } from '../../../functions/shared/types';
 
 export interface APIGatewayProxyEvent {
   pathParameters?: Record<string, string> | null;

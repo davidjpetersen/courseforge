@@ -5,12 +5,12 @@ import {
   type TemplateRepository,
   type TenantConnectionProvider,
   type APIGatewayProxyEvent,
-} from './handlers.js';
-import type { Template } from '../../models/types.js';
+} from './handlers';
+import type { Template } from '../../models/types';
 import {
   ROSTER_OPS_TEMPLATE,
   NOTIFICATIONS_TEMPLATE,
-} from '../../data/seed-templates.js';
+} from '../../data/seed-templates';
 
 // ── Helpers ──
 

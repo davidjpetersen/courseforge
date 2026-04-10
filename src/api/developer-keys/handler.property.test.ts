@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { createHash } from 'node:crypto';
 import fc from 'fast-check';
 
-import { createApiKeyHandler, hashKey } from './handler.js';
-import type { ApiKeyRepository } from './repository.js';
-import type { ApiKeyRecord, ApiKeyScope } from '../../../packages/types/src/api-keys.js';
+import { createApiKeyHandler, hashKey } from './handler';
+import type { ApiKeyRepository } from './repository';
+import type { ApiKeyRecord, ApiKeyScope } from '../../../packages/types/src/api-keys';
 
 // ── Arbitraries ──
 

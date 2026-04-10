@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import fc from 'fast-check';
 
-import { signToken, verifyToken } from './jwt.js';
-import type { JWTPayload } from './types.js';
-import type { UserRole } from './types.js';
+import { signToken, verifyToken } from './jwt';
+import type { JWTPayload } from './types';
+import type { UserRole } from './types';
 
 // ── Setup: set a deterministic JWT secret for tests ──
 

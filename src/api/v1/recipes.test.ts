@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import type { Template } from '../../models/types.js';
+import type { Template } from '../../models/types';
 import {
   createV1RecipeHandler,
   parseTimeToMinutes,
   templateToRecipe,
   type RecipeRepository,
   type APIGatewayProxyEvent,
-} from './recipes.js';
+} from './recipes';
 
 // ── Helpers ──
 

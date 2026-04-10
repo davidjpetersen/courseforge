@@ -6,10 +6,10 @@ import {
   UpdateCommand,
 } from '@aws-sdk/lib-dynamodb';
 
-import { RunStatus } from '../../packages/types/src/index.js';
-import { tenantPK, workflowSK } from '../../src/models/schema.js';
-import { findRunRecordById } from '../shared/run-records.js';
-import type { RunInitializerInput, RunInitializerOutput, StepDefinition } from '../shared/types.js';
+import { RunStatus } from '../../packages/types/src/index';
+import { tenantPK, workflowSK } from '../../src/models/schema';
+import { findRunRecordById } from '../shared/run-records';
+import type { RunInitializerInput, RunInitializerOutput, StepDefinition } from '../shared/types';
 
 export interface DynamoClientLike {
   get(params: {

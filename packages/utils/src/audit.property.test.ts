@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 import fc from 'fast-check';
 
-import { writeAuditLog, type DynamoClient, type WriteAuditInput } from './audit.js';
-import { ActionType } from '../../types/src/audit.js';
+import { writeAuditLog, type DynamoClient, type WriteAuditInput } from './audit';
+import { ActionType } from '../../types/src/audit';
 
 // ── Arbitraries ──
 

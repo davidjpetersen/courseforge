@@ -2,7 +2,7 @@ import {
   executeHttpAction,
   type HttpActionParams,
   type ConnectorContext,
-} from '../../packages/connectors/http-action/index.js';
+} from '../../packages/connectors/http-action/index';
 
 export interface RuntimeConnector {
   run(params: Record<string, unknown>, context: Record<string, unknown>): Promise<unknown>;

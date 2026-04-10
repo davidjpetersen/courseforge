@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-import { generateOpenApiSpec } from '../../../../src/api/v1/openapi.js';
+import { generateOpenApiSpec } from '../../../../src/api/v1/openapi';
 
 export async function GET() {
   const spec = generateOpenApiSpec();

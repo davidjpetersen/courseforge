@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { createReplayHandler } from './handler.js';
+import { createReplayHandler } from './handler';
 
 describe('createReplayHandler', () => {
   it('returns 422 for non-failed runs', async () => {

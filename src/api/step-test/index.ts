@@ -7,4 +7,4 @@ export {
   type StepTestTemplateProvider,
   type APIGatewayProxyEvent,
   type APIGatewayProxyResult,
-} from './handler.js';
+} from './handler';

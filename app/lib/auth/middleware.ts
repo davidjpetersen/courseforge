@@ -6,9 +6,9 @@
  * an AuthContext to the handler on success.
  */
 
-import { verifyToken, COOKIE_NAME } from './jwt.js';
-import { hasRole } from './roles.js';
-import type { AuthContext, UserRole } from './types.js';
+import { verifyToken, COOKIE_NAME } from './jwt';
+import { hasRole } from './roles';
+import type { AuthContext, UserRole } from './types';
 
 /** Minimal subset of NextRequest that the middleware relies on. */
 export interface MiddlewareRequest {

@@ -5,12 +5,12 @@
  * The route.ts file is a thin wrapper that calls this handler.
  */
 
-import { isValidEmail, isValidPassword } from '../../../lib/auth/validation.js';
-import { hashPassword } from '../../../lib/auth/password.js';
-import { signToken } from '../../../lib/auth/jwt.js';
-import { bootstrapTenant } from '../../../lib/tenant-bootstrap.js';
-import { tenantPK, userSK, emailPK, SK_VALUES } from '../../../../src/models/schema.js';
-import type { UserRecord, EmailIndexRecord } from '../../../lib/auth/types.js';
+import { isValidEmail, isValidPassword } from '../../../lib/auth/validation';
+import { hashPassword } from '../../../lib/auth/password';
+import { signToken } from '../../../lib/auth/jwt';
+import { bootstrapTenant } from '../../../lib/tenant-bootstrap';
+import { tenantPK, userSK, emailPK, SK_VALUES } from '../../../../src/models/schema';
+import type { UserRecord, EmailIndexRecord } from '../../../lib/auth/types';
 
 export interface RegisterInput {
   email: string;

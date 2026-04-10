@@ -3,7 +3,7 @@ import {
   buildSchedulePreview,
   createCreateScheduleHandler,
   createDeleteScheduleHandler,
-} from './schedule.js';
+} from './schedule';
 
 describe('buildSchedulePreview', () => {
   it('renders interval-based previews', () => {

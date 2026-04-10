@@ -6,8 +6,8 @@
  */
 
 import { NextResponse } from 'next/server';
-import { withAuth } from '../../../lib/auth/middleware.js';
-import type { AuthContext } from '../../../lib/auth/types.js';
+import { withAuth } from '../../../lib/auth/middleware';
+import type { AuthContext } from '../../../lib/auth/types';
 
 const handler = withAuth(async (_req, ctx: AuthContext) => {
   return NextResponse.json({

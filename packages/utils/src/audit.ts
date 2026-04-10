@@ -1,5 +1,5 @@
-import type { AuditEntry } from '../../types/src/audit.js';
-import { tenantPK, auditSK } from '../../../src/models/schema.js';
+import type { AuditEntry } from '../../types/src/audit';
+import { tenantPK, auditSK } from '../../../src/models/schema';
 
 export interface DynamoClient {
   put(params: { TableName: string; Item: Record<string, unknown> }): Promise<void>;

@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import fc from 'fast-check';
 
-import type { Template } from '../../models/types.js';
+import type { Template } from '../../models/types';
 import {
   createV1RecipeHandler,
   templateToRecipe,
   type RecipeRepository,
-} from './recipes.js';
+} from './recipes';
 
 // ── Arbitraries ──
 

@@ -5,7 +5,7 @@
  * and returns the created workflow details.
  */
 
-import type { Workflow } from '../../models/types.js';
+import type { Workflow } from '../../models/types';
 
 // ── Request / Response types ──
 

@@ -7,8 +7,8 @@ import {
   type EnvironmentRepository,
   type WorkflowRepository,
   type WorkflowSummary,
-} from './handler.js';
-import type { EnvironmentRecord } from '../../models/types.js';
+} from './handler';
+import type { EnvironmentRecord } from '../../models/types';
 
 // ── Helpers ──
 

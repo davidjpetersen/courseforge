@@ -1,1 +1,1 @@
-export { serializeConfig, deserializeConfig, DSLValidationError } from './serializer.js';
+export { serializeConfig, deserializeConfig, DSLValidationError } from './serializer';

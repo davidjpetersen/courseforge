@@ -10,8 +10,8 @@
 
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
-import { buildPublishConfirmationViewModel } from './publish.js';
-import type { PublishRequest, PublishResponse } from '../api/publish/handler.js';
+import { buildPublishConfirmationViewModel } from './publish';
+import type { PublishRequest, PublishResponse } from '../api/publish/handler';
 
 // ── Generators ──
 

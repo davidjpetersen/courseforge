@@ -1,6 +1,6 @@
 import { describe, it } from 'vitest';
 import * as fc from 'fast-check';
-import { encodeCursor, decodeCursor, clampLimit } from './validation.js';
+import { encodeCursor, decodeCursor, clampLimit } from './validation';
 
 describe('Property 2: cursor encode/decode round-trip', () => {
   it('decodeCursor(encodeCursor(obj)) deep-equals obj for any JSON-serializable object', () => {

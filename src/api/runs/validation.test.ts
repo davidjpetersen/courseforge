@@ -5,7 +5,7 @@ import {
   encodeCursor,
   decodeCursor,
   validateRunsQueryParams,
-} from './validation.js';
+} from './validation';
 
 describe('isValidISODate', () => {
   it('accepts a plain date string', () => {

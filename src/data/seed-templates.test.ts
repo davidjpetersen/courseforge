@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { SEED_TEMPLATES } from './seed-templates.js';
+import { SEED_TEMPLATES } from './seed-templates';
 
 describe('Seed templates', () => {
   it('contains at least 3 templates', () => {

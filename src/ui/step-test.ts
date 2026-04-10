@@ -4,7 +4,7 @@
  * Pure TypeScript (no React, no DOM).
  */
 
-import type { StepDefinition } from '../models/types.js';
+import type { StepDefinition } from '../models/types';
 
 // ── Step Test State ──
 

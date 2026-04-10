@@ -7,9 +7,9 @@ import {
   tenantPK,
   workflowMetaSK,
   workflowPK,
-} from '../../src/models/schema.js';
-import { WorkflowStatus } from '../../packages/types/src/index.js';
-import { createScheduledTriggerHandler } from './handler.js';
+} from '../../src/models/schema';
+import { WorkflowStatus } from '../../packages/types/src/index';
+import { createScheduledTriggerHandler } from './handler';
 
 // ── Helpers ──
 

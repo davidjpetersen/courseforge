@@ -1,8 +1,8 @@
 import fc from 'fast-check';
 import { describe, expect, it, vi } from 'vitest';
 
-import { runtimeConnectorRegistry } from '../shared/connectors.js';
-import { createExecuteStepHandler } from './handler.js';
+import { runtimeConnectorRegistry } from '../shared/connectors';
+import { createExecuteStepHandler } from './handler';
 
 const arbJsonSafe = fc.jsonValue().map((value) => JSON.parse(JSON.stringify(value)));
 

@@ -14,7 +14,7 @@ import {
   VALID_CATEGORIES,
   type Storage,
   type FilterState,
-} from './filter.js';
+} from './filter';
 
 // ── In-memory mock storage ──
 

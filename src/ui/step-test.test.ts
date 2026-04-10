@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import type { StepDefinition } from '../models/types.js';
+import type { StepDefinition } from '../models/types';
 import {
   isStepTestable,
   buildStepTestButtonViewModel,
   initialStepTestState,
   type StepTestState,
-} from './step-test.js';
+} from './step-test';
 
 // ── Helpers ──
 

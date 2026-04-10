@@ -10,9 +10,9 @@ export {
   type ValidationResult,
   type NewConnectionInput,
   type NewConnectionOptions,
-} from './logic.js';
+} from './logic';
 
-export { connectorRegistry } from './registry.js';
+export { connectorRegistry } from './registry';
 
 export {
   createConnectionHandler,
@@ -29,4 +29,4 @@ export {
   type AuditRepository,
   type CreateConnectionRequest,
   type RotateConnectionRequest,
-} from './handlers.js';
+} from './handlers';

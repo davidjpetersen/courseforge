@@ -17,7 +17,7 @@ export {
   type WorkflowRepository,
   type WorkflowVersionRecord,
   type WorkflowStatus,
-} from './handlers.js';
+} from './handlers';
 
 export {
   filterWorkflows,
@@ -31,4 +31,4 @@ export {
   type ConnectionInfo,
   type ValidationError,
   type VersionMetadata,
-} from './logic.js';
+} from './logic';

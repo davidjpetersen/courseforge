@@ -1,4 +1,4 @@
-import type { Template } from '../models/types.js';
+import type { Template } from '../models/types';
 
 /**
  * Education-certified starter templates shipped with the Recipe Library at launch.

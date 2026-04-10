@@ -6,7 +6,7 @@
  * by CDK constructs, CloudFormation custom resources, or deployment scripts.
  */
 
-import { TABLE_NAME } from '../models/schema.js';
+import { TABLE_NAME } from '../models/schema';
 
 // ── OpenSearch Serverless Collection ──
 

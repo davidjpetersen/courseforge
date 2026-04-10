@@ -1,10 +1,10 @@
 import { QueryCommand } from '@aws-sdk/lib-dynamodb';
 import type { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 
-import type { Run, RunStep } from '../../../packages/types/src/runs.js';
-import { findRunRecordById } from '../../../functions/shared/run-records.js';
-import type { RunRepository } from './handler.js';
-import { decodeCursor, type RunsQueryParams } from './validation.js';
+import type { Run, RunStep } from '../../../packages/types/src/runs';
+import { findRunRecordById } from '../../../functions/shared/run-records';
+import type { RunRepository } from './handler';
+import { decodeCursor, type RunsQueryParams } from './validation';
 
 interface QueryOptions {
   tenantId: string;

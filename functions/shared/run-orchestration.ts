@@ -1,4 +1,4 @@
-import type { ExecuteStepInput, ExecuteStepOutput, StepDefinition } from './types.js';
+import type { ExecuteStepInput, ExecuteStepOutput, StepDefinition } from './types';
 
 export interface StepExecutor {
   execute(input: ExecuteStepInput): Promise<ExecuteStepOutput>;

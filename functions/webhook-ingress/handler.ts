@@ -6,13 +6,13 @@ import {
   webhookSecretSK,
   workflowMetaSK,
   workflowPK,
-} from '../../src/models/schema.js';
+} from '../../src/models/schema';
 import {
   RunStatus,
   TRIGGER_EVENT_TYPES,
   WorkflowStatus,
   type DomainEvent,
-} from '../../packages/types/src/index.js';
+} from '../../packages/types/src/index';
 
 export interface APIGatewayProxyEvent {
   pathParameters?: Record<string, string> | null;

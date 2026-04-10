@@ -1,6 +1,6 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
-import { connectorRegistry, resolveConnector } from './registry.js';
+import { connectorRegistry, resolveConnector } from './registry';
 
 describe('connector registry', () => {
   it('resolves the education standards connectors', () => {
